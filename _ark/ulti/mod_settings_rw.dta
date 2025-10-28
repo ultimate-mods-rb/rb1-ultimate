@@ -1,0 +1,75 @@
+#ifdef HX_PS3
+   #define MOD_SETTINGS_PATH ("GD:/dev_hdd0/game/BLUS30050/USRDIR/mod_settings.milo")
+#else
+   #define MOD_SETTINGS_PATH ("GAME:/mod_settings.milo")
+#endif
+{new ObjectDir
+   mod_settings_rw
+   (vars (
+      skipintro
+      trackspeed
+      speedmod
+      hwlength
+      scrbloom
+      camerashake
+      fxdof
+      scrnoise
+      mbblend
+      emulatefps
+      vsyncrate
+      trkmuting
+      whammypb
+      misssounds
+      fcring
+      countdown
+      songtimer
+      kickbounce
+      pad_inst
+      pad_map
+      video_bgs
+      syncdifspeeds
+      songtitle
+      legacybass
+      colorshuffle
+      blackbg
+      tiltsensor
+      prodrums
+      cnt_slot1
+      cnt_slot2
+      cnt_slot3
+      cnt_slot4
+      cnt_slot5
+      cnt_star
+      gems
+   ))
+   (save_settings
+      {print_ship "attempting to save mod settings"}
+      {new ObjectDir mod_settings}
+      {foreach $s [vars]
+         {mod_settings set $s {eval_var $s}}
+      }
+      {mod_settings save_objects MOD_SETTINGS_PATH}
+      {delete mod_settings}
+      {print_ship "mod settings saved to milo"}
+   )
+   (load_settings
+      {print_ship "attempting to load mod_settings"}
+      {do
+         ($mod_settings {load_objects MOD_SETTINGS_PATH})
+         {if_else $mod_settings
+            {do
+               {$mod_settings delete_loader}
+               {foreach $s [vars]
+                  {if {$mod_settings has ($s)}
+                     {set_var $s {$mod_settings get $s}}
+                  }
+               }
+               {delete $mod_settings}
+               {print_ship "mod settings loaded"}
+            }
+            {print_ship "mod settings not loaded"}
+         }
+      }
+   )
+}
+{mod_settings_rw load_settings}

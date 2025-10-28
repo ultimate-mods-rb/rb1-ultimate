@@ -1,0 +1,16 @@
+_build/xbox/gen/
+_build/ps3/USRDIR/gen/
+*_out
+/ignore
+.fuse_hidden*
+_ark/*.png
+_ark/*.jpg
+_ark/*.dds
+_ark/*.sh
+_ark/*.py
+*_dbg.milo*
+*_rt.milo*
+*.bak
+_temp*
+*.xcf
+/_ark/char

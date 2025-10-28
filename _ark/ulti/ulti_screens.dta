@@ -1,0 +1,47 @@
+#include overshell.dta
+{new UIPanel
+   main_bandtour_panel
+   (file "../ui/main_bandcoop.milo")
+   (focus local.btn)
+   (enter
+      {if {profile_mgr get_all_unlocked}
+         {if {== kFocused {online.btn get_state}}
+            {$this set_focus local.btn}
+         }
+         {online.btn set_state kDisabled}
+      }
+   )
+   (load
+      {main_panel set mode_focus multi.btn}
+      {main_multimode_panel set mode_focus bandtour.btn}
+   )
+   (SELECT_START_MSG
+      {gamemode set_mode
+         {switch $component
+            (local.btn tour_world_local)
+            (online.btn tour_world_online)
+         }
+         $player_num
+      }
+      {goto_after_network_connect
+         tour_band_sel_screen
+         {! {gamemode get local_network}}
+      }
+      kDataUnhandled
+   )
+}
+{new UIScreen
+   main_bandtour_screen
+   (panels
+      meta
+      movie_panel
+      main_lower3rd_panel
+      main_panel
+      main_bandtour_panel
+      fx
+   )
+   (focus main_bandtour_panel)
+   (back main_multimode_screen)
+   MAIN_SCREEN_TRANSITION_HANDLER
+   (enter {char_cache cache_update})
+}

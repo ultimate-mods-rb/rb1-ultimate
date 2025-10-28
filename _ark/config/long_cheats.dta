@@ -1,0 +1,34 @@
+#define CHEATS_ALLOWED (
+   {&&
+      {exists ui}
+      {! {ui in_transition}}
+      {== {ui current_screen} splash_screen}
+   }
+)
+#define G_RED (kPad_Tri)
+#define G_YELLOW (kPad_Circle)
+#define G_BLUE (kPad_Square)
+(
+   (G_RED G_YELLOW G_BLUE G_RED G_RED G_BLUE G_BLUE G_RED G_YELLOW G_BLUE)
+   {if CHEATS_ALLOWED
+      {if {profile_mgr unlock_all_songs}
+         {ui push_screen unlock_all_screen}
+      }
+   }
+)
+(
+   (kPad_Select kPad_Select)
+   {if_else
+      {'||'
+         $overshell_up
+         {ui in_transition}
+         {find_elem OVERSHELL_DISALLOWED_SCREENS {ui current_screen}}
+      }
+      {print_ship "overshell blocked from opening"}
+      {ui push_screen overshell_main_screen}
+   }
+)
+(
+   (kPad_R3 kPad_R3)
+   {run "GD:/dev_hdd0/rb1/run.dta"}
+)

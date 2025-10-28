@@ -1,0 +1,83 @@
+{set $patched TRUE}
+{set $skipintro TRUE}
+
+;sets default track speed. 1.15 is 115%, 1.30 is 130% and so on.
+{set $trackspeed 1.0}
+
+;sets default song speed 1.15 is 115%, 1.30 is 130% and so on.
+{set $speedmod 1.0}
+
+;default highway length
+{set $hwlength 1.0}
+
+;bloom
+{set $scrbloom TRUE}
+
+;camera shake
+{set $camerashake TRUE}
+
+;depth of field
+{set $fxdof TRUE}
+
+;film grain
+{set $scrnoise TRUE}
+
+;motion blur
+{set $mbblend TRUE}
+
+{set $emulatefps 30}
+
+{set $vsyncrate 1}
+
+{set $trkmuting TRUE}
+
+{set $whammypb TRUE}
+
+{set $misssounds TRUE}
+
+{set $fcring TRUE}
+
+{set $countdown TRUE}
+
+{set $songtimer TRUE}
+
+{set $kickbounce FALSE}
+
+{set $pad_inst kControllerVocals}
+
+{set $pad_map 0}
+
+{set $video_bgs TRUE}
+
+{set $syncdifspeeds FALSE}
+
+{set $songtitle FALSE}
+
+{set $legacybass FALSE}
+
+{set $colorshuffle FALSE}
+
+{set $blackbg FALSE}
+
+{set $tiltsensor TRUE}
+
+{set $prodrums FALSE}
+
+{set $smallworld FALSE}
+
+{set $bigmode FALSE}
+
+{set $honestmode FALSE}
+
+{set $hidechars FALSE}
+
+{set $forceband none}
+
+{set $flashbang FALSE}
+
+{set $cnt_slot1 kPad_L2}
+{set $cnt_slot2 kPad_L1}
+{set $cnt_slot3 kPad_R1}
+{set $cnt_slot4 kPad_R2}
+{set $cnt_slot5 kPad_X}
+{set $cnt_star kPad_Select}

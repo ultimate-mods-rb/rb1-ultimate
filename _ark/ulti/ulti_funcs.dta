@@ -1,0 +1,772 @@
+{func print_ship
+   ($s)
+   #ifdef HX_PS3
+   {run {sprintf "GD:/%d    %s    %d" {random_int 100 1000} {sprint $s} {random_int 100 1000}}}
+   #else
+   kDataUnhandled
+   #endif
+}
+{func dump_array
+   ($a $p)
+   #ifdef HX_PS3
+   {do
+      ($o {new ObjectDir temp_dir})
+      {$o set array $a}
+      {$o save_objects $p}
+      {delete $o}
+      {print_ship {sprint "array dumped to " $p}}
+   }
+   #else
+   kDataUnhandled
+   #endif
+}
+{func set_var
+   ($var $in)
+   {eval {` {set {, {var $var}} $in}}}
+}
+{func eval_var
+   ($var)
+   {eval {var $var}}
+}
+{func toggle_var
+   ($var)
+   {eval {` {set {, {var $var}} {! {eval_var $var}}}}}
+}
+{func lst_reset {do
+   ($array {array 0})
+   {foreach $entry {$this get data}
+      {if_else {== {type $entry} kDataArray} ; just return whatever was passed if not array
+         {switch {elem {find $entry type} 1}
+            (uNormal
+               {push_back $array {eval {elem $entry 0}}}
+            )
+            (uOnOFF
+               {push_back $array
+                  {sprintf
+                     {localize os_onoff_fmt}
+                     {localize {elem $entry 0}}
+                     {localize {if_else {eval {elem {find $entry bool} 1}} on off}}
+                  }
+               }
+            )
+            (uFakeSld
+               {push_back $array
+                  {sprintf
+                     {localize {elem $entry 0}}
+                     {switch {elem {find $entry fmt_type} 1}
+                        (uNormal {eval_var {elem {find $entry var} 1}})
+                        (uColor
+                           {localize
+                              {switch {eval_var {elem {find $entry var} 1}}
+                                 (0 color_green)
+                                 (1 color_red)
+                                 (2 color_yellow)
+                                 (3 color_blue)
+                                 (4 color_orange)
+                                 invalid
+                              }
+                           }
+                        )
+                        (uDrumColor
+                           {localize
+                              {switch {eval_var {elem {find $entry var} 1}}
+                                 (0 kick)
+                                 (1 color_red)
+                                 (2 color_yellow)
+                                 (3 color_blue)
+                                 (4 color_green)
+                                 invalid
+                              }
+                           }
+                        )
+                        (uCunt
+                           {localize
+                              {switch {eval_var {elem {find $entry var} 1}}
+                                 (kPad_L2 os_pad_l2)
+                                 (kPad_L1 os_pad_l1)
+                                 (kPad_R1 os_pad_r1)
+                                 (kPad_R2 os_pad_r2)
+                                 (kPad_X os_pad_x)
+                                 (kPad_Circle os_pad_circle)
+                                 (kPad_Square os_pad_square)
+                                 (kPad_Tri os_pad_tri)
+                                 (kPad_DUp os_pad_dup)
+                                 (kPad_DDown os_pad_ddown)
+                                 (kPad_DLeft os_pad_dleft)
+                                 (kPad_DRight os_pad_dright)
+                                 (kPad_L3 os_pad_l3)
+                                 (kPad_R3 os_pad_r3)
+                                 (kPad_Select os_pad_select)
+                                 invalid
+                              }
+                           }
+                        )
+                        (uSync
+                           {localize
+                              {switch {eval_var {elem {find $entry var} 1}}
+                                 (0 infinite)
+                                 (1 full)
+                                 (2 half)
+                                 (4 quarter)
+                                 invalid
+                              }
+                           }
+                        )
+                        (uInst
+                           {localize
+                              {switch {eval_var {elem {find $entry var} 1}}
+                                 (kControllerGuitar guitar_sym)
+                                 (kControllerDrum drum_sym)
+                                 (kControllerVocals vocals_sym)
+                                 invalid
+                              }
+                           }
+                        )
+                        (uMapping
+                           {localize
+                              {switch {eval_var {elem {find $entry var} 1}}
+                                 (0 custom)
+                                 (1 guitar_sym)
+                                 (2 gh_guitar)
+                                 (3 ps2_guitar)
+                                 (4 drum_sym)
+                                 invalid
+                              }
+                           }
+                        )
+                        (uSpeed {int {+ {* {eval_var {elem {find $entry var} 1}} 100} 0.5}})
+                     }
+                  }
+               }
+            )
+            #ifdef _SHIP
+            {exit}
+            #else
+            {fail {sprint {elem {find $entry type} 1} " is an unknown type"}}
+            #endif
+         }
+         {push_back $array {eval $entry}}
+      }
+   }
+   {OS_LIST set_data $array}
+   {OS_LIST set max_display {if_else {> {size $array} 4} 0 3}}
+   {if {$this has (pos)}
+      {OS_LIST set_selected [pos]}
+   }
+   {os_update_helpbar}
+}}
+{func os_setup_common
+   {title.lbl set text_token [title]}
+   {lst_reset}
+}
+{func os_sel_common {do
+   ($entry {elem [data] {OS_LIST selected_pos}})
+   {if_else
+      {&&
+         {== {type $entry} kDataArray}
+         {!
+            {do
+               ($block {find_exists $entry block_ingame})
+               ($bool)
+               {if {&& $block {exists beatmatch}}
+                  {set $bool {elem $block 1}}
+               }
+               $bool
+            }
+         }
+      }
+      {do
+         {switch {elem {find $entry type} 1}
+            ((uNormal uOnOFF)
+               {foreach $cmd {find $entry sel_script}
+                  {eval $cmd}
+               }
+            )
+            (uFakeSld
+               {$this set focused TRUE}
+               {$this set store {eval_var {elem {find $entry var} 1}}}
+            )
+         }
+      }
+      {synth play button_error}
+   }}
+   {lst_reset}
+}
+{func os_down_common {do
+   ($entry {elem [data] {OS_LIST selected_pos}})
+   {if_else {== {type $entry} kDataArray}
+      {switch {elem {find $entry type} 1}
+         (uFakeSld
+            {if_else {&& {$this has (focused)} [focused]}
+               {switch $button
+                  (kPad_X
+                     {synth play button_select}
+                     {$this set focused FALSE}
+                     {set [store] 0}
+                     {os_update_helpbar}
+                  )
+                  (kPad_Tri
+                     {synth play button_back}
+                     {$this set focused FALSE}
+                     {set_var {elem {find $entry var} 1} [store]}
+                     {set [store] 0}
+                     {lst_reset}
+                  )
+                  ((kPad_DUp kPad_DLeft)
+                     {synth play button_toggle}
+                     {set_var {elem {find $entry var} 1}
+                        {prev_elem
+                           {eval {elem {find $entry array} 1}}
+                           {eval_var {elem {find $entry var} 1}}
+                        }
+                     }
+                     {lst_reset}
+                  )
+                  ((kPad_DDown kPad_DRight)
+                     {synth play button_toggle}
+                     {set_var {elem {find $entry var} 1}
+                        {next_elem
+                           {eval {elem {find $entry array} 1}}
+                           {eval_var {elem {find $entry var} 1}}
+                        }
+                     }
+                     {lst_reset}
+                  )
+               }
+               {os_unhandled_down}
+            }
+         )
+         {os_unhandled_down}
+      }
+      {os_unhandled_down}
+   }}
+}
+{func os_unhandled_down
+   {if
+      {&&
+         {== $button kPad_Tri}
+         {do
+            {synth play button_back}
+            {$this has (pos)}
+         }
+      }
+      {set [pos] 0}
+   }
+   kDataUnhandled
+}
+{func os_update_helpbar {do
+   ($entry {elem [data] {OS_LIST selected_pos}})
+   {helpbar set_config
+      {if_else {== {type $entry} kDataArray}
+         {cond
+            ({&& {$this has (focused)} [focused]}
+               (
+                  helpbar_cancel
+                  helpbar_confirmsetting
+               )
+            )
+            ({find_elem (uOnOFF uFakeSld) {elem {find $entry type} 1}}
+               (
+                  helpbar_back
+                  helpbar_changesetting
+               )
+            )
+            (TRUE
+               (
+                  helpbar_back
+                  helpbar_select
+               )
+            )
+         }
+         (
+            helpbar_back
+            helpbar_select
+         )
+      }
+   }
+}}
+{func get_elem
+    ($array $data)
+    {do
+        ($elem)
+        ($notfound TRUE)
+        ($size {- {size $array} 1})
+        {while {&& $notfound {<= $elem $size}}
+            {if_else {== {elem $array $elem} $data}
+               {set $notfound FALSE}
+               {++ $elem}
+            }
+        }
+        $elem
+    }
+}
+{func next_elem
+   ($array $data)
+   {elem $array
+      {max
+         {min
+            {+ {get_elem $array $data} 1}
+            {- {size $array} 1}
+         }
+         0
+      }
+   }
+}
+{func prev_elem
+   ($array $data)
+   {elem $array
+      {max
+         {min
+            {- {get_elem $array $data} 1}
+            {- {size $array} 1}
+         }
+         0
+      }
+   }
+}
+{func force_drum_freestyle
+   ($bool)
+   {unless {gamemode get is_drum_trainer}
+      {game foreach_local_player $p
+         {if {&& $p {== {$p instrument} drum}}
+            {$p force_fill $bool}
+         }
+      }
+   }
+}
+{func clear_array
+   ($obj $name)
+   {while {size {$obj get_array $name}}
+      {$obj remove ($name 0)}
+   }
+}
+{func seconds_to_time
+   ($float)
+   {do
+      ($minutes {int {/ $float 60}})
+      ($seconds {int {mod $float 60}})
+      {sprintf "%d:%s"
+         $minutes
+         {if_else {< $seconds 10}
+            {sprintf "0%d" $seconds}
+            {sprint $seconds}
+         }
+      }
+   }
+}
+{func is_vocals_on_top
+   {if_else {exists beatmatch}
+      {do
+         ($size 0)
+         ($bool 0)
+         {beatmatch foreach_active_player $player
+            {if {== {$player instrument} vocals}
+               {set $bool TRUE}
+            }
+            {++ $size}
+         }
+         {&& {>= $size 2} $bool}
+      }
+      {fail "considering beatmatch doesn't exist it's safe to say vocals isn't on top"}
+   }
+}
+{func apply_gfx_settings
+   {rnd set_sync $vsyncrate}
+   {$world iterate PostProc $p
+      #ifdef HX_NG
+      {if_else {game is_loaded}
+         {$p set emulate_fps $emulatefps}
+         {$p set emulate_fps 60}
+      }
+      {unless $mbblend
+         {$p set motion_blur_blend 0}
+         {$p set motion_blur_weight 0}
+      }
+      #endif
+      {unless $scrnoise
+         {$p set noise_intensity 0}
+      }
+      {unless $scrbloom
+         {$p set bloom_intensity 0}
+      }
+   }
+   {$world iterate CamShot $cs
+      {unless $fxdof
+         {$cs set use_depth_of_field FALSE}
+      }
+      {unless $camerashake
+         {foreach_int $i 0 {$cs size (keyframes)}
+            {$cs set (keyframes $i shake_noisefreq) 0}
+            {$cs set (keyframes $i shake_noiseamp) 0}
+            {$cs set (keyframes $i shake_maxangle x) 0}
+            {$cs set (keyframes $i shake_maxangle y) 0}
+         }
+      }
+   }
+   {if $bigmode {do
+      ($x) ($y) ($z)
+      {$world iterate Character $c
+         {$c iterate Mesh $m
+            {$m get_local_scale $x $y $z}
+            {$m set_local_scale
+               {* $x 2}
+               {* $y 2}
+               {* $z 2}
+            }
+         }
+      }
+   }}
+   {if $smallworld {do
+      ($x) ($y) ($z)
+      {$world iterate Mesh $m
+         {$m get_local_scale $x $y $z}
+         {$m set_local_scale
+            {/ $x 2}
+            {/ $y 2}
+            {/ $z 2}
+         }
+      }
+      {$world iterate RndDir $dir
+         {unless {$dir is_a Character}
+            {$dir iterate Mesh $m
+               {$m get_local_scale $x $y $z}
+               {$m set_local_scale
+                  {/ $x 2}
+                  {/ $y 2}
+                  {/ $z 2}
+               }
+            }
+         }
+      }
+   }}
+   {if $honestmode {do
+      ($array {array 0})
+      {$honestmilo iterate Tex $t
+         {push_back $array $t}
+      }
+      {$world iterate Mat $m
+         {$m set diffuse_tex {random_elem $array}}
+      }
+      {$world iterate RndDir $dir
+         {unless {$dir is_a Character}
+            {$dir iterate Mat $m
+               {$m set diffuse_tex {random_elem $array}}
+            }
+         }
+      }
+   }}
+   {if $hidechars
+      {$world iterate Character $c
+         {$c set_showing FALSE}
+      }
+   }
+}
+{func tolower ; fuck you harmonix
+   ($string)
+   {search_replace $string "A" "a" $string}
+   {search_replace $string "B" "b" $string}
+   {search_replace $string "C" "c" $string}
+   {search_replace $string "D" "d" $string}
+   {search_replace $string "E" "e" $string}
+   {search_replace $string "F" "f" $string}
+   {search_replace $string "G" "g" $string}
+   {search_replace $string "H" "h" $string}
+   {search_replace $string "I" "i" $string}
+   {search_replace $string "J" "j" $string}
+   {search_replace $string "K" "k" $string}
+   {search_replace $string "L" "l" $string}
+   {search_replace $string "M" "m" $string}
+   {search_replace $string "N" "n" $string}
+   {search_replace $string "O" "o" $string}
+   {search_replace $string "P" "p" $string}
+   {search_replace $string "Q" "q" $string}
+   {search_replace $string "R" "r" $string}
+   {search_replace $string "S" "s" $string}
+   {search_replace $string "T" "t" $string}
+   {search_replace $string "U" "u" $string}
+   {search_replace $string "V" "v" $string}
+   {search_replace $string "W" "w" $string}
+   {search_replace $string "X" "x" $string}
+   {search_replace $string "Y" "y" $string}
+   {search_replace $string "Z" "z" $string}
+   $string
+}
+{func char_code
+   ($char)
+   {switch $char
+      (" " 32)
+      ("!" 33)
+      ("#" 35)
+      ("$" 36)
+      ("%" 37)
+      ("&" 38)
+      ("'" 39)
+      ("(" 40)
+      (")" 41)
+      ("*" 42)
+      ("+" 43)
+      ("," 44)
+      ("-" 45)
+      ("." 46)
+      ("/" 47)
+      ("0" 48)
+      ("1" 49)
+      ("2" 50)
+      ("3" 51)
+      ("4" 52)
+      ("5" 53)
+      ("6" 54)
+      ("7" 55)
+      ("8" 56)
+      ("9" 57)
+      (":" 58)
+      (";" 59)
+      ("<" 60)
+      ("=" 61)
+      (">" 62)
+      ("?" 63)
+      ("@" 64)
+      ("A" 65)
+      ("B" 66)
+      ("C" 67)
+      ("D" 68)
+      ("E" 69)
+      ("F" 70)
+      ("G" 71)
+      ("H" 72)
+      ("I" 73)
+      ("J" 74)
+      ("K" 75)
+      ("L" 76)
+      ("M" 77)
+      ("N" 78)
+      ("O" 79)
+      ("P" 80)
+      ("Q" 81)
+      ("R" 82)
+      ("S" 83)
+      ("T" 84)
+      ("U" 85)
+      ("V" 86)
+      ("W" 87)
+      ("X" 88)
+      ("Y" 89)
+      ("Z" 90)
+      ("[" 91)
+      ("]" 93)
+      ("^" 94)
+      ("_" 95)
+      ("`" 96)
+      ("a" 97)
+      ("b" 98)
+      ("c" 99)
+      ("d" 100)
+      ("e" 101)
+      ("f" 102)
+      ("g" 103)
+      ("h" 104)
+      ("i" 105)
+      ("j" 106)
+      ("k" 107)
+      ("l" 108)
+      ("m" 109)
+      ("n" 110)
+      ("o" 111)
+      ("p" 112)
+      ("q" 113)
+      ("r" 114)
+      ("s" 115)
+      ("t" 116)
+      ("u" 117)
+      ("v" 118)
+      ("w" 119)
+      ("x" 120)
+      ("y" 121)
+      ("z" 122)
+      ("{" 123)
+      ("|" 124)
+      ("}" 125)
+      ("~" 126)
+      0
+   }
+}
+{func strip_syms
+   ($string)
+   {foreach $sym
+      (
+         "-"
+         "+"
+         "("
+         ")"
+         "\q"
+         "'"
+         "`"
+         "?"
+         "/"
+         "!"
+         "."
+         ","
+         ":"
+         ";"
+      )
+      {search_replace $string $sym "" $string}
+   }
+   ; after removing syms double spaces will cause search to fail for something like "Undone - The Sweater Song"
+   {search_replace $string "  " " " $string}
+   {search_replace $string "&" "and" $string}
+   $string
+}
+; i've tried to optimise this func the best i could and this seems as fast as i can get it.
+; if anyone smart is reading this pls make it better ;3
+{func badcmp
+   ($s1 $s2)
+   {if_else {== $s1 $s2}
+      0
+      {do
+         ($i 0)
+         ($result 0)
+         ($max {max {strlen $s1} {strlen $s2}})
+            {while {< $i $max}
+               {do
+                  ($c1 {str_elem $s1 $i})
+                  ($c2 {str_elem $s2 $i})
+                  {unless {== $c1 $c2}
+                     {set $result
+                        {if_else {< {char_code $c1} {char_code $c2}}
+                           -1
+                           1
+                        }
+                     }
+                     {set $i $max}
+                  }
+               }
+               {++ $i}
+            }
+         $result
+      }
+   }
+}
+{func sti
+   ($str)
+   {switch $str
+      ("0" 0)   ("1" 1)   ("2" 2)   ("3" 3)   ("4" 4)
+      ("5" 5)   ("6" 6)   ("7" 7)   ("8" 8)   ("9" 9)
+
+      ("a" 10)  ("b" 11)  ("c" 12)  ("d" 13)  ("e" 14)  ("f" 15)
+      ("g" 16)  ("h" 17)  ("i" 18)  ("j" 19)  ("k" 20)  ("l" 21)
+      ("m" 22)  ("n" 23)  ("o" 24)  ("p" 25)  ("q" 26)  ("r" 27)
+      ("s" 28)  ("t" 29)  ("u" 30)  ("v" 31)  ("w" 32)  ("x" 33)
+      ("y" 34)  ("z" 35)
+
+      ("A" 36)  ("B" 37)  ("C" 38)  ("D" 39)  ("E" 40)  ("F" 41)
+      ("G" 42)  ("H" 43)  ("I" 44)  ("J" 45)  ("K" 46)  ("L" 47)
+      ("M" 48)  ("N" 49)  ("O" 50)  ("P" 51)  ("Q" 52)  ("R" 53)
+      ("S" 54)  ("T" 55)  ("U" 56)  ("V" 57)  ("W" 58)  ("X" 59)
+      ("Y" 60)  ("Z" 61)
+
+      {fail {sprint "can't decode " $str}}
+   }
+}
+{func its
+   ($int)
+   {switch $int
+      (0 "0")   (1 "1")   (2 "2")   (3 "3")   (4 "4")
+      (5 "5")   (6 "6")   (7 "7")   (8 "8")   (9 "9")
+
+      (10 "a")  (11 "b")  (12 "c")  (13 "d")  (14 "e")  (15 "f")
+      (16 "g")  (17 "h")  (18 "i")  (19 "j")  (20 "k")  (21 "l")
+      (22 "m")  (23 "n")  (24 "o")  (25 "p")  (26 "q")  (27 "r")
+      (28 "s")  (29 "t")  (30 "u")  (31 "v")  (32 "w")  (33 "x")
+      (34 "y")  (35 "z")
+
+      (36 "A")  (37 "B")  (38 "C")  (39 "D")  (40 "E")  (41 "F")
+      (42 "G")  (43 "H")  (44 "I")  (45 "J")  (46 "K")  (47 "L")
+      (48 "M")  (49 "N")  (50 "O")  (51 "P")  (52 "Q")  (53 "R")
+      (54 "S")  (55 "T")  (56 "U")  (57 "V")  (58 "W")  (59 "X")
+      (60 "Y")  (61 "Z")
+
+      {fail {sprint "can't encode " $str}}
+   }
+}
+{func siti
+   ($str)
+   {do
+      ($result)
+      ($len {strlen $str})
+      {foreach_int $elem 0 $len
+         {set $result {+ {* $result 10} {sti {str_elem $str $elem}}}}
+      }
+      $result
+   }
+}
+{func sftf
+   ($str)
+   {do
+      ($dotpos {str_elemof $str "."})
+      {if_else $dotpos
+         {do
+            ($fracpart {substr $str {+ $dotpos 1} {strlen $str}})
+            {+
+               {siti {substr $str 0 $dotpos}}
+               {/
+                  {siti $fracpart}
+                  {pow 10 {strlen $fracpart}}
+               }
+            }
+         }
+         {siti $str}
+      }
+   }
+}
+{func str_elemof
+   ($str $char)
+   {do
+      ($len {strlen $str})
+      ($found)
+      ($elem)
+      ($return)
+      {while {&& {! $found} {> $len $elem}}
+         {if_else {== {str_elem $str $elem} $char}
+            {do
+               {set $found TRUE}
+               {set $return $elem}
+            }
+            {++ $elem}
+         }
+      }
+      $return
+   }
+}
+{func pow
+   ($base $exp)
+   {do
+      ($return 1)
+      {foreach_int $i 0 $exp
+         {set $return {* $return $base}}
+      }
+      $return
+   }
+}
+{func set_pad_map
+   ($mapping)
+   {foreach $pad (analog dualshock)
+      {set_elem
+         {find $syscfg joypad controller_mapping $pad} 1
+         {switch $mapping
+            (0 joypad)
+            #ifdef HX_XBOX
+            (1 ro_guitar_xbox)
+            #else
+            (1 hx_guitar_ps3)
+            #endif
+            (2 ro_guitar_ps3)
+            (3 guitar)
+            #ifdef HX_XBOX
+            (4 hx_drums_xbox)
+            #else
+            (4 hx_drums_ps3)
+            #endif
+         }
+      }
+   }
+}

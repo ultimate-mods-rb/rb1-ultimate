@@ -1,0 +1,381 @@
+(Object
+   (types
+      (countdown
+         (active FALSE)
+         (done FALSE)
+         (current_event 0)
+         (total_events 0)
+         (remaining 0)
+         (event_array 0)
+         (target 0)
+         (track 0)
+         (parent 0)
+         (anim 0)
+         (init
+            ($track $dir)
+            {set [track] {coop_track_panel find $track}}
+            {with $dir
+               {unless {$this has (init)}
+                  ; maybe like move most of this to the objects one day. maybe if wii wasn't special (le) i'd do it now :<
+                  {{streak_meter.grp dir} set_trans_parent end_game_drum.grp}
+                  {{streak_meter.grp dir} set_local_scale 35 35 35}
+                  {LegoStud.mesh set_showing FALSE}
+                  {multi_meter_anim.grp set_showing FALSE}
+                  {end_game_drum.lbl set_local_scale 0.014 0.014 0.014}
+                  {end_game_drum.lbl set_local_pos -0.08 0 0}
+                  {end_game_drum.lbl set_trans_parent streak_meter.grp}
+                  {$this set init TRUE}
+                  {$this sync_objects}
+               }
+               {{coop_track_panel find ulti_objects.grp} add_object {streak_meter.grp dir}}
+               {{coop_track_panel find ulti_objects.grp} add_object end_game_drum.lbl}
+            }
+            {set [target] {$dir find end_game_drum.lbl}}
+            {set [anim] {$dir find meter_wipe.mnm}}
+            {set [parent] {$dir find streak_meter.grp}}
+            {[parent] set_showing FALSE}
+            {$this set_lbl " "}
+            {cond
+               ({!= [track] vocals}
+                  {[parent] set_local_pos 0 0 -14}
+               )
+               ({! {is_vocals_on_top}}
+                  {[parent] set_local_pos 0 0 -6}
+               )
+               kDataUnhandled
+            }
+            {set [event_array] {{sprint $this "_mp"} get event_array}}
+            {do
+               ($pos {{sprint $this "_mp"} get final_note_pos})
+               ($len {- {end_of_song get end} $pos})
+               {if {>= $len 20}
+                  {push_back [event_array] {array ($pos {int {- $len 4}})}}
+               }
+            }
+            {set [total_events] {max 0 {- {size [event_array]} 1}}}
+            {game add_sink $this (intro_start game_outro)}
+         )
+         (set_lbl
+            ($text)
+            {[target] set_localized {sprint $text}}
+         )
+         (downbeat
+            {if {&& {size [event_array]} {! [done]}}
+               {if
+                  {&&
+                     {! [active]}
+                     {>= {taskmgr beat} {elem {elem [event_array] [current_event]} 0}}
+                  }
+                  {set [remaining] {int {/ {elem {elem [event_array] [current_event]} 1} 4}}}
+                  {set [active] TRUE}
+                  {[anim] animate
+                     (units kTaskBeats)
+                     (period {* {- [remaining] 1} 4})
+                     (range 0 1)
+                  }
+                  {[parent] set_showing TRUE}
+                  {{[track] find retract.trig} trigger}
+                  {if {== [track] drum}
+                     {force_drum_freestyle TRUE}
+                  }
+               }
+               {if [active]
+                  {-- [remaining]}
+                  {if_else [remaining]
+                     {$this set_lbl [remaining]}
+                     {do
+                        {$this set_lbl " "}
+                        {[parent] set_showing FALSE}
+                        {if {== [track] drum}
+                           {force_drum_freestyle FALSE}
+                        }
+                        {set [active] FALSE}
+                        {if_else {== {[track] name} vocals}
+                           {{[track] find play_intro.trig} trigger}
+                           {{[track] find intro.trig} trigger}
+                        }
+                        {if_else {== [current_event] [total_events]}
+                           {set [done] TRUE}
+                           {++ [current_event]}
+                        }
+                     }
+                  }
+               }
+            }
+         )
+         (intro_start {$this reset})
+         (game_outro {$this reset})
+         (reset
+            {$this set_lbl " "}
+            {[parent] set_showing FALSE}
+            {set [done] TRUE}
+         )
+      )
+      (track_callback
+         (init
+            ($player)
+            {set [player] $player}
+            {[player] add_sink $this (hit miss pass phrase_rating)}
+            {set [track] {coop_track_panel find {$player instrument}}}
+            {if $fcring
+               {with {[track] get streak_meter}
+                  {unless {exists fake.trig}
+                     {{new EventTrigger show_ring.trig} copy star_deploy.trig 0}
+                     {{new EventTrigger hide_ring.trig} copy star_deploy_stop.trig 0}
+
+                     {new EventTrigger fake.trig}
+                     {star_deploy.trig copy fake.trig 0}
+                     {star_deploy_stop.trig copy fake.trig 0}
+                  }
+                  {show_ring.trig trigger}
+               }
+            }
+         )
+         (hit
+            {++ [gems_hit]}
+            {++ [gems_combo]}
+            {if {&& {! {|| $legacybass {== [track] bass}}} {> [gems_combo] 29} {! [groove_active]}}
+               {set [groove_active] TRUE}
+               {{[track] find BassSuperStreak_ON.trig} trigger}
+            }
+         )
+         (miss
+            {unless
+               {||
+                  {[player] current_streak}
+                  {== {+ [gems_hit] [gems_pass]} 0}
+               }
+               {++ [gems_miss]}
+               {set [gems_combo] 0}
+               {$this on_miss}
+            }
+         )
+         (pass
+            {unless {[player] current_streak}
+               {++ [gems_pass]}
+               {set [gems_combo] 0}
+               {$this on_miss}
+            }
+         )
+         (phrase_rating
+            ($rating)
+            {if_else {== $rating 4}
+               {do
+                  {++ [gems_hit]}
+                  {++ [gems_combo]}
+               }
+               {do
+                  {++ [gems_miss]}
+                  {set [gems_combo] 0}
+                  {$this on_miss}
+               }
+            }
+         )
+         (on_miss
+            {if $fcring
+               {{{[track] get streak_meter} find hide_ring.trig} trigger}
+            }
+            {if [groove_active]
+               {set [groove_active] FALSE}
+               {{[track] find BassSuperStreak_OFF.trig} trigger}
+            }
+         )
+         (gems_hit 0)
+         (gems_combo 0)
+         (gems_miss 0)
+         (gems_pass 0)
+         (groove_active FALSE)
+         (player 0)
+         (track 0)
+      )
+   )
+)
+(BandList
+   (types
+      (overshell
+         (resource_file "resource/list_overshell.milo")
+         (vertical TRUE)
+         (element ((text "section.lbl")))
+         (back_arrow "back.mesh")
+         (next_arrow "next.mesh")
+         (highlight "highlight.mesh")
+         (colors
+            (
+               (
+                  (normal
+                     (normal 0.6 0.6 0.6)
+                     (focused 0.9 0.9 0.9)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0 0 0)
+                  )
+                  (highlight
+                     (normal 0.9 0.9 0.9)
+                     (focused 0.9 0.9 0.9)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0 0 0)
+                  )
+                  (disabled
+                     (normal 0.5 0.5 0.5)
+                     (focused 0.5 0.5 0.5)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0.5 0.5 0.5)
+                  )
+               )
+               (
+                  (normal
+                     (normal 0.5 0.35 0)
+                     (focused 0.5 0.35 0)
+                     (disabled 0.5 0.35 0)
+                     (selecting 0.5 0.35 0)
+                  )
+                  (highlight
+                     (normal 0.5 0.35 0)
+                     (focused 0.5 0.35 0)
+                     (disabled 0.5 0.35 0)
+                     (selecting 0.5 0.35 0)
+                  )
+                  (disabled
+                     (normal 0.5 0.35 0)
+                     (focused 0.5 0.35 0)
+                     (disabled 0.5 0.35 0)
+                     (selecting 0.5 0.35 0)
+                  )
+               )
+               (
+                  (normal
+                     (normal 0.6 0.6 0.6)
+                     (focused 0.9 0.9 0.9)
+                     (disabled 0 0 0)
+                     (selecting 0.9 0.9 0.9)
+                  )
+                  (highlight
+                     (normal 0.6 0.6 0.6)
+                     (focused 0.9 0.9 0.9)
+                     (disabled 0 0 0)
+                     (selecting 0.9 0.9 0.9)
+                  )
+                  (disabled
+                     (normal 0.6 0 0)
+                     (focused 0.6 0 0)
+                     (disabled 0.6 0 0)
+                     (selecting 0.6 0 0)
+                  )
+               )
+               (
+                  (normal
+                     (normal 0.3 0.3 0.3)
+                     (focused 0.3 0.3 0.3)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0.3 0.3 0.3)
+                  )
+                  (highlight
+                     (normal 0 0 0)
+                     (focused 0 0 0)
+                     (disabled 0 0 0)
+                     (selecting 0 0 0)
+                  )
+                  (disabled
+                     (normal 0.5 0.5 0.5)
+                     (focused 0.5 0.5 0.5)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0.5 0.5 0.5)
+                  )
+               )
+            )
+         )
+         (provider ("section?"))
+      )
+      (song_search
+         (resource_file "../ui/resource/list_song.milo")
+         (vertical TRUE)
+         (element ((text "list.lbl")))
+         (back_arrow "back.mesh")
+         (next_arrow "next.mesh")
+         (highlight
+            "highlight.mesh"
+            (colors
+               (selecting 0.75 0.75 0.75)
+               (normal 1 1 1)
+               (disabled 0.3 0.3 0.3)
+            )
+         )
+         (colors
+            (
+               (
+                  (normal
+                     (normal 0 0 0)
+                     (focused 0 0 0)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0 0 0)
+                  )
+                  (highlight
+                     (normal 0 0 0)
+                     (focused 0 0 0)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0 0 0)
+                  )
+                  (disabled
+                     (normal 0.5 0.5 0.5)
+                     (focused 0.5 0.5 0.5)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0.5 0.5 0.5)
+                  )
+               )
+            )
+         )
+         (provider ("song name"))
+      )
+   )
+)
+(UIList
+   (types
+      (song_search
+         (resource_file "resource/list_song_search.milo")
+         (vertical TRUE)
+         (element ((text "list.lbl")))
+         (back_arrow "back.mesh")
+         (next_arrow "next.mesh")
+         (highlight
+            "highlight.mesh"
+            (colors
+               (selecting 0.75 0.75 0.75)
+               (normal 1 1 1)
+               (disabled 0.3 0.3 0.3)
+            )
+         )
+         (colors
+            (
+               (
+                  (normal
+                     (normal 0.3 0.3 0.3)
+                     (focused 0.3 0.3 0.3)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0.3 0.3 0.3)
+                  )
+                  (highlight
+                     (normal 0 0 0)
+                     (focused 0 0 0)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0 0 0)
+                  )
+                  (disabled
+                     (normal 0.5 0.5 0.5)
+                     (focused 0.5 0.5 0.5)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0.5 0.5 0.5)
+                  )
+               )
+            )
+         )
+         (provider ("I get by\nHonest Bob"))
+      )
+   )
+)
+(BandLabel
+   (types
+      (screen_title_ulti
+         (resource_file "resource/avantgarde.milo")
+         (texts (text "avantgarde.txt"))
+      )
+   )
+)
