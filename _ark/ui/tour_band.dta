@@ -277,6 +277,27 @@
          {$this set_focus gigguide.btn}
       }
       {set [reset] FALSE}
+      ; remove bwt requiring leader by setting it to the first active player if the host is local
+      {if
+         {&&
+            {== {gamecfg get leader_num} -1}
+            {find_elem (kNetLocal kNetHost) {session mode}} ; idk if this is being done right but i'll never be able to debug it
+         }
+         {do
+            ($i 0)
+            {while {== {gamecfg get leader_num} -1}
+               {if
+                  {&&
+                     {gamecfg is_player_participating $i}
+                     {gamecfg is_player_local $i}
+                  }
+                  {gamecfg set leader_num $i}
+                  {game set leader_num $i}
+               }
+               {++ $i}
+            }
+         }
+      }
       {if {== {gamecfg get leader_num} -1}
          {$this disable gigguide.btn}
          {$this disable bandprofile.btn}
