@@ -261,9 +261,12 @@
    (select_song
       {switch [song_mode]
          (game
-            {if_else {gamemode get is_hth_arrangement}
-               {hth_goto_tracksel_screen}
-               {ui goto_screen {gamemode get ready_screen}}
+            {if_else {&& $selectvenue {! {gamemode get online_play_required}}}
+               {ui goto_screen qp_selvenue_screen}
+               {if_else {gamemode get is_hth_arrangement}
+                  {hth_goto_tracksel_screen}
+                  {ui goto_screen {gamemode get ready_screen}}
+               }
             }
          )
          (practice {ui goto_screen {gamemode get ready_screen}})
@@ -766,7 +769,7 @@
       }
    )
 }
-#ifndef _SHIP
+;#ifndef _SHIP
 {new UIPanel
    qp_selvenue_panel
    (file "qp_selvenue.milo")
@@ -781,22 +784,18 @@
          }
       }
       {venue.lst set_data {gamemode get venues}}
-      {if {!= {game get_venue} ''}
-         {venue.lst set_selected {game get_venue}}
-      }
+      {venue.lst set_selected 1}
    )
    (exit
       {if {is_leader_local}
          {game set_venue {venue.lst selected_sym}}
       }
-      {session remove_sink $this change_game_msg}
    )
    (SCROLL_MSG
       {if {is_leader_local}
          {game set_venue {venue.lst selected_sym}}
       }
    )
-   (CHANGE_GAME_MSG {venue.lst set_selected {game get_venue}})
    (SELECT_MSG
       {if_else {gamemode get is_hth_arrangement}
          {hth_goto_tracksel_screen}
@@ -811,4 +810,4 @@
    (back qp_selsong_screen)
    (helpbar (back select))
 }
-#endif
+;#endif

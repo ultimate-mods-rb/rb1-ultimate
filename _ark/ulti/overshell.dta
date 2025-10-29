@@ -793,7 +793,12 @@
    (data (
       (os_freecam
          (type uNormal)
-         (sel_script {ulti_cycle_free_camera})
+         (sel_script {cycle_free_camera})
+      )
+      (os_selectvenue
+         (type uOnOFF)
+         (bool $selectvenue)
+         (sel_script {toggle_var selectvenue})
       )
       (os_smallworld
          (type uOnOFF)

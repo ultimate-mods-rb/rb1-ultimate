@@ -41,6 +41,7 @@
       cnt_slot5
       cnt_star
       gems
+      selectvenue
    ))
    (save_settings
       {print_ship "attempting to save mod settings"}
