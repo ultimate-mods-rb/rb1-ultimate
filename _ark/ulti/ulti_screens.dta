@@ -45,3 +45,57 @@
    MAIN_SCREEN_TRANSITION_HANDLER
    (enter {char_cache cache_update})
 }
+{new UIPanel
+   bonus_panel
+   (file "../ui/options.milo")
+   (focus audio.btn)
+   (SELECT_START_MSG
+      {switch $component
+         (audio.btn {ui push_screen overshell_main_screen})
+         (gameplay.btn kDataUnhandled)
+         (calibrate_av.btn kDataUnhandled)
+         (characterdata.btn kDataUnhandled)
+         (exportsongs.btn
+            #ifdef HX_PS3
+            {ui goto_screen store_enter_confirm_screen}
+            #else
+               {store_panel set store_player_num $player_num}
+               {band_ui_sink set_controller_level
+                  kControllerLevelPlayer
+                  $player_num
+                  {gamecfg get_controller_type_from_controller $player_num}
+               }
+               #ifdef HX_XBOX
+               {if_else
+                  {'||'
+                     {! {platform_mgr is_player_signed_into_live $player_num}}
+                     {platform_mgr is_player_a_guest $player_num}
+                  }
+                  {ui push_screen main_store_signin_screen}
+                  {ui push_screen main_store_find_cache_screen}
+               }
+               #else
+               {gamemode set_mode store}
+               {ui goto_screen store_loading_screen}
+               #endif
+            #endif
+         )
+      }
+   )
+   (load {main_panel set mode_focus options.btn})
+   (finish_load
+      {audio.btn set text_token os_ultisettings}
+      {gameplay.btn set text_token placeholder}
+      {calibrate_av.btn set text_token placeholder}
+      {characterdata.btn set text_token placeholder}
+      {exportsongs.btn set text_token musicstore}
+   )
+   (TRANSITION_COMPLETE_MSG {autosave} kDataUnhandled)
+}
+{new UIScreen
+   bonus_screen
+   (panels meta movie_panel main_lower3rd_panel main_panel bonus_panel fx)
+   (focus bonus_panel)
+   (back main_screen)
+   MAIN_SCREEN_TRANSITION_HANDLER
+}

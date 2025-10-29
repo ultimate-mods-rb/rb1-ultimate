@@ -15,9 +15,6 @@ jobs:
       - name: Remove PS3 files
         run: |
           find . -name "*.*_ps3" -type f -delete
-      - name: Move songs_xbox folder to _ark
-        run: |
-          mv _songs/songs_xbox _ark/songs
       - name: Build ARK
         run: |
           dependencies/linux/arkhelper dir2ark ./_ark ./_build/xbox/gen -n "patch_xbox" -e -v 4 -s 4073741823 -f

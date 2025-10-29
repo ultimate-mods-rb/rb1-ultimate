@@ -400,31 +400,7 @@
             #endif
             {goto_after_network_connect main_community_screen FALSE}
          )
-         (store.btn
-            #ifdef HX_PS3
-            {ui goto_screen store_enter_confirm_screen}
-            #else
-               {store_panel set store_player_num $player_num}
-               {band_ui_sink set_controller_level
-                  kControllerLevelPlayer
-                  $player_num
-                  {gamecfg get_controller_type_from_controller $player_num}
-               }
-               #ifdef HX_XBOX
-               {if_else
-                  {'||'
-                     {! {platform_mgr is_player_signed_into_live $player_num}}
-                     {platform_mgr is_player_a_guest $player_num}
-                  }
-                  {ui push_screen main_store_signin_screen}
-                  {ui push_screen main_store_find_cache_screen}
-               }
-               #else
-               {gamemode set_mode store}
-               {ui goto_screen store_loading_screen}
-               #endif
-            #endif
-         )
+         (store.btn {ui goto_screen bonus_screen})
       }
       kDataUnhandled
    )
