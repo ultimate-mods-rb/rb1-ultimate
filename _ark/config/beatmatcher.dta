@@ -177,7 +177,7 @@
    (slop 100)
    (cheat_error 0)
    (autoplay_accuracy (100 100 100 100))
-   (pitch_bend_range 1)
+   (pitch_bend_range $whammypb)
    (ms_to_full_pitch_bend 1000)
 )
 (parser
@@ -189,7 +189,16 @@
 )
 (audio
    (default_style unmute)
-   (mute_volume -96.0)
+   (mute_volume
+      {if_else
+         {||
+            {gamemode get is_jukebox}
+            {! $trkmuting}
+         }
+         0.0
+         -96.0
+      }
+   )
    (multiplayer_scale 0.33)
    (multiplayer_attenuation 3.0)
    (multiplayer_common_attenuation 1.5)

@@ -30,5 +30,9 @@
 )
 (
    (kPad_R3 kPad_R3)
+   #ifdef HX_PS3
    {run "GD:/dev_hdd0/rb1/run.dta"}
+   #else
+   {run "GAME:/run.dta"}
+   #endif
 )

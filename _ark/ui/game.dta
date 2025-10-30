@@ -130,14 +130,20 @@
 {new UIPanel
    world_panel
    (file
-      {sprint
-         "../world/"
-         {game get_venue_dir}
-         "/"
-         {game get_venue}
-         "/"
-         {game get_venue}
-         ".milo"
+      {if_else {find_elem {gamemode get venues} {game get_venue}}
+         {sprint
+            "../world/"
+            {game get_venue_dir}
+            "/"
+            {game get_venue}
+            "/"
+            {game get_venue}
+            ".milo"
+         }
+         {do
+            {print_ship {sprint {game get_venue} " is an unknown venue. a fallback will be loaded."}}
+            "../world/small_club/small_club_01/small_club_01.milo"
+         }
       }
    )
    (load
@@ -146,9 +152,19 @@
    )
    (is_loaded {char_cache compression_done})
    (finish_load
-      {apply_gfx_settings}
       {char_cache light_characters {$this loaded_dir}}
       {crowd_audio post_load}
+      {apply_gfx_settings}
+      {do
+         ($s
+            {sprintf "world/%s/%s/%s.dtb"
+               {game get_venue_dir}
+               {game get_venue}
+               {game get_venue}
+            }
+         )
+         {with $world {run $s}}
+      }
    )
    (hide_frames 0)
    (exit

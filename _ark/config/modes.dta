@@ -97,7 +97,7 @@
       FALSE
       #endif
    )
-   (show_loading_images FALSE)
+   (show_loading_images TRUE)
    (popup_help_can_disable FALSE)
    (on_pause_restart {session end_game kRestart})
    (intro_category INTRO)
@@ -117,6 +117,7 @@
    (enable_star_power TRUE)
    (cannot_connect_warning community_no_server_warning)
    (missing_part_type kMissingSelectCoop)
+   (is_jukebox FALSE)
 )
 (init
    (community_screen main_leaderboard_screen)
@@ -557,4 +558,19 @@
    (uisink_default_screen store_unload_screen)
    (uisink_signout_screen store_unload_screen)
    (quit_early_screen store_unload_screen)
+)
+(jukebox
+   COOP_MODE_PROPERTIES
+   (disable_guitar_fx TRUE)
+   (show_hud FALSE)
+   (show_track FALSE)
+   (update_crowd_meter FALSE)
+   (crowd_reacts FALSE)
+   (play_star_sfx FALSE)
+   (play_track_intro_sfx FALSE)
+   (play_streak_sfx FALSE)
+   (enable_bre FALSE)
+   (enable_streak FALSE)
+   (enable_star_power FALSE)
+   (is_jukebox TRUE)
 )

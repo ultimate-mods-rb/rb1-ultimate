@@ -7,7 +7,6 @@
 {new CharLoadingPanel
    matchmaking_band_panel
    (file matchmaking_band.milo)
-   (enter {apply_gfx_settings})
    (show_waiting
       {spinner.filt animate}
       {waiting.grp set_showing TRUE}

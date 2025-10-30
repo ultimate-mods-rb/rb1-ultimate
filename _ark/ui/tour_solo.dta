@@ -6,7 +6,6 @@
    LIMIT_TO_LEADER_SESSION
    (char_provider {object ""})
    (enter
-      {apply_gfx_settings}
       {band_ui_sink set_controller_level kControllerLevelSession}
       {do
          ($pcfg {game get_player_config {game get leader_num}})
@@ -16,7 +15,7 @@
             {get_font_char_from_controller_type {$pcfg get_controller_type}}
          }
          {set [char_provider] {get_solo_char_provider {game get leader_num}}}
-         {[char_provider] set_instrument_filter {$pcfg get_controller_sym}}
+         ;{[char_provider] set_instrument_filter {$pcfg get_controller_sym}}
          {char.lst set_provider [char_provider]}
          {do
             ($char_pos {[char_provider] get_pos_from_char {$pcfg get_char}})
@@ -28,6 +27,7 @@
       }
       {$this set_gender FALSE}
       {$this update}
+      {tour_solo_event_panel set real_char FALSE}
    )
    (exit
       {do
@@ -205,7 +205,9 @@
    (reset TRUE)
    LIMIT_TO_LEADER_SESSION
    (enter
-      {apply_gfx_settings}
+      {if {tour_solo_event_panel get real_char}
+         {{game get_player_config {game get leader_num}} set_char {tour_solo_event_panel get real_char}}
+      }
       {if [reset]
          {$this set_focus gigguide.btn}
       }
@@ -415,6 +417,7 @@
    COMMON_SONG_PREVIEW
    (file tour_solo_event.milo)
    (focus event.lst)
+   (real_char FALSE)
    (enter
       {$this select_first_unplayed}
       {$this refresh}
@@ -563,6 +566,13 @@
          {$this confirm_event}
          {do
             ($pcfg {game get_player_config {game get leader_num}})
+            {if {!= {{$pcfg get_char} get_instrument} {$pcfg get_controller_sym}}
+               {print_ship "wrong instrument detected. prefab time!"}
+               {set [real_char] {$pcfg get_char}}
+               {$pcfg set_char
+                  {available_prefab {game get leader_num} {$pcfg get_controller_sym}}
+               }
+            }
             {$pcfg set_track_type {{$pcfg get_char} get_instrument}}
          }
          {session add_sink $this}

@@ -47,6 +47,17 @@
          {synth play track_beg.cue}
       }
    )
+   (poll
+      {if
+         {||
+            {&& $nofail {! {gamemode get is_tour}}}
+            {gamemode get is_jukebox}
+         }
+         {beatmatch foreach_active_player $player
+            {$player set_crowd_rating 0.66}
+         }
+      }
+   )
 )
 {new TrackPanel
    coop_track_panel

@@ -52,7 +52,11 @@
    (SELECT_START_MSG
       {switch $component
          (audio.btn {ui push_screen overshell_main_screen})
-         (gameplay.btn kDataUnhandled)
+         (gameplay.btn
+            {gamemode set_mode jukebox $player_num}
+            {ui goto_screen {gamemode get matchmaking_screen}}
+            kDataUnhandled
+         )
          (calibrate_av.btn kDataUnhandled)
          (characterdata.btn kDataUnhandled)
          (exportsongs.btn
@@ -85,7 +89,7 @@
    (load {main_panel set mode_focus options.btn})
    (finish_load
       {audio.btn set text_token os_ultisettings}
-      {gameplay.btn set text_token placeholder}
+      {gameplay.btn set text_token jukebox}
       {calibrate_av.btn set text_token placeholder}
       {characterdata.btn set text_token placeholder}
       {exportsongs.btn set text_token musicstore}

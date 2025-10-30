@@ -272,7 +272,6 @@
    (reset TRUE)
    LIMIT_TO_SESSION
    (enter
-      {apply_gfx_settings}
       {if [reset]
          {$this set_focus gigguide.btn}
       }
