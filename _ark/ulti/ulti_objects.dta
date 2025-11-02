@@ -3,64 +3,78 @@
       (countdown
          (active FALSE)
          (done FALSE)
+         (alive TRUE)
          (current_event 0)
          (total_events 0)
          (remaining 0)
          (event_array 0)
          (target 0)
          (track 0)
+         (player 0)
+         (parser)
          (parent 0)
          (anim 0)
          (init
-            ($track $dir)
-            {set [track] {coop_track_panel find $track}}
+            ($player $dir)
+            {set [player] $player}
+            {set [track] {get_dir_from_player $player}}
+            {set [parser] {object
+               {sprint
+                  {if_else {gamemode get separate_parts}
+                     {[player] track}
+                     {[player] instrument}
+                  }
+                  "_countdown_mp"
+               }
+            }}
+            {print_ship {sprint {$player instrument} " " {[track] name} " " {$dir name}}}
             {with $dir
                {unless {$this has (init)}
-                  ; maybe like move most of this to the objects one day. maybe if wii wasn't special (le) i'd do it now :<
-                  {{streak_meter.grp dir} set_trans_parent end_game_drum.grp}
-                  {{streak_meter.grp dir} set_local_scale 35 35 35}
-                  {LegoStud.mesh set_showing FALSE}
-                  {multi_meter_anim.grp set_showing FALSE}
-                  {end_game_drum.lbl set_local_scale 0.014 0.014 0.014}
-                  {end_game_drum.lbl set_local_pos -0.08 0 0}
-                  {end_game_drum.lbl set_trans_parent streak_meter.grp}
+                  {{meter_wipe.mnm dir} set_trans_parent $this}
+                  {if_else {== {$player instrument} vocals}
+                     {do
+                        {{meter_wipe.mnm dir} set_local_scale 0.5 0.5 0.5}
+                        {{meter_wipe.mnm dir} set_local_pos 0 0 -0.5}
+                     }
+                     {do
+                        {{meter_wipe.mnm dir} set_local_scale 1.5 1.5 1.5}
+                        {{meter_wipe.mnm dir} set_local_pos 0 0 -27}
+                     }
+                  }
+                  {multiplier.txt set_font fakir_black_outline.font}
+                  {multiplier.txt set_align kMiddleCenter}
+                  {multiplier.txt set_local_pos -0.1 0 0.2}
+                  {multiplier.txt set_local_scale 1.2 1.2 1.2}
                   {$this set init TRUE}
                   {$this sync_objects}
                }
-               {{coop_track_panel find ulti_objects.grp} add_object {streak_meter.grp dir}}
-               {{coop_track_panel find ulti_objects.grp} add_object end_game_drum.lbl}
             }
-            {set [target] {$dir find end_game_drum.lbl}}
+            {set [target] {$dir find multiplier.txt}}
             {set [anim] {$dir find meter_wipe.mnm}}
             {set [parent] {$dir find streak_meter.grp}}
             {[parent] set_showing FALSE}
-            {$this set_lbl " "}
-            {cond
-               ({!= [track] vocals}
-                  {[parent] set_local_pos 0 0 -14}
-               )
-               ({! {is_vocals_on_top}}
-                  {[parent] set_local_pos 0 0 -6}
-               )
-               kDataUnhandled
-            }
-            {set [event_array] {{sprint $this "_mp"} get event_array}}
-            {do
-               ($pos {{sprint $this "_mp"} get final_note_pos})
-               ($len {- {end_of_song get end} $pos})
-               {if {>= $len 20}
-                  {push_back [event_array] {array ($pos {int {- $len 4}})}}
+            {set [event_array] {[parser] get event_array}}
+            {unless {[parser] get first_note}
+               {do
+                  ($pos {[parser] get final_note_pos})
+                  ($len {- {end_of_song get end} $pos})
+                  {if {>= $len 20}
+                     {push_back [event_array] {eval_array ($pos {int {- $len 4}})}}
+                  }
                }
             }
             {set [total_events] {max 0 {- {size [event_array]} 1}}}
-            {game add_sink $this (intro_start game_outro)}
+            {game add_sink $this}
+            {unless {== {gamemode get player_arrangement} kArrangeHth}
+               {[player] add_sink $this}
+            }
          )
          (set_lbl
             ($text)
-            {[target] set_localized {sprint $text}}
+            {[target] set_text {sprint $text}}
          )
          (downbeat
-            {if {&& {size [event_array]} {! [done]}}
+            {if {&& {== {mod {int {taskmgr beat}} 4} 0} {size [event_array]} {! [done]}}
                {if
                   {&&
                      {! [active]}
@@ -73,9 +87,17 @@
                      (period {* {- [remaining] 1} 4})
                      (range 0 1)
                   }
-                  {[parent] set_showing TRUE}
-                  {{[track] find retract.trig} trigger}
-                  {if {== [track] drum}
+                  {if [alive]
+                     {[parent] set_showing TRUE}
+                     {{[track] find retract.trig} trigger}
+                     {if {[track] has (streak_meter)}
+                        {{[track] get streak_meter} set_showing FALSE}
+                     }
+                     {if {[track] has (star_power_meter)}
+                        {{[track] get star_power_meter} set_showing FALSE}
+                     }
+                  }
+                  {if {== {[player] instrument} drum}
                      {force_drum_freestyle TRUE}
                   }
                }
@@ -90,9 +112,17 @@
                            {force_drum_freestyle FALSE}
                         }
                         {set [active] FALSE}
-                        {if_else {== {[track] name} vocals}
-                           {{[track] find play_intro.trig} trigger}
-                           {{[track] find intro.trig} trigger}
+                        {if [alive]
+                           {if {[track] has (streak_meter)}
+                              {{[track] get streak_meter} set_showing TRUE}
+                           }
+                           {if {[track] has (star_power_meter)}
+                              {{[track] get star_power_meter} set_showing TRUE}
+                           }
+                           {if_else {== {[player] instrument} vocals}
+                              {{[track] find play_intro.trig} trigger}
+                              {{[track] find intro.trig} trigger}
+                           }
                         }
                         {if_else {== [current_event] [total_events]}
                            {set [done] TRUE}
@@ -103,10 +133,35 @@
                }
             }
          )
+         (enable_player
+            {set [alive] TRUE}
+            {if [active]
+               {thread_task kTaskSeconds
+                  (delay 1)
+                  (script
+                     {if {&& [active] {> [remaining] 3}}
+                        {[parent] set_showing TRUE}
+                        {{[track] find retract.trig} trigger}
+                        {if {[track] has (streak_meter)}
+                           {{[track] get streak_meter} set_showing FALSE}
+                        }
+                        {if {[track] has (star_power_meter)}
+                           {{[track] get star_power_meter} set_showing FALSE}
+                        }
+                     }
+                  )
+               }
+            }
+         )
+         (disable_player
+            {set [alive] FALSE}
+            {[parent] set_showing FALSE}
+         )
          (intro_start {$this reset})
          (game_outro {$this reset})
+         (game_lost {$this reset})
+         (game_won {$this reset})
          (reset
-            {$this set_lbl " "}
             {[parent] set_showing FALSE}
             {set [done] TRUE}
          )
@@ -115,10 +170,17 @@
          (init
             ($player)
             {set [player] $player}
-            {[player] add_sink $this (hit miss pass phrase_rating)}
-            {set [track] {coop_track_panel find {$player instrument}}}
+            {[player] add_sink $this}
+            {set [track] {get_dir_from_player $player}}
+            {set [streak_meter]
+               ; it's a symbol in the h2h vocals track for some reason
+               {if_else {== {type {[track] get streak_meter}} kDataSymbol}
+                  {[track] find {[track] get streak_meter}}
+                  {[track] get streak_meter}
+               }
+            }
             {if $fcring
-               {with {[track] get streak_meter}
+               {with [streak_meter]
                   {unless {exists fake.trig}
                      {{new EventTrigger show_ring.trig} copy star_deploy.trig 0}
                      {{new EventTrigger hide_ring.trig} copy star_deploy_stop.trig 0}
@@ -134,7 +196,7 @@
          (hit
             {++ [gems_hit]}
             {++ [gems_combo]}
-            {if {&& {! {|| $legacybass {== [track] bass}}} {> [gems_combo] 29} {! [groove_active]}}
+            {if {&& {! {|| $legacybass {== {[player] instrument} bass}}} {> [gems_combo] 29} {! [groove_active]}}
                {set [groove_active] TRUE}
                {{[track] find BassSuperStreak_ON.trig} trigger}
             }
@@ -173,7 +235,7 @@
          )
          (on_miss
             {if $fcring
-               {{{[track] get streak_meter} find hide_ring.trig} trigger}
+               {{[streak_meter] find hide_ring.trig} trigger}
             }
             {if [groove_active]
                {set [groove_active] FALSE}
@@ -187,6 +249,7 @@
          (groove_active FALSE)
          (player 0)
          (track 0)
+         (streak_meter 0)
       )
    )
 )

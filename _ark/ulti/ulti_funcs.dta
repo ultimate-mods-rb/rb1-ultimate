@@ -6,6 +6,11 @@
    kDataUnhandled
    #endif
 }
+{func fail_ship
+   ($s)
+   {print_ship $s}
+   {exit}
+}
 {func dump_array
    ($a $p)
    #ifdef HX_PS3
@@ -31,6 +36,17 @@
 {func toggle_var
    ($var)
    {eval {` {set {, {var $var}} {! {eval_var $var}}}}}
+}
+; array in rb1 can only be passed an int
+{func eval_array
+   ($array)
+   {do
+      ($a {array 0})
+      {foreach $elem $array
+         {push_back $a {eval $elem}}
+      }
+      $a
+   }
 }
 {func lst_reset {do
    ($array {array 0})
@@ -368,6 +384,15 @@
          {&& {>= $size 2} $bool}
       }
       {fail "considering beatmatch doesn't exist it's safe to say vocals isn't on top"}
+   }
+}
+{func get_dir_from_player
+   ($player)
+   {{get_track_panel} find
+      {if_else {== {gamemode get player_arrangement} kArrangeHth}
+         {sprint "track_" {str_elem {{$player track} name} 5}}
+         {$player instrument}
+      }
    }
 }
 {func apply_gfx_settings

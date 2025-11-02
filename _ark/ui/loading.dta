@@ -91,11 +91,28 @@
       {ui goto_screen preloading_screen}
    )
 }
+{set $guitar_notes (96 97 98 99 100)}
+{set $bass_notes (96 97 98 99 100)}
+{set $drum_notes (96 97 98 99 100)}
 {new PreloadPanel
    preload_panel
    (content_name "")
    (corrupt FALSE)
    (enter
+      {gamecfg foreach_player_config $pcfg
+         {if {!= {$pcfg get_track_sym} vocals}
+            ; i fucking hate using global vars but like there isn't really a better way to save this
+            {set_var {sprint {$pcfg get_track_sym} "_notes"}
+               {switch {$pcfg get_difficulty_sym}
+                  (expert (96 97 98 99 100))
+                  (hard (84 85 86 87 88))
+                  (medium (72 73 74 75 76))
+                  (easy (60 61 62 63 64))
+                  {fail_ship "invalid user diff? how the hell did you get this far???"}
+               }
+            }
+         }
+      }
       #ifdef IGNORE_PRELOAD_OK
       {ui goto_screen real_loading_screen}
       #else

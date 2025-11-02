@@ -570,7 +570,7 @@
                {print_ship "wrong instrument detected. prefab time!"}
                {set [real_char] {$pcfg get_char}}
                {$pcfg set_char
-                  {available_prefab {game get leader_num} {$pcfg get_controller_sym}}
+                  {available_prefab {game get leader_num} {$pcfg get_controller_sym} female}
                }
             }
             {$pcfg set_track_type {{$pcfg get_char} get_instrument}}

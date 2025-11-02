@@ -14,12 +14,28 @@
    (animate_track_out_fast)
    (animate_track_in_fast)
    (finish_load
-      {if {!= $gems lrb} {do
+      {do
          ($gems_dir {new RndDir gems_dir})
          {switch $gems
             #include ../ulti/track/gems/gems_scripting.dta
          }
-      }}
+      }
+      {cond
+         ({exists vocals} ;coop
+            {player_feedback_01 insert (subdirs 0) "ulti/track/countdown_0.milo"}
+            {player_feedback_02 insert (subdirs 0) "ulti/track/countdown_1.milo"}
+            {player_feedback_03 insert (subdirs 0) "ulti/track/countdown_2.milo"}
+            {{vocals get failed_feedback} insert (subdirs 0) "ulti/track/countdown_3.milo"}
+         )
+         ({exists guitar_fx_0} ; h2h
+            {player_feedback_01 insert (subdirs 0) "ulti/track/countdown_0.milo"}
+            {player_feedback_02 insert (subdirs 0) "ulti/track/countdown_1.milo"}
+         )
+         (TRUE ;h2h vox
+            {{track_0 get failed_feedback} insert (subdirs 0) "ulti/track/countdown_0.milo"}
+            {{track_1 get failed_feedback} insert (subdirs 0) "ulti/track/countdown_1.milo"}
+         )
+      }
       {$this set_showing FALSE}
       {$this set_track_out}
    )
@@ -42,6 +58,7 @@
       {{$this loaded_dir} reset}
    )
    (on_extend
+      {$this do_stuff}
       {$this play_intro}
       {if {&& {exists gamemode} {gamemode get play_track_intro_sfx}}
          {synth play track_beg.cue}
@@ -55,6 +72,52 @@
          }
          {beatmatch foreach_active_player $player
             {$player set_crowd_rating 0.66}
+         }
+      }
+   )
+   (do_stuff
+      {if {gems_dir exists animate.trig}
+         {{gems_dir find animate.trig} trigger}
+      }
+      {beatmatch foreach_active_player $player ;handle adding the appropriate callbacks to each player
+         {if_else {gamemode get is_autoplay}
+            {do
+               {$player set_auto_play TRUE}
+               {with {$this loaded_dir}
+                  {unless {$this has (init)}
+                     {$player toggle_no_fills}
+                     {$this set init TRUE}
+                  }
+               }
+            }
+            {do
+               ($obj {sprint {$player track} "_track_callback"})
+               {if {exists $obj} {delete $obj}}
+               {new Object $obj}
+               {$obj set_type track_callback}
+               {$obj init $player}
+            }
+         }
+         {unless {|| {! $countdown} {gamemode get is_practice} {gamemode get is_drum_trainer}}
+            {do
+               ($obj {sprint {$player track} "_countdown"})
+               ($track {get_dir_from_player $player})
+               ($dir
+                  {cond
+                     ({&& {$track has (player_feedback)} {!= {$player instrument} vocals}}
+                        {$track get player_feedback}
+                     )
+                     ({== {$player instrument} vocals}
+                        {$track find failed_feedback}
+                     )
+                     (TRUE {fail_ship "wtf did you do to get here? countdown failed"})
+                  }
+               )
+               {if {exists $obj} {delete $obj}}
+               {new Object $obj}
+               {$obj set_type countdown}
+               {$obj init $player $dir}
+            }
          }
       }
    )

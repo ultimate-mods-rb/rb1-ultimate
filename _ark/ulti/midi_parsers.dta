@@ -1,0 +1,102 @@
+#define COUNTDOWN_PARSER_INIT (
+   {set [event_array] {array 0}}
+   {set [first_note] TRUE}
+)
+#define COUNTDOWN_PARSER (
+   {if [first_note]
+      {if {>= $mp.start 20}
+         {push_back [event_array] {eval_array (4.0 {int {- $mp.start 4}})}}
+      }
+      {set [first_note] FALSE}
+   }
+   {if {&& {>= $mp.prev_end 20} {< $mp.prev_end 9000}}
+      {push_back [event_array] {eval_array ({- $mp.start $mp.prev_end} {- {int $mp.prev_end} 4})}}
+   }
+   {set [final_note_pos] $mp.end}
+)
+{new MidiParser
+   end_of_song
+   (track_name EVENTS)
+   (text
+      {if {== $mp.val end}
+         {set [end] $mp.start}
+      }
+   )
+}
+{new MidiParser
+   guitar_countdown_mp
+   (track_name 'PART GUITAR')
+   (inverted TRUE)
+   (append_length TRUE)
+   (allowed_notes
+      {elem $guitar_notes 0}
+      {elem $guitar_notes 1}
+      {elem $guitar_notes 2}
+      {elem $guitar_notes 3}
+      {elem $guitar_notes 4}
+      120
+   )
+   (init COUNTDOWN_PARSER_INIT)
+   (midi COUNTDOWN_PARSER)
+}
+{new MidiParser
+   bass_countdown_mp
+   (track_name 'PART BASS')
+   (inverted TRUE)
+   (append_length TRUE)
+   (allowed_notes
+      {elem $bass_notes 0}
+      {elem $bass_notes 1}
+      {elem $bass_notes 2}
+      {elem $bass_notes 3}
+      {elem $bass_notes 4}
+      120
+   )
+   (init COUNTDOWN_PARSER_INIT)
+   (midi COUNTDOWN_PARSER)
+}
+{new MidiParser
+   drum_countdown_mp
+   (track_name 'PART DRUMS')
+   (inverted TRUE)
+   (append_length TRUE)
+   (allowed_notes
+      {elem $drum_notes 0}
+      {elem $drum_notes 1}
+      {elem $drum_notes 2}
+      {elem $drum_notes 3}
+      {elem $drum_notes 4}
+      120
+   )
+   (init COUNTDOWN_PARSER_INIT)
+   (midi COUNTDOWN_PARSER)
+}
+{new MidiParser
+   vocals_countdown_mp
+   (track_name 'PART VOCALS')
+   (inverted TRUE)
+   (append_length TRUE)
+   (allowed_notes 96 105 106 120)
+   (init COUNTDOWN_PARSER_INIT)
+   (midi COUNTDOWN_PARSER)
+}
+{if {gamemode get separate_parts}
+   {new MidiParser
+      track0_countdown_mp
+      (track_name H2H_TRACK)
+      (inverted TRUE)
+      (append_length TRUE)
+      (allowed_notes 105)
+      (init COUNTDOWN_PARSER_INIT)
+      (midi COUNTDOWN_PARSER)
+   }
+   {new MidiParser
+      track1_countdown_mp
+      (track_name H2H_TRACK)
+      (inverted TRUE)
+      (append_length TRUE)
+      (allowed_notes 106)
+      (init COUNTDOWN_PARSER_INIT)
+      (midi COUNTDOWN_PARSER)
+   }
+}

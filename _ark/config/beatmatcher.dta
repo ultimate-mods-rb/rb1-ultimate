@@ -3,6 +3,7 @@
 )
 (midi_parsers
    #include midi_parsers.dta
+   #include ../ulti/midi_parsers.dta
    {world_focus_parser delete_managed}
    {new MidiParser
       world_focus_parser
@@ -159,6 +160,15 @@
    )
    (eighth_note {handle ($world halfbeat)})
    (beat
+      {if {== {mod {int {taskmgr beat}} 4} 0}
+         {foreach $inst (track0 track1 track2 track3)
+            {with {get_track_panel}
+               {if {exists {sprint $inst "_countdown"}}
+                  {{sprint $inst "_countdown"} downbeat}
+               }
+            }
+         }
+      }
       {if_else $world
          {handle ($world beat)}
          {handle (game beat)}
