@@ -2,7 +2,15 @@
 {set $skipintro TRUE}
 
 ;sets default track speed. 1.15 is 115%, 1.30 is 130% and so on.
-{set $trackspeed 1.0}
+{set $guitar_trackspeed 1.00}
+
+{set $bass_trackspeed 1.00}
+
+{set $drum_trackspeed 1.00}
+
+{set $track0_trackspeed 1.00}
+
+{set $track1_trackspeed 1.00}
 
 ;sets default song speed 1.15 is 115%, 1.30 is 130% and so on.
 {set $speedmod 1.0}
@@ -50,6 +58,8 @@
 {set $video_bgs TRUE}
 
 {set $syncdifspeeds FALSE}
+
+{set $indvtrkspeeds TRUE}
 
 {set $songtitle FALSE}
 

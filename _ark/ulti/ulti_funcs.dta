@@ -395,6 +395,44 @@
       }
    }
 }
+{func set_track_speeds
+   {foreach $obj [gem_tracks] {do
+      ($player {$obj get player})
+      ($diff_view_time
+         {cond
+            ($syncdifspeeds 1.2)
+            ($indvtrkspeeds {elem (2.4 2.0 1.6 1.2) {$player difficulty}})
+            (TRUE {+ 2.4 {* $average_difficulty -1.2}})
+         }
+      )
+      ($ts
+         {eval_var
+            {sprint
+               {if_else {== {gamemode get player_arrangement} kArrangeHth}
+                  {$player track}
+                  {$player instrument}
+               }
+               "_trackspeed"
+            }
+         }
+      )
+      ($hwss
+         {if_else {== $hwlength 1.0}
+            1.0
+            {if_else {> $hwlength 2.0}
+               {/ $hwlength 1.4}
+               {if_else {> $hwlength 1.0}
+                  {/ $hwlength {+ {* 0.4 $hwlength} 0.6}}
+                  {* $hwlength {+ {* -1.5 $hwlength} 2.5}}
+               }
+            }
+         }
+      )
+      ($view_time {* {* {/ $diff_view_time $ts} $hwss} $speedmod})
+      {print_ship {sprint $obj " " $diff_view_time " " $ts " " $hwss " " $view_time}}
+      {$obj set y_per_second {/ {$obj get top_y} $view_time}}
+   }}
+}
 {func apply_gfx_settings
    {rnd set_sync $vsyncrate}
    {$world iterate PostProc $p

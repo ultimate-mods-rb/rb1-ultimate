@@ -561,6 +561,7 @@
 )
 (jukebox
    COOP_MODE_PROPERTIES
+   (game_screen jukebox_game_screen)
    (disable_guitar_fx TRUE)
    (show_hud FALSE)
    (show_track FALSE)
