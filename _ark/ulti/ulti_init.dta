@@ -25,7 +25,7 @@
 ;motion blur
 {set $mbblend TRUE}
 
-{set $emulatefps 30}
+{set $emulatefps 24}
 
 {set $vsyncrate 1}
 

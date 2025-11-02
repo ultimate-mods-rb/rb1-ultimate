@@ -467,7 +467,7 @@
       {$this sync_objects}
    )
    (VIRTUAL_KEYBOARD_RESULT_MSG
-      {if {&& $ok $text {== {ui focus_panel} $this}}
+      {if {&& $ok {== {ui focus_panel} $this}}
          {$this search_for {tolower {strip_syms $text}}}
       }
    )

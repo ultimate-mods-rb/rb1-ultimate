@@ -103,3 +103,15 @@
    (back main_screen)
    MAIN_SCREEN_TRANSITION_HANDLER
 }
+{new UIScreen
+   jukebox_game_screen
+   (panels game world_panel coop_track_panel mtv_overlay)
+   GAME_SCREEN_HANDLERS
+   (BUTTON_DOWN_MSG
+      {switch $button
+         (kPad_Square {cycle_free_camera})
+         (kPad_Circle {toggle_time_paused})
+         kDataUnhandled
+      }
+   )
+}

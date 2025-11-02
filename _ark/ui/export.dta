@@ -38,7 +38,7 @@
    (SELECT_MSG
       {switch $component
          (opt1.btn
-            {if_else {license_mgr is_export_license_valid}
+            {if_else TRUE ;{license_mgr is_export_license_valid}
                {ui goto_screen export_export_screen}
                #ifdef HX_XBOX
                {if_else
@@ -93,7 +93,7 @@
    (poll
       {if {&& [waiting] {content_mgr refresh_done}}
          {set [waiting] FALSE}
-         {if_else {license_mgr is_export_license_valid}
+         {if_else TRUE ;{license_mgr is_export_license_valid}
             {ui goto_screen export_export_screen}
             {ui goto_screen export_acquire_license_screen}
          }
