@@ -10,19 +10,26 @@ EXCLUDES=( "*.bik" "*.*_wii" "*.xbvwii" "*.*_ps3" "*_out*" "*_dbg.milo*" "*_rt.m
 
 TEMP_ARK="$PWD_ROOT/_temp_ark_xbox"
 
-SOURCES=( "$PWD_ROOT/_ark::." "$PWD_ROOT/_songs/songs_xbox::songs" )
+SOURCES=( "$PWD_ROOT/_ark::." )
 
 # Build output location
 OUT_DIR="$PWD_ROOT/_build/xbox/gen"
 
 # ---------- Platform / arkhelper selection ----------
-if [[ $(uname -s) == "Darwin" ]]; then
-    echo "Running for macOS"
-    ARKHELPER_PATH="$PWD_ROOT/dependencies/macos/arkhelper"
-else
-    echo "Running for Linux"
-    ARKHELPER_PATH="$PWD_ROOT/dependencies/linux/arkhelper"
-fi
+case "$(uname -s)" in
+    Darwin)
+        echo "Running for macOS"
+        ARKHELPER_PATH="$PWD_ROOT/dependencies/macos/arkhelper"
+        ;;
+    MINGW*|MSYS*|CYGWIN*)
+        echo "Running for Windows"
+        ARKHELPER_PATH="$PWD_ROOT/dependencies/arkhelper"
+        ;;
+    *)
+        echo "Running for Linux"
+        ARKHELPER_PATH="$PWD_ROOT/dependencies/linux/arkhelper"
+        ;;
+esac
 
 # ---------- Helpers ----------
 should_exclude() {
@@ -88,7 +95,7 @@ fi
 # ---------- Result message ----------
 echo
 if [[ "$FAILED_ARK_BUILD" -ne 1 ]]; then
-    echo "Successfully built LEGO Rock Band Ultimate ARK. You may find the files needed to place on your Xbox 360 in /_build/xbox/"
+    echo "Successfully built Rock Band 1 Ultimate ARK files. You may find the files needed to place on your Xbox 360 in /_build/xbox/"
 else
-    echo "Error building ARK. Check your modifications."
+    echo "Error building ARK. Download the repo again or some dta file is bad p.s turn echo on to see what arkhelper says"
 fi

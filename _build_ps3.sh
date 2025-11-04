@@ -10,19 +10,26 @@ EXCLUDES=( "*.bik" "*.*_wii" "*.xbvwii" "*.*_xbox" "*_out*" "*_dbg.milo*" "*_rt.
 
 TEMP_ARK="$PWD_ROOT/_temp_ark_ps3"
 
-SOURCES=( "$PWD_ROOT/_ark::." "$PWD_ROOT/_songs/songs_ps3::songs" )
+SOURCES=( "$PWD_ROOT/_ark::." )
 
 # Build output location
 OUT_DIR="$PWD_ROOT/_build/ps3/USRDIR/gen"
 
 # ---------- Platform / arkhelper selection ----------
-if [[ $(uname -s) == "Darwin" ]]; then
-    echo "Running for macOS"
-    ARKHELPER_PATH="$PWD_ROOT/dependencies/macos/arkhelper"
-else
-    echo "Running for Linux"
-    ARKHELPER_PATH="$PWD_ROOT/dependencies/linux/arkhelper"
-fi
+case "$(uname -s)" in
+    Darwin)
+        echo "Running for macOS"
+        ARKHELPER_PATH="$PWD_ROOT/dependencies/macos/arkhelper"
+        ;;
+    MINGW*|MSYS*|CYGWIN*)
+        echo "Running for Windows"
+        ARKHELPER_PATH="$PWD_ROOT/dependencies/arkhelper"
+        ;;
+    *)
+        echo "Running for Linux"
+        ARKHELPER_PATH="$PWD_ROOT/dependencies/linux/arkhelper"
+        ;;
+esac
 
 # ---------- Helpers ----------
 should_exclude() {

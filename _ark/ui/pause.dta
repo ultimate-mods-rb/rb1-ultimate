@@ -414,7 +414,7 @@
                {notify "WARNING: change band triggered by non-leader"}
             }
             {session end_game kQuit}
-            {band_ui_sink sync_screen meta_loading_changemembers_screen 1}
+            {band_ui_sink sync_screen meta_loading_pause_new_song_screen 1}
          )
          (exit_forfeit {ui goto_screen meta_loading_matchmaking_forfeit_screen})
          (exit_new_section
