@@ -121,6 +121,7 @@
          )
          (char_provider '')
          (choose_gender FALSE)
+         (prefab_mode FALSE)
          (enter
             {set [choose_gender] FALSE}
             {$this update_char_provider}
@@ -267,15 +268,37 @@
          (update_char_provider
             {if {!= [player_num] -1}
                {if {&& {$this is_participating} {gamecfg is_player_local [player_num]}}
-                  {set [char_provider] {get_char_provider [player_num]}}
-                  {[char_provider] save_relative_pos {char.lst selected_pos}}
-                  {[char_provider] set_instrument_filter
-                     {game get_instrument_from_controller [player_num]}
-                  }
-                  {char.lst set_provider [char_provider]}
-                  {char.lst set_selected {[char_provider] get_saved_pos}}
-                  {unless {{gamecfg get_player_config [player_num]} get_char}
-                     {$this load_char_from_list}
+                  {if_else [prefab_mode]
+                     {do
+                        ($inst {game get_instrument_from_controller [player_num]})
+                        ($array {eval_array (Random)})
+                        {foreach $char {find $syscfg characters prefab}
+                           {if
+                              {&&
+                                 {== {type $char} kDataArray}
+                                 {find_exists $char instrument}
+                                 {== {elem {find $char instrument} 1} $inst}
+                              }
+                              {push_back $array {elem $char 0}}
+                           }
+                        }
+                        {char.lst set_type prefab_char_chooser}
+                        {dump_array $array "GD:/dev_hdd0/rb1/char_array.milo"}
+                        {char.lst set_data $array}
+                     }
+                     {do
+                        {char.lst set_type band_char_chooser}
+                        {set [char_provider] {get_char_provider [player_num]}}
+                        {[char_provider] save_relative_pos {char.lst selected_pos}}
+                        {[char_provider] set_instrument_filter
+                           {game get_instrument_from_controller [player_num]}
+                        }
+                        {char.lst set_provider [char_provider]}
+                        {char.lst set_selected {[char_provider] get_saved_pos}}
+                        {unless {{gamecfg get_player_config [player_num]} get_char}
+                           {$this load_char_from_list}
+                        }
+                     }
                   }
                }
             }
@@ -315,7 +338,7 @@
          )
          (no_instrument (BUTTON_DOWN_MSG TRUE))
          (join
-            (init {set [choose_gender] FALSE})
+            (init {set [choose_gender] FALSE} {set [prefab_mode] FALSE})
             (BUTTON_DOWN_MSG
                {if_else {'||' {session_mgr is_finding} {!= {session mode} kNetLocal}}
                   {do
@@ -400,9 +423,7 @@
             )
             (SELECT_START_MSG
                {cond
-                  ({[char_provider]
-                        is_create_new
-                        {$component selected_pos}}
+                  ({[char_provider] is_create_new {$component selected_pos}}
                      {if_else
                         {profile_mgr can_player_create_char
                            [player_num]
@@ -412,37 +433,64 @@
                         {ui push_screen mm_band_char_no_room_screen}
                      }
                   )
-                  ({[char_provider]
-                        is_char
-                        {$component selected_pos}}
-                     {do
-                        ($char {[char_provider] get_char {$component selected_pos}})
-                        {if_else
-                           {&&
-                              {gamemode get is_bwt}
-                              {'||'
-                                 {== {tour bwtmode} kMetaTour_StartNew}
-                                 {== {tour bwtmode} kMetaTour_UnknownRemote}
+                  ({[char_provider] is_char {$component selected_pos}}
+                     {cond
+                        ([prefab_mode]
+                           {do
+                              ($char {available_prefab [player_num] {game get_instrument_from_controller [player_num]}})
+                              ($i 0)
+                              {while {&& {!= {elem {$char get_char_data} 0} {$component selected_sym}} {< $i 500}}
+                                 {++ $i}
+                                 {set $char {available_prefab [player_num] {game get_instrument_from_controller [player_num]}}}
                               }
-                              {! {profile_mgr can_char_join_band $char}}
-                           }
-                           {do
-                              {mm_at_band_limit_screen set_char_name {$char get_char_name}}
-                              {ui push_screen mm_at_band_limit_screen}
-                           }
-                           {do
                               {{game get_player_config [player_num]} set_char $char}
                               {char_cache request [player_num] $char}
                               {session_mgr update_band_leader}
+                              {set [prefab_mode] FALSE}
+                              {char.lst set_selected 0}
                            }
-                        }
+                        )
+                        ({&& {== {$component selected_pos} 0} {gamemode get show_prefab_chars}}
+                           {do
+                              {set [prefab_mode] TRUE}
+                              {$this update_char_provider}
+                           }
+                        )
+                        (TRUE
+                           {do
+                              ($char {[char_provider] get_char {$component selected_pos}})
+                              {if_else
+                                 {&&
+                                    {gamemode get is_bwt}
+                                    {'||'
+                                       {== {tour bwtmode} kMetaTour_StartNew}
+                                       {== {tour bwtmode} kMetaTour_UnknownRemote}
+                                    }
+                                    {! {profile_mgr can_char_join_band $char}}
+                                 }
+                                 {do
+                                    {mm_at_band_limit_screen set_char_name {$char get_char_name}}
+                                    {ui push_screen mm_at_band_limit_screen}
+                                 }
+                                 {do
+                                    {{game get_player_config [player_num]} set_char $char}
+                                    {char_cache request [player_num] $char}
+                                    {session_mgr update_band_leader}
+                                 }
+                              }
+                           }
+                        )
                      }
                   )
                }
                {{gamemode get matchmaking_screen} export_all update}
                kDataUnhandled
             )
-            (SCROLL_MSG {$this load_char_from_list})
+            (SCROLL_MSG
+               {unless [prefab_mode]
+                  {$this load_char_from_list}
+               }
+            )
             (BUTTON_DOWN_MSG
                {if_else {== $button kPad_Tri}
                   {do
