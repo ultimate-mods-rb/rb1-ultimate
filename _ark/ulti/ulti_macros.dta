@@ -1,3 +1,7 @@
+#define ULTI_VENUES (
+   small_club_battle
+)
+
 #define uNormal    (0)
 #define uOnOFF     (1)
 #define uFakeSld   (2)

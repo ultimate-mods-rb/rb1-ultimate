@@ -1,0 +1,30 @@
+{foreach $o
+   (
+      room_back.grp
+      room_geom_opaque.grp
+      room_geom_opaque_rafters.grp
+      props_boxes.grp
+      back_01.spot
+      back_010.spot
+      back_02.spot
+      back_03.spot
+      back_04.spot
+      back_05.spot
+      back_06.spot
+      back_07.spot
+      back_08.spot
+      back_09.spot
+      'front_01.5.spot'
+      front_01.spot
+      front_02.spot
+      'front_03.5.spot'
+      front_03.spot
+      front_04.spot
+      'Flood light02.mesh'
+   )
+   {if {exists $o}
+      {$o set_showing FALSE}
+   }
+}
+{crowd_mesh.mesh set_local_pos 60 -26.45 -5}
+{WorldCrowd.crd rebuild}

@@ -108,7 +108,7 @@
    (pause_screen pause_screen)
    (practice_mode_fx FALSE)
    (render_practice_loop FALSE)
-   (venues (VENUES))
+   (venues (VENUES ULTI_VENUES))
    (always_allow_player FALSE)
    (unlock_song_initial_num 58)
    (unlock_song_instrument '')
