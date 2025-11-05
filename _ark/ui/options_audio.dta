@@ -296,6 +296,7 @@
       {helpbar set_limit_to_player_num [player_num]}
    )
    (exit
+      {mod_settings_rw save_settings}
       {session remove_sink $this signin_changed}
       {memcardmgr remove_sink $this save_load_all_complete_msg}
       {helpbar set_limit_to_player_num -1}

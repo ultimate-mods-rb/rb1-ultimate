@@ -52,6 +52,22 @@
       {foreach $s [vars]
          {mod_settings set $s {eval_var $s}}
       }
+
+      {do
+         ($array {array 0})
+         {foreach_int $i 0 4
+            {push_back $array
+               {eval_array
+                  (
+                     {{profile_mgr get_char_options_from_player $i} get_mic_gain}
+                     {{profile_mgr get_char_options_from_player $i} get_vocal_volume}
+                  )
+               }
+            }
+         }
+         {mod_settings set mic_volumes $array}
+      }
+      
       {mod_settings save_objects MOD_SETTINGS_PATH}
       {delete mod_settings}
       {print_ship "mod settings saved to milo"}
@@ -68,6 +84,15 @@
                      {set_var $s {$mod_settings get $s}}
                   }
                }
+
+               {if {$mod_settings has (mic_volumes)} {do
+                  ($array {$mod_settings get mic_volumes})
+                  {foreach_int $i 0 4
+                     {{profile_mgr get_char_options_from_player $i} set_mic_gain {elem {elem $array $i} 0}}
+                     {{profile_mgr get_char_options_from_player $i} set_vocal_volume {elem {elem $array $i} 1}}
+                  }
+               }}
+
                {delete $mod_settings}
                {print_ship "mod settings loaded"}
             }
