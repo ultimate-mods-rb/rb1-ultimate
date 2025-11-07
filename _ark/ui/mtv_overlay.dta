@@ -11,7 +11,9 @@
       {if {gamemode get show_mtv_overlay}
          {$this setup_text}
          {$this show_overlay TRUE}
-         {script_task kTaskSeconds (delay 5) (script {$this show_overlay FALSE})}
+         {unless $songtitle
+            {script_task kTaskSeconds (delay 5) (script {$this show_overlay FALSE})}
+         }
       }
    )
    (exit
@@ -55,7 +57,10 @@
       ($show)
       {$this set_showing $show}
       {if_else $show
-         {fade.anim animate}
+         {if_else $songtitle
+            {fade.anim set_frame 50}
+            {fade.anim animate}
+         }
          {fade.anim set_frame 0}
       }
       {$this set_paused {! $show}}

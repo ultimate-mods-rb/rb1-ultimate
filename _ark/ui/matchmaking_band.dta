@@ -283,7 +283,6 @@
                            }
                         }
                         {char.lst set_type prefab_char_chooser}
-                        {dump_array $array "GD:/dev_hdd0/rb1/char_array.milo"}
                         {char.lst set_data $array}
                      }
                      {do

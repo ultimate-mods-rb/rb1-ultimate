@@ -2,7 +2,7 @@
 #define TRACK_PANEL_HANDLERS (
    (enter
       {game add_sink $this}
-      {$this set_showing {gamemode get show_track}}
+      {$this set_showing {if_else $nohud FALSE {gamemode get show_track}}}
    )
    (exit {game remove_sink $this})
    (unison_hit)
@@ -73,12 +73,12 @@
    )
    (intro_start
       {$this reset}
-      {$this set_showing {gamemode get show_track}}
+      {$this set_showing {if_else $nohud FALSE {gamemode get show_track}}}
       {$this set_track_in}
    )
    (intro_skip
       {$this reset}
-      {$this set_showing {gamemode get show_track}}
+      {$this set_showing {if_else $nohud FALSE {gamemode get show_track}}}
       {$this set_track_out}
       {$this play_intro}
    )

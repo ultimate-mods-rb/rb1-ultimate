@@ -56,7 +56,7 @@
       {os_setup_common}
       {set $overshell_up TRUE}
    )
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
    (BUTTON_DOWN_MSG
       {if {== $button kPad_Tri}
          {mod_settings_rw save_settings}
@@ -78,16 +78,10 @@
    OVERSHELL_SAVE_POS
    (title os_mod)
    (data (
-      (mod_autokick
+      (os_nofail
          (type uOnOFF)
-         (bool {modifier_mgr is_modifier_active mod_autokick})
-         (block_ingame TRUE)
-         (sel_script {modifier_mgr toggle_modifier_active mod_autokick})
-      )
-      (mod_doublespeed
-         (type uOnOFF)
-         (bool {modifier_mgr is_modifier_active mod_doublespeed})
-         (sel_script {modifier_mgr toggle_modifier_active mod_doublespeed})
+         (bool $nofail)
+         (sel_script kDataUnhandled) ; intentional. need to figure out how to handle online.
       )
       (os_tiltsensor
          (type uOnOFF)
@@ -112,7 +106,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_modifier_screen
@@ -126,10 +120,10 @@
    OVERSHELL_SAVE_POS
    (title os_vis)
    (data (
-      (mod_nohud
+      (os_nohud
          (type uOnOFF)
-         (bool {modifier_mgr is_modifier_active mod_nohud})
-         (sel_script {modifier_mgr toggle_modifier_active mod_nohud})
+         (bool $nohud)
+         (sel_script {toggle_var nohud})
       )
       (os_songtitle
          (type uOnOFF)
@@ -151,11 +145,6 @@
          (bool $prodrums)
          (sel_script {toggle_var prodrums})
       )
-      (os_colorshuffle
-         (type uOnOFF)
-         (bool $colorshuffle)
-         (sel_script {toggle_var colorshuffle})
-      )
       (os_fcring
          (type uOnOFF)
          (bool $fcring)
@@ -172,15 +161,10 @@
          (bool $songtimer)
          (sel_script {toggle_var songtimer})
       )
-      (os_videobgs
-         (type uOnOFF)
-         (bool $video_bgs)
-         (sel_script {toggle_var video_bgs})
-      )
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_visual_screen
@@ -245,7 +229,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_graphics_screen
@@ -288,7 +272,7 @@
    (enter {os_setup_common})
    (exit {set_pad_map $pad_map})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_cnt_screen
@@ -322,7 +306,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_speed_screen
@@ -379,7 +363,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_trackspeed_screen
@@ -416,7 +400,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_trk_screen
@@ -430,7 +414,7 @@
    (title os_gems)
    (data (lrb rb3 rb2 rb1 tbrb gh2 gh3 ghwt ghwor ghl))
    (enter {os_setup_common})
-   (SELECT_START_MSG
+   (SELECT_MSG
       {set $gems {$component selected_sym}}
       {pop_and_goto_screen overshell_trk_screen}
    )
@@ -462,7 +446,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_gem_color_screen
@@ -509,7 +493,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_gtr_gem_color_screen
@@ -556,7 +540,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_drm_gem_color_screen
@@ -603,7 +587,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_gtr_sus_color_screen
@@ -617,7 +601,7 @@
    (title os_smashers)
    (data (lrb rb2 rb1 rb1_alt))
    (enter {os_setup_common})
-   (SELECT_START_MSG
+   (SELECT_MSG
       {set $smashers {$component selected_sym}}
       {pop_and_goto_screen overshell_trk_screen}
    )
@@ -645,7 +629,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_smasher_color_screen
@@ -692,7 +676,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_gtr_smasher_color_screen
@@ -734,7 +718,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_drm_smasher_color_screen
@@ -795,7 +779,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_remap_cnt_screen
@@ -828,7 +812,7 @@
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_other_screen
@@ -850,6 +834,11 @@
          (type uOnOFF)
          (bool $selectvenue)
          (sel_script {toggle_var selectvenue})
+      )
+      (os_colorshuffle
+         (type uOnOFF)
+         (bool $colorshuffle)
+         (sel_script {toggle_var colorshuffle})
       )
       (os_smallworld
          (type uOnOFF)
@@ -893,7 +882,7 @@
    ))
    (enter  {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_START_MSG {os_sel_common})
+   (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_cheats_screen

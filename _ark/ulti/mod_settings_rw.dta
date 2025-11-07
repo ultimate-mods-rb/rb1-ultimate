@@ -29,11 +29,9 @@
       kickbounce
       pad_inst
       pad_map
-      video_bgs
       syncdifspeeds
       songtitle
       legacybass
-      colorshuffle
       blackbg
       tiltsensor
       prodrums
@@ -45,6 +43,7 @@
       cnt_star
       gems
       selectvenue
+      nohud
    ))
    (save_settings
       {print_ship "attempting to save mod settings"}
