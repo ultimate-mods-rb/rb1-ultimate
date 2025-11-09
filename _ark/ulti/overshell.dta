@@ -854,10 +854,10 @@
          (type uOnOFF)
          (bool $honestmode)
          (sel_script
-            {unless $honestmilo
-               {set $honestmilo {load_objects ulti/honestbob.milo}}
-               {$honestmilo delete_loader}
-            }
+            ;{unless $honestmilo
+            ;   {set $honestmilo {load_objects ulti/honestbob.milo}}
+            ;   {$honestmilo delete_loader}
+            ;}
             {toggle_var honestmode}
          )
       )
@@ -874,8 +874,8 @@
       (os_fakecheat
          (type uNormal)
          (sel_script
-            {passive_messages_panel queue_message
-               "to claim your monies you need to play every Honest Bob song. try again once finished."
+            {if {shop_char_panel is_up}
+               {{{game get_player_config {shop_char_panel get char_player_num}} get_char} set_money 999999999}
             }
          )
       )
