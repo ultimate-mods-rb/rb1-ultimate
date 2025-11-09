@@ -44,6 +44,20 @@
                {{sprintf "drum_mash%d.anim" $i} copy {sprintf "drum_bak%d.anim" $color} 0}
                {{sprintf "drum_mash%d_BRE.anim" $i} copy {sprintf "drum_bak%d_BRE.anim" $color} 0}
             }}
+            {foreach $wid
+               (
+                  dynamic_crash_gem_cymbal.wid
+                  dynamic_crash_gem_cymbal_lefty.wid
+                  cymbal_gem_star.wid
+                  cymbal_gem_red.wid
+                  cymbal_gem_yellow.wid
+                  cymbal_gem_blue.wid
+                  cymbal_gem_green.wid
+                  cymbal_gem_orange.wid
+               )
+               {{new TrackWidget $wid} copy drum_red.wid 0}
+               {drum_gems.grp add_object $wid}
+            }
          }
       }
       {do
