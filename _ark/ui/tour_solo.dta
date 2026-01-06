@@ -567,7 +567,7 @@
          {do
             ($pcfg {game get_player_config {game get leader_num}})
             {if {!= {{$pcfg get_char} get_instrument} {$pcfg get_controller_sym}}
-               {print_ship "wrong instrument detected. prefab time!"}
+               {print "wrong instrument detected. prefab time!"}
                {set [real_char] {$pcfg get_char}}
                {$pcfg set_char
                   {available_prefab {game get leader_num} {$pcfg get_controller_sym} female}

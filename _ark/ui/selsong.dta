@@ -485,7 +485,6 @@
                {||
                   {song_provider is_invalid_song $i}
                   {! {song_mgr has_song {song_provider get_song_to_set $i}}}
-                  {! {song_mgr has_missing_parts {song_provider is_invalid_song $i} {gamemode get missing_part_type}}}
                }
                {++ $f}
                {do
@@ -515,6 +514,7 @@
                         {has_substr {tolower {strip_syms $artist}} $string}
                      }
                      {song_mgr is_song_shared $song}
+                     {! {song_mgr has_missing_parts $song {gamemode get missing_part_type}}}
                      {! {find_elem [results] $song}}
                   }
                   {push_back $data {sprintf "%s\n%s" $title $artist}}

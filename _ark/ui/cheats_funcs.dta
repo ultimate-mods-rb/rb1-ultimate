@@ -3,6 +3,9 @@
    cheat_display
    (show
       ($msg)
+      #ifdef _SHIP
+      {print $msg}
+      #else
       {rnd show_overlay cheats TRUE}
       {rnd reflect cheats {print $msg "\n"}}
       {'++' [refs]}
@@ -15,6 +18,7 @@
             }
          )
       }
+      #endif
    )
    (show_bool
       ($label $val)

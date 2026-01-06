@@ -27,7 +27,7 @@
                   "_countdown_mp"
                }
             }}
-            {print_ship {sprint {$player instrument} " " {[track] name} " " {$dir name}}}
+            {print {sprint {$player instrument} " " {[track] name} " " {$dir name}}}
             {with $dir
                {unless {$this has (init)}
                   {{meter_wipe.mnm dir} set_trans_parent $this}

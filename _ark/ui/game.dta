@@ -141,7 +141,7 @@
             ".milo"
          }
          {do
-            {print_ship {sprint {game get_venue} " is an unknown venue. a fallback will be loaded."}}
+            {print {sprint {game get_venue} " is an unknown venue. a fallback will be loaded."}}
             "../world/small_club/small_club_01/small_club_01.milo"
          }
       }

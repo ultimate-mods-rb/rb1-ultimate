@@ -17,7 +17,6 @@
       camerashake
       fxdof
       scrnoise
-      mbblend
       emulatefps
       vsyncrate
       trkmuting
@@ -46,7 +45,7 @@
       nohud
    ))
    (save_settings
-      {print_ship "attempting to save mod settings"}
+      {print "attempting to save mod settings"}
       {new ObjectDir mod_settings}
       {foreach $s [vars]
          {mod_settings set $s {eval_var $s}}
@@ -69,10 +68,10 @@
       
       {mod_settings save_objects MOD_SETTINGS_PATH}
       {delete mod_settings}
-      {print_ship "mod settings saved to milo"}
+      {print "mod settings saved to milo"}
    )
    (load_settings
-      {print_ship "attempting to load mod_settings"}
+      {print "attempting to load mod_settings"}
       {do
          ($mod_settings {load_objects MOD_SETTINGS_PATH})
          {if_else $mod_settings
@@ -93,9 +92,9 @@
                }}
 
                {delete $mod_settings}
-               {print_ship "mod settings loaded"}
+               {print "mod settings loaded"}
             }
-            {print_ship "mod settings not loaded"}
+            {print "mod settings not loaded"}
          }
       }
    )

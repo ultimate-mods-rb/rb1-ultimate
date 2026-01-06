@@ -156,7 +156,7 @@
                      ({== {$player instrument} vocals}
                         {$track find failed_feedback}
                      )
-                     (TRUE {fail_ship "wtf did you do to get here? countdown failed"})
+                     (TRUE {fail "wtf did you do to get here? countdown failed"})
                   }
                )
                {if {exists $obj} {delete $obj}}
