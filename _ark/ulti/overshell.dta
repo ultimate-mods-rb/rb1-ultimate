@@ -1,16 +1,14 @@
 #define OVERSHELL_LIST_FILE (
    (file overshell.milo)
    (focus OS_LIST)
+   (pos (0 0))
    (TRANSITION_COMPLETE_MSG {os_update_helpbar})
    (SCROLL_MSG
       {os_update_helpbar}
       {if {$this has (pos)}
-         {set [pos] {OS_LIST selected_pos}}
+         {set [pos] {eval_array ({OS_LIST selected_pos} {OS_LIST first_showing})}}
       }
    )
-)
-#define OVERSHELL_SAVE_POS (
-   (pos 0)
 )
 {func pop_and_goto_screen
    ($gotoscreen)
@@ -20,7 +18,6 @@
 {new UIPanel
    overshell_main_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_ultisettings)
    (data (
       (os_mod
@@ -60,7 +57,7 @@
    (BUTTON_DOWN_MSG
       {if {== $button kPad_Tri}
          {mod_settings_rw save_settings}
-         {set [pos] 0}
+         {set [pos] (0 0)}
          {ui pop_screen}
          {set $overshell_up FALSE}
       }
@@ -75,7 +72,6 @@
 {new UIPanel
    overshell_modifier_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_mod)
    (data (
       (os_nofail
@@ -117,7 +113,6 @@
 {new UIPanel
    overshell_visual_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_vis)
    (data (
       (os_nohud
@@ -175,7 +170,6 @@
 {new UIPanel
    overshell_graphics_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_gfx)
    (data (
       (os_fps_fmt
@@ -221,11 +215,6 @@
          (bool $camerashake)
          (sel_script {toggle_var camerashake})
       )
-      (os_mbblend
-         (type uOnOFF)
-         (bool $mbblend)
-         (sel_script {toggle_var mbblend})
-      )
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
@@ -240,7 +229,6 @@
 {new UIPanel
    overshell_cnt_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_cnt)
    (data (
       (os_remap_cnt
@@ -283,7 +271,6 @@
 {new UIPanel
    overshell_speed_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_spd)
    (data (
       (os_trackspeed
@@ -317,7 +304,6 @@
 {new UIPanel
    overshell_trackspeed_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_trackspeed)
    (data (
       (os_indvtrkspeeds
@@ -374,7 +360,6 @@
 {new UIPanel
    overshell_trk_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_trk)
    (data (
       (os_reset
@@ -428,7 +413,6 @@
 {new UIPanel
    overshell_gem_color_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_gems_colors)
    (data (
       (os_gtr_gems_color
@@ -457,7 +441,6 @@
 {new UIPanel
    overshell_gtr_gem_color_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_gtr_gems_color)
    (data (
       (os_reset
@@ -504,7 +487,6 @@
 {new UIPanel
    overshell_drm_gem_color_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_drm_gems_color)
    (data (
       (os_reset
@@ -551,7 +533,6 @@
 {new UIPanel
    overshell_gtr_sus_color_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_gtr_sus_color)
    (data (
       (os_reset
@@ -615,7 +596,6 @@
 {new UIPanel
    overshell_smasher_color_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_smashers_colors)
    (data (
       (os_gtr_smasher_color
@@ -640,7 +620,6 @@
 {new UIPanel
    overshell_gtr_smasher_color_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_gtr_smasher_color)
    (data (
       (os_reset
@@ -687,7 +666,6 @@
 {new UIPanel
    overshell_drm_smasher_color_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_drm_smasher_color)
    (data (
       (os_reset
@@ -729,7 +707,6 @@
 {new UIPanel
    overshell_remap_cnt_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_remap_cnt)
    (data (
       (os_reset
@@ -790,7 +767,6 @@
 {new UIPanel
    overshell_other_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_other)
    (data (
       (os_cheats
@@ -823,7 +799,6 @@
 {new UIPanel
    overshell_cheats_panel
    OVERSHELL_LIST_FILE
-   OVERSHELL_SAVE_POS
    (title os_cheats)
    (data (
       (os_freecam
