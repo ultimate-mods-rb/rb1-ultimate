@@ -247,3 +247,48 @@
       }
    }
 )
+(lrb
+   {$gems_dir insert (subdirs 0) "ulti/track/gems/lrb/gems.milo"}
+   {$this iterate TrackDir $dir
+      {with $dir
+         {foreach $entry
+            (
+               (gem_green.wid lego_gem_guitar_grn_body.mesh)
+               (gem_red.wid lego_gem_guitar_red_body.mesh)
+               (gem_yellow.wid lego_gem_guitar_yel_body.mesh)
+               (gem_blue.wid lego_gem_guitar_blu_body.mesh)
+               (gem_orange.wid lego_gem_guitar_ora_body.mesh)
+               (gem_miss.wid lego_gem_guitar_mis_body.mesh)
+               (star_gem.wid lego_gem_guitar_nrg_body.mesh)
+
+               (gem_green_hopo.wid lego_gem_ham_grn_body.mesh)
+               (gem_red_hopo.wid lego_gem_ham_red_body.mesh)
+               (gem_yellow_hopo.wid lego_gem_ham_yel_body.mesh)
+               (gem_blue_hopo.wid lego_gem_ham_blu_body.mesh)
+               (gem_orange_hopo.wid lego_gem_ham_ora_body.mesh)
+               (gem_miss_hopo.wid lego_gem_ham_mis_body.mesh)
+               (star_hopo.wid lego_gem_ham_nrg_body.mesh)
+
+               (drum_red.wid lego_gem_drum_red_body.mesh)
+               (drum_yellow.wid lego_gem_drum_yel_body.mesh)
+               (drum_blue.wid lego_gem_drum_blu_body.mesh)
+               (drum_green.wid lego_gem_drum_grn_body.mesh)
+               (drum_miss.wid lego_gem_drum_mis_body.mesh)
+               (drum_star.wid lego_gem_drum_nrg_body.mesh)
+               (gem_kick.wid prism_gem_kick.mesh)
+               (kick_miss.wid prism_gem_kick_miss.mesh)
+               (star_kick.wid prism_gem_kick_style.mesh)
+            )
+            {if {exists {elem $entry 0}}
+               {clear_array {elem $entry 0} meshes}
+               {{elem $entry 0} insert (meshes 0) {$gems_dir find {elem $entry 1}}}
+               #ifdef HX_NG
+               {if {== {size $entry} 3}
+                  {{elem $entry 0} set multi_mesh {elem $entry 2}}
+               }
+               #endif
+            }
+         }
+      }
+   }
+)
