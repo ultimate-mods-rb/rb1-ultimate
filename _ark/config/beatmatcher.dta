@@ -157,6 +157,33 @@
          {handle ($world quarterbeat)}
          {handle (game quarterbeat)}
       }
+      {do
+         ($dir {{get_track_panel} loaded_dir})
+         {if {$dir has (timer)}
+            {{$dir get timer} set_text
+               {switch $songtimer
+                  (1
+                     {sprint
+                        {seconds_to_time {/ {beatmatch get_song_ms} 1000}}
+                        "/"
+                        {seconds_to_time {end_of_song get end_ms}}
+                     }
+                  )
+                  (2
+                     {sprint
+                        {seconds_to_time {max {- {end_of_song get end_ms} {/ {beatmatch get_song_ms} 1000}} 0}}
+                        "/"
+                        {seconds_to_time {end_of_song get end_ms}}
+                     }
+                  )
+                  (3 {seconds_to_time {max {- {end_of_song get end_ms} {/ {beatmatch get_song_ms} 1000}} 0}})
+                  (4 {seconds_to_time {/ {beatmatch get_song_ms} 1000}})
+                  (5 {seconds_to_time {end_of_song get end_ms}})
+                  ""
+               }
+            }
+         }
+      }
    )
    (eighth_note {handle ($world halfbeat)})
    (beat

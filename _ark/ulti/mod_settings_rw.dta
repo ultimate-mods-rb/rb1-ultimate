@@ -43,6 +43,30 @@
       gems
       selectvenue
       nohud
+      gtrgem1
+      gtrgem2
+      gtrgem3
+      gtrgem4
+      gtrgem5
+      drmgem1
+      drmgem2
+      drmgem3
+      drmgem4
+      drmgem5
+      gtrsm1
+      gtrsm2
+      gtrsm3
+      gtrsm4
+      gtrsm5
+      gtrsus1
+      gtrsus2
+      gtrsus3
+      gtrsus4
+      gtrsus5
+      drms1
+      drms2
+      drms3
+      drms4
    ))
    (save_settings
       {print "attempting to save mod settings"}

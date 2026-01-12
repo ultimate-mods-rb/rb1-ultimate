@@ -82,6 +82,21 @@
             {{track_1 get failed_feedback} insert (subdirs 0) "ulti/track/countdown_1.milo"}
          )
       }
+      {if {exists scoreboard}
+         {with scoreboard
+            {new Text timer.txt}
+            {timer.txt copy score.txt 0}
+            {timer.txt set_font 'avantgarde.font'}
+            {if_else {is_vocals_on_top}
+               {timer.txt set_local_pos 9.07 -0.00 -3.00}
+               {timer.txt set_local_pos 9.07 -0.00 5.80}
+            }
+            {timer.txt set_local_scale 0.8 0 0.8}
+            {timer.txt set_text ""}
+            {{{get_track_panel} loaded_dir} set timer {object timer.txt}}
+            {$this sync_objects}
+         }
+      }
       {$this set_showing FALSE}
       {$this set_track_out}
    )
