@@ -4,6 +4,7 @@
          (active FALSE)
          (done FALSE)
          (alive TRUE)
+         (hide_at_end FALSE)
          (current_event 0)
          (total_events 0)
          (remaining 0)
@@ -59,6 +60,7 @@
                   ($pos {[parser] get final_note_pos})
                   ($len {- {end_of_song get end} $pos})
                   {if {>= $len 20}
+                     {set [hide_at_end] TRUE}
                      {push_back [event_array] {eval_array ($pos {int {- $len 4}})}}
                   }
                }
@@ -97,8 +99,9 @@
                         {{[track] get star_power_meter} set_showing FALSE}
                      }
                   }
+                  ; this could break things!!!
                   {if {== {[player] instrument} drum}
-                     {force_drum_freestyle TRUE}
+                     {[player] force_solo TRUE}
                   }
                }
                {if [active]
@@ -108,20 +111,22 @@
                      {do
                         {$this set_lbl " "}
                         {[parent] set_showing FALSE}
-                        {if {== [track] drum}
-                           {force_drum_freestyle FALSE}
+                        {if {== {[player] instrument} drum}
+                           {[player] force_solo FALSE}
                         }
                         {set [active] FALSE}
                         {if [alive]
-                           {if {[track] has (streak_meter)}
-                              {{[track] get streak_meter} set_showing TRUE}
-                           }
-                           {if {[track] has (star_power_meter)}
-                              {{[track] get star_power_meter} set_showing TRUE}
-                           }
-                           {if_else {== {[player] instrument} vocals}
-                              {{[track] find play_intro.trig} trigger}
-                              {{[track] find intro.trig} trigger}
+                           {unless {&& [hide_at_end] {== [current_event] [total_events]}}
+                              {if {[track] has (streak_meter)}
+                                 {{[track] get streak_meter} set_showing TRUE}
+                              }
+                              {if {[track] has (star_power_meter)}
+                                 {{[track] get star_power_meter} set_showing TRUE}
+                              }
+                              {if_else {== {[player] instrument} vocals}
+                                 {{[track] find play_intro.trig} trigger}
+                                 {{[track] find intro.trig} trigger}
+                              }
                            }
                         }
                         {if_else {== [current_event] [total_events]}
