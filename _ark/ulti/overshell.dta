@@ -77,7 +77,7 @@
       (os_nofail
          (type uOnOFF)
          (bool $nofail)
-         (sel_script kDataUnhandled) ; intentional. need to figure out how to handle online.
+         (sel_script {toggle_var nofail})
       )
       (os_tiltsensor
          (type uOnOFF)

@@ -128,7 +128,7 @@
    (poll
       {if
          {||
-            {&& $nofail {! {gamemode get is_tour}}}
+            {&& $nofail {! {gamemode get is_tour}} {== {session mode} kNetLocal}}
             {gamemode get is_jukebox}
          }
          {beatmatch foreach_active_player $player
