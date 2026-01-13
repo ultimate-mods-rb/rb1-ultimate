@@ -100,7 +100,7 @@
                      }
                   }
                   ; this could break things!!!
-                  {if {== {[player] instrument} drum}
+                  {if {!= {[player] instrument} vocals}
                      {[player] force_solo TRUE}
                   }
                }
@@ -111,7 +111,7 @@
                      {do
                         {$this set_lbl " "}
                         {[parent] set_showing FALSE}
-                        {if {== {[player] instrument} drum}
+                        {if {!= {[player] instrument} vocals}
                            {[player] force_solo FALSE}
                         }
                         {set [active] FALSE}
