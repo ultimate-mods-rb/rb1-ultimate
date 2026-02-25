@@ -329,11 +329,13 @@
    game_screen
    (panels game world_panel coop_track_panel mtv_overlay)
    GAME_SCREEN_HANDLERS
+   HANDLE_MIC_DEPLOY
 }
 {new UIScreen
    hth_game_screen
    (panels game world_panel hth_track_panel mtv_overlay)
    GAME_SCREEN_HANDLERS
+   HANDLE_MIC_DEPLOY
 }
 {new UIScreen
    vocal_test_screen
