@@ -151,6 +151,12 @@
          (block_ingame TRUE)
          (sel_script {toggle_var fcring})
       )
+      (os_goldprogress
+         (type uOnOFF)
+         (bool $goldprogress)
+         (block_ingame TRUE)
+         (sel_script {toggle_var goldprogress})
+      )
       (os_countdown
          (type uOnOFF)
          (bool $countdown)

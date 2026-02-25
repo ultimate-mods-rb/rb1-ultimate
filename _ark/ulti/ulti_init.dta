@@ -75,6 +75,8 @@
 
 {set $micdeploy TRUE}
 
+{set $goldprogress TRUE}
+
 {set $smallworld FALSE}
 
 {set $bigmode FALSE}
