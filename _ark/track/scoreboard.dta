@@ -67,44 +67,27 @@
                      {set [delta_score] {- {'+' [current_star] 1} [previous_score]}}
                   }
                }
-               {if_else {!= [last_star] 1}
-                  {do
-                     {set [sweep_pct] {- $stars [previous_score]}}
-                     {if {<= [sweep_pct] 0.95}
-                        {if_else {< [current_star] {size [stars]}}
-                           {{{elem [stars] [current_star]} find sweep.mnm} set_frame [sweep_pct]}
-                           {if $goldprogress
-                              {foreach $s [stars]
-                                 {{$s find meter_wipe.mesh} set_showing TRUE}
-                                 {{$s find sweep.mnm} set_frame [sweep_pct]}
-                              }
-                           }
-                        }
-                     }
-                     {if {>= $stars {'+' [current_star] 1}}
-                        {if {< [current_star] {size [stars]}}
-                           {{{elem [stars] [current_star]} find sweep.mnm} set_frame 1}
-                           {{{elem [stars] [current_star]} find full.trig} trigger}
-                        }
-                        {$this play_star_sound}
-                        {set [current_star] {'+' [current_star] 1}}
-                        {if {== [current_star] [max_stars]}
-                           {set [last_star] 1}
-                        }
-                        {if {&& {!= [last_star] 1} {< [current_star] {size [stars]}}}
-                           {{elem [stars] [current_star]} set showing 1}
-                           {stars_offset.tnm animate (dest {'*' [current_star] 10})}
-                           {{{elem
-                                    [stars]
-                                    [current_star]}
-                                 find
-                                 sweep.mnm} set_frame
-                              {- [sweep_pct] 1}
-                           }
+               {set [sweep_pct] {- $stars [previous_score]}}
+               {if {<= [sweep_pct] 0.95}
+                  {if_else {< [current_star] {size [stars]}}
+                     {{{elem [stars] [current_star]} find sweep.mnm} set_frame [sweep_pct]}
+                     {if $goldprogress
+                        {foreach $s [stars]
+                           {{$s find meter_wipe.mesh} set_showing TRUE}
+                           {{$s find sweep.mnm} set_frame [sweep_pct]}
                         }
                      }
                   }
-                  {do
+               }
+               {if {>= $stars {'+' [current_star] 1}}
+                  {if {< [current_star] {size [stars]}}
+                     {{{elem [stars] [current_star]} find sweep.mnm} set_frame 1}
+                     {{{elem [stars] [current_star]} find full.trig} trigger}
+                  }
+                  {$this play_star_sound}
+                  {set [current_star] {'+' [current_star] 1}}
+                  {if {== [current_star] [max_stars]}
+                     {set [last_star] 1}
                      {if {>= $stars [max_stars]}
                         {if {! [gold]}
                            {if {exists gold_stars.trig}
@@ -113,6 +96,17 @@
                            {$this play_star_sound}
                            {set [gold] 1}
                         }
+                     }
+                  }
+                  {if {&& {!= [last_star] 1} {< [current_star] {size [stars]}}}
+                     {{elem [stars] [current_star]} set showing 1}
+                     {stars_offset.tnm animate (dest {'*' [current_star] 10})}
+                     {{{elem
+                              [stars]
+                              [current_star]}
+                           find
+                           sweep.mnm} set_frame
+                        {- [sweep_pct] 1}
                      }
                   }
                }
