@@ -99,6 +99,20 @@
    cymbal_gem_green.wid
    cymbal_gem_star.wid
 )
+#define GTRMASH_SET (
+   gem_mash0.wid
+   gem_mash1.wid
+   gem_mash2.wid
+   gem_mash3.wid
+   gem_mash4.wid
+)
+#define DRMMASH_SET (
+   drum_mash4.wid
+   drum_mash1.wid
+   drum_mash2.wid
+   drum_mash3.wid
+   drum_mash4.wid
+)
 #define GTR_SUSTAIN_COLORS (green red yellow blue orange star)
 #define COLOR_SHUFFLE_SLOT_1 (
    {if_else $colorshuffle

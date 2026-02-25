@@ -8,7 +8,7 @@
       (unison_hopo star_hopo.wid)
       (miss gem_miss.wid)
       (miss_hopo gem_miss_hopo.wid)
-      (mash gem_mash0.wid)
+      (mash {elem (GTRMASH_SET) $gtrsm1})
    )
    (1
       (normal {elem (NORMALGEM_SET) COLOR_SHUFFLE_SLOT_2})
@@ -19,7 +19,7 @@
       (unison_hopo star_hopo.wid)
       (miss gem_miss.wid)
       (miss_hopo gem_miss_hopo.wid)
-      (mash gem_mash1.wid)
+      (mash {elem (GTRMASH_SET) $gtrsm2})
    )
    (2
       (normal {elem (NORMALGEM_SET) COLOR_SHUFFLE_SLOT_3})
@@ -30,7 +30,7 @@
       (unison_hopo star_hopo.wid)
       (miss gem_miss.wid)
       (miss_hopo gem_miss_hopo.wid)
-      (mash gem_mash2.wid)
+      (mash {elem (GTRMASH_SET) $gtrsm3})
    )
    (3
       (normal {elem (NORMALGEM_SET) COLOR_SHUFFLE_SLOT_4})
@@ -41,7 +41,7 @@
       (unison_hopo star_hopo.wid)
       (miss gem_miss.wid)
       (miss_hopo gem_miss_hopo.wid)
-      (mash gem_mash3.wid)
+      (mash {elem (GTRMASH_SET) $gtrsm4})
    )
    (4
       (normal {elem (NORMALGEM_SET) COLOR_SHUFFLE_SLOT_5})
@@ -52,7 +52,7 @@
       (unison star_gem.wid)
       (miss gem_miss.wid)
       (miss_hopo gem_miss_hopo.wid)
-      (mash gem_mash4.wid)
+      (mash {elem (GTRMASH_SET) $gtrsm5})
    )
 )
 #define DRUM_SET (
@@ -67,7 +67,7 @@
       (star drum_star.wid)
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash drum_mash1.wid)
+      (mash {elem (DRMMASH_SET) $drms1})
    )
    (2
       (normal {elem (DRUMGEM_SET) DRUMGEM_SLOT3})
@@ -75,7 +75,7 @@
       (star drum_star.wid)
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash drum_mash2.wid)
+      (mash {elem (DRMMASH_SET) $drms2})
    )
    (3
       (normal {elem (DRUMGEM_SET) DRUMGEM_SLOT4})
@@ -83,7 +83,7 @@
       (star drum_star.wid)
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash drum_mash3.wid)
+      (mash {elem (DRMMASH_SET) $drms3})
    )
    (4
       (normal {elem (DRUMGEM_SET) DRUMGEM_SLOT5})
@@ -91,7 +91,7 @@
       (star drum_star.wid)
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash drum_mash4.wid)
+      (mash {elem (DRMMASH_SET) $drms4})
       (crash dynamic_crash_gem.wid)
    )
 )
@@ -107,7 +107,7 @@
       (star drum_star.wid)
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash drum_mash4.wid)
+      (mash {elem (DRMMASH_SET) $drms4})
    )
    (2
       (normal {elem (DRUMGEM_SET) DRUMGEM_SLOT4})
@@ -115,7 +115,7 @@
       (star drum_star.wid)
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash drum_mash3.wid)
+      (mash {elem (DRMMASH_SET) $drms3})
    )
    (3
       (normal {elem (DRUMGEM_SET) DRUMGEM_SLOT3})
@@ -123,7 +123,7 @@
       (star drum_star.wid)
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash drum_mash2.wid)
+      (mash {elem (DRMMASH_SET) $drms2})
    )
    (4
       (normal {elem (DRUMGEM_SET) DRUMGEM_SLOT2})
@@ -131,7 +131,7 @@
       (star drum_star.wid)
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash drum_mash1.wid)
+      (mash {elem (DRMMASH_SET) $drms1})
       (crash dynamic_crash_gem_lefty.wid)
    )
 )
