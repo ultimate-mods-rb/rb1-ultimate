@@ -277,7 +277,7 @@
                               {&&
                                  {== {type $char} kDataArray}
                                  {find_exists $char instrument}
-                                 {== {elem {find $char instrument} 1} $inst}
+                                 {== {eval {elem {find $char instrument} 1}} $inst}
                               }
                               {push_back $array {elem $char 0}}
                            }

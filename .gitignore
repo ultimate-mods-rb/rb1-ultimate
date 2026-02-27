@@ -13,6 +13,3 @@ _ark/*.py
 *.bak
 _temp*
 *.xcf
-/_ark/char/male
-/_ark/char/female
-_ark/char/outfitloader.dta

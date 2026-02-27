@@ -797,6 +797,11 @@
          (bool $skipintro)
          (sel_script {toggle_var skipintro})
       )
+      (os_cchars
+         (type uOnOFF)
+         (bool $cchars)
+         (sel_script {toggle_var cchars})
+      )
       (os_reset_all
          (type uNormal)
          (sel_script
