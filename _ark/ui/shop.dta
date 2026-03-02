@@ -600,7 +600,20 @@
                }
             }
          )
+         (appearance.btn
+            {ui goto_screen shop_appearance_screen}
+            {shop_char_panel select_cam "closeup_idle"}
+         )
       }
+   )
+   (finish_load
+      {new BandButton appearance.btn}
+      {appearance.btn copy instruments.btn 0}
+      {appearance.btn set text_token create_char_appearance}
+      {appearance.btn set_local_pos_index 2 -80.00}
+      {instruments.btn set nav_down appearance.btn}
+      {buttons.grp add_object appearance.btn}
+      {$this sync_objects}
    )
 }
 {new UIScreen
@@ -1304,4 +1317,248 @@
    shop_error_selected_color_screen
    SHOP_ERROR_SELECTED_HANDLERS
    (SELECT_MSG {ui goto_screen color_select_screen})
+}
+{new OutfitPanel
+   shop_appearance_panel
+   (file "charcreator_appearance.milo")
+   (focus weight.btn)
+   (reset_focus TRUE)
+   (show_outfit_text TRUE)
+   (player_num {shop_char_panel get char_player_num})
+   (outfit_char shop_char_panel)
+   (enter
+      {do
+         ($tour_char {shop_char_panel get tour_char})
+         ($char {shop_char_panel get char})
+         {weight.sld set_num_steps 5}
+         {weight.sld set_frame {$char get weight}}
+         {height.sld set_num_steps 5}
+         {height.sld set_frame {$char get height}}
+         {skin.lst set_colors {$char get skin_color_palette}}
+         {skin.lst set_selected {$char get skin_color_index}}
+         {attitude.lst set_data
+            (attitude_banger attitude_dramatic attitude_rocker attitude_spazz)
+         }
+         {attitude.lst set_selected
+            {switch {$tour_char get_attitude}
+               (kGenreBanger attitude_banger)
+               (kGenreDramatic attitude_dramatic)
+               (kGenreRocker attitude_rocker)
+               (kGenreSpazz attitude_spazz)
+            }
+         }
+      }
+   )
+   (exit {shop_char_panel save})
+   (SELECT_MSG
+      {unless {== {$this focus_category} ''}
+         {$this store_outfit}
+      }
+      {switch $component
+         (weight.btn
+            {weight.sld store}
+            {$this set_focus weight.sld}
+         )
+         (height.btn
+            {height.sld store}
+            {$this set_focus height.sld}
+         )
+         (skin.btn
+            {skin.lst store}
+            {$this set_focus skin.lst}
+         )
+         (attitude.btn
+            {shop_char_panel play_attitude_group}
+            {attitude.lst store}
+            {$this set_focus attitude.lst}
+         )
+         (done.btn {ui goto_screen shop_screen})
+      }
+      kDataUnhandled
+   )
+   (SCROLL_MSG
+      {do
+         ($tour_char {shop_char_panel get tour_char})
+         ($char {shop_char_panel get char})
+         {switch $component
+            (skin.lst {$tour_char set_skin_color $char {skin.lst selected_pos}})
+            (weight.sld
+               {$tour_char set_weight $char {weight.sld frame}}
+               {$char deform FALSE}
+            )
+            (height.sld
+               {$tour_char set_height $char {height.sld frame}}
+               {$char deform FALSE}
+            )
+            (attitude.lst
+               {$tour_char set_attitude
+                  $char
+                  {$this sym_to_attitude {attitude.lst selected_sym}}
+               }
+               {shop_char_panel play_attitude_group}
+            )
+         }
+      }
+   )
+   (FOCUS_MSG {$this update_cam $new_focus})
+   (TRANSITION_COMPLETE_MSG {$this update_cam {$this focus_name}})
+   (update_cam
+      ($focus)
+      {shop_char_panel select_cam
+         {if_else {== $focus heads.lst}
+            hair
+            closeup_idle
+         }
+      }
+   )
+   (BUTTON_DOWN_MSG
+      {do
+         ($category {$this focus_category})
+         ($selected {$this focus_outfit})
+         {if_else {!= $selected ''}
+            {switch $button
+               (kPad_X
+                  {cond
+                     ({== $category heads}
+                        {ui push_screen shop_eyecolor_screen}
+                     )
+                     ({== $category hair} kDataUnhandled)
+                     (TRUE {$this confirm_outfit})
+                  }
+               )
+               (kPad_Tri {$this undo_outfit} TRUE)
+               kDataUnhandled
+            }
+            {switch {$this focus_name}
+               (skin.lst
+                  {switch $button
+                     (kPad_X
+                        {skin.lst confirm}
+                        {$this set_focus skin.btn}
+                     )
+                     (kPad_Tri
+                        {skin.lst undo $player_num}
+                        {$this set_focus skin.btn}
+                     )
+                     kDataUnhandled
+                  }
+               )
+               (weight.sld
+                  {switch $button
+                     (kPad_X
+                        {weight.sld confirm}
+                        {$this set_focus weight.btn}
+                     )
+                     (kPad_Tri
+                        {weight.sld undo $player_num}
+                        {$this set_focus weight.btn}
+                     )
+                     kDataUnhandled
+                  }
+               )
+               (height.sld
+                  {switch $button
+                     (kPad_X
+                        {height.sld confirm}
+                        {$this set_focus height.btn}
+                     )
+                     (kPad_Tri
+                        {height.sld undo $player_num}
+                        {$this set_focus height.btn}
+                     )
+                     kDataUnhandled
+                  }
+               )
+               (attitude.lst
+                  {switch $button
+                     (kPad_X
+                        {attitude.lst confirm}
+                        {$this set_focus attitude.btn}
+                     )
+                     (kPad_Tri
+                        {attitude.lst undo $player_num}
+                        {$this set_focus attitude.btn}
+                     )
+                     kDataUnhandled
+                  }
+               )
+               kDataUnhandled
+            }
+         }
+      }
+   )
+   (sym_to_attitude
+      ($sym)
+      {switch $sym
+         (attitude_banger kGenreBanger)
+         (attitude_dramatic kGenreDramatic)
+         (attitude_rocker kGenreRocker)
+         (attitude_spazz kGenreSpazz)
+      }
+   )
+   (finish_load
+      {hair.lst set_name attitude.lst}
+      {hair.btn set_name attitude.btn}
+      {attitude.btn set text_token create_char_attitude}
+      {$this sync_objects}
+   )
+}
+{new UIScreen
+   shop_appearance_screen
+   (panels
+      meta
+      shop_char_panel
+      shop_appearance_panel
+      shop_lower3rd_panel
+      shop_money_panel
+      helpbar
+   )
+   (focus shop_appearance_panel)
+   (back shop_screen)
+   (helpbar (helpbar_back helpbar_select))
+   (SCREEN_CHANGE_MSG
+      {if {== $new_screen shop_screen}
+         {shop_char_panel select_cam "idle"}
+      }
+   )
+}
+{new UIPanel
+   shop_eyecolor_panel
+   (file "color_select.milo")
+   (focus color.lst)
+   (undo_eye_index -1)
+   (enter
+      {title.lbl set text_token shell_eye_color}
+      {do
+         ($char {shop_char_panel get char})
+         {color.lst set_colors {$char get eye_color_palette}}
+         {color.lst set_selected {$char get eye_color_index}}
+         {set [undo_eye_index] {$char get eye_color_index}}
+      }
+   )
+   (SCROLL_MSG
+      {{shop_char_panel get tour_char} set_eye_color
+         {shop_char_panel get char}
+         {color.lst selected_pos}
+      }
+   )
+   (SELECT_MSG
+      {shop_appearance_panel confirm_outfit}
+      {ui pop_screen}
+   )
+   (BUTTON_DOWN_MSG
+      {if {== $button kPad_Tri}
+         {{shop_char_panel get tour_char} set_eye_color
+            {shop_char_panel get char}
+            [undo_eye_index]
+         }
+         {ui pop_screen}
+      }
+      kDataUnhandled
+   )
+}
+{new UIScreen
+   shop_eyecolor_screen
+   (panels shop_eyecolor_panel)
+   (focus shop_eyecolor_panel)
 }
