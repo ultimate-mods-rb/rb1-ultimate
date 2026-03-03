@@ -115,3 +115,42 @@
       }
    )
 }
+{new UIScreen
+   char_clear_screen
+   (panels dialog_panel)
+   (focus dialog_panel)
+   (destination '')
+   (enter
+      {dialog_panel set_yesno
+         {localize_token shop_clear_info}
+         no.btn
+      }
+   )
+   (SELECT_START_MSG
+      {switch $component
+         (yes.btn
+            {do
+               ($tour_char {shop_char_panel get tour_char})
+               ($char {shop_char_panel get char})
+               {foreach $a
+                  (
+                     (hair none)
+                     (heads empty)
+                     (hands empty)
+                     (legs empty)
+                     (feet empty)
+                  )
+                  {$tour_char select_outfit $char {elem $a 0} {elem $a 1}}
+               }
+               {$tour_char set_weight $char 0.5}
+               {$tour_char set_height $char 0.5}
+               {$char deform FALSE}
+               {shop_char_panel save}
+            }
+            {ui pop_screen}
+         )
+         (no.btn {ui pop_screen})
+      }
+      kDataUnhandled
+   )
+}

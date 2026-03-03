@@ -295,6 +295,8 @@
 (vocals13 "Quentin Lance")
 (vocals16 "Emily of Byron")
 (vocals20 "Penelope McQueen")
+(shell_shop_charstore "CUSTOM CHARACTERS")
+(shop_clear_info "Do you want to clear customization options for this character? This will make things look as intended.")
 (skye "Skye")
 (guitar_skye "Skye")
 (skye_desc "Find your greatest adventure.")

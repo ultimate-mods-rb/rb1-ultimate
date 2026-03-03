@@ -464,7 +464,7 @@
          (shell_shop_punkstore "shop_clothing_punk.milo")
          (shell_shop_rockstore "shop_clothing_rock.milo")
          (shell_shop_gothstore "shop_clothing_goth.milo")
-         (shell_shop_metalstore "shop_clothing_metal.milo")
+         ((shell_shop_metalstore shell_shop_charstore) "shop_clothing_metal.milo")
          "shop_closet.milo"
       }
    )
@@ -473,6 +473,9 @@
    (enter
       {if [reset]
          {$this set_focus torso.btn}
+         {if {== [genre] shell_shop_charstore}
+            {ui push_screen char_clear_screen}
+         }
       }
       {set [reset] FALSE}
       {title.lbl set text_token [title]}
@@ -689,6 +692,15 @@
          {ui goto_screen shop_clothing_genre_screen}
       }
    )
+   (finish_load
+      {new BandButton char.btn}
+      {char.btn copy closet.btn 0}
+      {char.btn set text_token shell_shop_charstore}
+      {char.btn set_local_pos_index 2 -135}
+      {closet.btn set nav_down char.btn}
+      {buttons.grp add_object char.btn}
+      {$this sync_objects}
+   )
 }
 {new UIScreen
    shop_clothing_screen
@@ -725,7 +737,7 @@
          (shell_shop_punkstore "shop_clothing_punk_lower3rd.milo")
          (shell_shop_rockstore "shop_clothing_rock_lower3rd.milo")
          (shell_shop_gothstore "shop_clothing_goth_lower3rd.milo")
-         (shell_shop_metalstore "shop_clothing_metal_lower3rd.milo")
+         ((shell_shop_metalstore shell_shop_charstore) "shop_clothing_metal_lower3rd.milo")
          ""
       }
    )

@@ -2104,7 +2104,7 @@
                (head_4 (ui_name female_head_4))
                (head_5 (ui_name female_head_5))
                (head_6 (ui_name female_head_6))
-               (empty (ui_name none))
+               (empty (ui_name none) (exclude TRUE))
             )
          )
          (eyes
@@ -2750,9 +2750,9 @@
                (thermalundertee_line6)
                (thintank_ludwig)
                (thintank_vater)
-               (skye (genre shell_shop_rockstore))
-               (helsie (genre shell_shop_rockstore))
-               (nemia (genre shell_shop_rockstore))
+               (skye (genre shell_shop_charstore))
+               (helsie (genre shell_shop_charstore))
+               (nemia (genre shell_shop_charstore))
             )
          )
          (hands
@@ -2785,7 +2785,7 @@
                   (ui_name gloves_skeleton)
                   (cost 25)
                )
-               (empty (ui_name none))
+               (empty (ui_name none) (exclude TRUE))
             )
          )
          (legs
@@ -3085,10 +3085,7 @@
                   (genre shell_shop_metalstore)
                   (cost 209)
                )
-               (empty
-                  (ui_name none)
-                  (genre shell_shop_rockstore)
-               )
+               (empty (ui_name none) (exclude TRUE))
             )
          )
          (feet
@@ -3395,10 +3392,7 @@
                   (genre shell_shop_metalstore)
                   (cost 539)
                )
-               (empty
-                  (ui_name none)
-                  (genre shell_shop_rockstore)
-               )
+               (empty (ui_name none) (exclude TRUE))
             )
          )
          (glasses
