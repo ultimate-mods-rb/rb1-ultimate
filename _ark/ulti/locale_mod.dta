@@ -26,6 +26,7 @@
 (os_scrbloom "Bloom")
 (os_mbblend "Motion Blur")
 (os_camerashake "Camera Shake")
+(os_crowd "Crowd")
 (os_misssounds "Miss Sounds")
 (os_trkmuting "Track Muting")
 (os_micdeploy "Deploy With Mic")

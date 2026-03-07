@@ -227,6 +227,11 @@
          (bool $camerashake)
          (sel_script {toggle_var camerashake})
       )
+      (os_crowd
+         (type uOnOFF)
+         (bool $crowd)
+         (sel_script {toggle_var crowd})
+      )
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})

@@ -33,6 +33,8 @@
 ;motion blur
 {set $mbblend TRUE}
 
+{set $crowd TRUE}
+
 {set $emulatefps 24}
 
 {set $vsyncrate 1}
@@ -78,6 +80,7 @@
 {set $goldprogress TRUE}
 
 {set $cchars TRUE}
+
 {set $smallworld FALSE}
 
 {set $bigmode FALSE}

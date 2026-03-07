@@ -470,14 +470,31 @@
    {rnd set_sync $vsyncrate}
    {$world iterate PostProc $p {with $p
       {if_else {game is_loaded}
-         {set [emulate_fps] $emulatefps}
+         {unless {$this has (p)}
+            {set [emulate_fps]
+               {if_else {>= $emulatefps 35}
+                  60
+                  {clamp {* [emulate_fps] {/ $emulatefps 24}} 1 30}
+               }
+            }
+            {$this set p 1}
+         }
          {set [emulate_fps] 60}
       }
-      {if {&& {! $scrnoise} [noise_intensity]}
-         {set [noise_intensity] 0.0001}
+      {if {! $scrnoise}
+         {set [noise_base_scale x] 0}
+         {set [noise_base_scale y] 0}
       }
       {if {&& {! $scrbloom} [bloom_intensity]}
-         {set [bloom_intensity] 0.0001}
+         {set [bloom_intensity]
+            #ifdef HX_PS3
+            ; setting this to 0 breaks some visual effects but bloom is fucked on ps3 anyways
+            ; the entire game is super blurry with it even slightly on
+            0
+            #else
+            0.01
+            #endif
+         }
       }
    }}
    {$world iterate CamShot $cs
