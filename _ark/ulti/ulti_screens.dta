@@ -135,12 +135,19 @@
                {foreach $a
                   (
                      (hair none)
+                     (glasses none)
+                     (wrist none)
+                     (rings none)
+                     (earrings none)
                      (heads empty)
                      (hands empty)
                      (legs empty)
                      (feet empty)
                   )
                   {$tour_char select_outfit $char {elem $a 0} {elem $a 1}}
+               }
+               {if {== {$tour_char get_gender} male}
+                  {$tour_char select_outfit $char facehair none}
                }
                {$tour_char set_weight $char 0.5}
                {$tour_char set_height $char 0.5}

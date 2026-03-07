@@ -92,6 +92,7 @@
                (head_4 (ui_name male_head_4))
                (head_5 (ui_name male_head_5))
                (head_6 (ui_name male_head_6))
+               (empty (ui_name none) (exclude TRUE))
             )
          )
          (eyes
@@ -1105,6 +1106,7 @@
                (wornlongsleeveshirt_fender)
                (worntshirt_guitarcenter)
                (worntshirt_line6)
+               (spiderman (genre shell_shop_charstore))
             )
          )
          (hands
@@ -1137,6 +1139,7 @@
                   (ui_name gloves_skeleton)
                   (cost 25)
                )
+               (empty (ui_name none) (exclude TRUE))
             )
          )
          (legs
@@ -1442,6 +1445,7 @@
                   (genre shell_shop_metalstore)
                   (cost 330)
                )
+               (empty (ui_name none) (exclude TRUE))
             )
          )
          (feet
@@ -1763,6 +1767,7 @@
                   (genre shell_shop_metalstore)
                   (cost 89)
                )
+               (empty (ui_name none) (exclude TRUE))
             )
          )
          (wrist
