@@ -414,7 +414,13 @@
                {notify "WARNING: change band triggered by non-leader"}
             }
             {session end_game kQuit}
-            {band_ui_sink sync_screen meta_loading_pause_new_song_screen 1}
+            #ifdef HX_PS3
+               ; going to meta_loading_changemembers_screen then back to the song select causes rpcs3 to crash when using llvm.
+               ; this happens on vanilla with no dlc. if rpcs3 detection is implemented or this bug is fixed pls change.
+               {band_ui_sink sync_screen meta_loading_pause_new_song_screen 1}
+            #else
+               {band_ui_sink sync_screen meta_loading_changemembers_screen 1}
+            #endif
          )
          (exit_forfeit {ui goto_screen meta_loading_matchmaking_forfeit_screen})
          (exit_new_section
