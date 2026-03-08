@@ -54,7 +54,7 @@
             {set [anim] {$dir find meter_wipe.mnm}}
             {set [parent] {$dir find streak_meter.grp}}
             {[parent] set_showing FALSE}
-            {set [event_array] {[parser] get event_array}}
+            {set [event_array] {eval_array {[parser] get event_array}}}
             {unless {[parser] get first_note}
                {do
                   ($pos {[parser] get final_note_pos})
@@ -82,15 +82,22 @@
                      {! [active]}
                      {>= {taskmgr beat} {elem {elem [event_array] [current_event]} 0}}
                   }
-                  {set [remaining] {int {/ {elem {elem [event_array] [current_event]} 1} 4}}}
-                  {set [active] TRUE}
-                  {[anim] animate
-                     (units kTaskBeats)
-                     (period {* {- [remaining] 1} 4})
-                     (range 0 1)
+                  {if_else {&& [hide_at_end] {== [current_event] [total_events]}}
+                     {set [done] TRUE}
+                     {do
+                        {set [remaining] {int {/ {elem {elem [event_array] [current_event]} 1} 4}}}
+                        {set [active] TRUE}
+                        {[anim] animate
+                           (units kTaskBeats)
+                           (period {* {- [remaining] 1} 4})
+                           (range 0 1)
+                        }
+                        {if [alive]
+                           {[parent] set_showing TRUE}
+                        }
+                     }
                   }
                   {if [alive]
-                     {[parent] set_showing TRUE}
                      {{[track] find retract.trig} trigger}
                      {if {[track] has (streak_meter)}
                         {{[track] get streak_meter} set_showing FALSE}
@@ -116,17 +123,15 @@
                         }
                         {set [active] FALSE}
                         {if [alive]
-                           {unless {&& [hide_at_end] {== [current_event] [total_events]}}
-                              {if {[track] has (streak_meter)}
-                                 {{[track] get streak_meter} set_showing TRUE}
-                              }
-                              {if {[track] has (star_power_meter)}
-                                 {{[track] get star_power_meter} set_showing TRUE}
-                              }
-                              {if_else {== {[player] instrument} vocals}
-                                 {{[track] find play_intro.trig} trigger}
-                                 {{[track] find intro.trig} trigger}
-                              }
+                           {if {[track] has (streak_meter)}
+                              {{[track] get streak_meter} set_showing TRUE}
+                           }
+                           {if {[track] has (star_power_meter)}
+                              {{[track] get star_power_meter} set_showing TRUE}
+                           }
+                           {if_else {== {[player] instrument} vocals}
+                              {{[track] find play_intro.trig} trigger}
+                              {{[track] find intro.trig} trigger}
                            }
                         }
                         {if_else {== [current_event] [total_events]}
