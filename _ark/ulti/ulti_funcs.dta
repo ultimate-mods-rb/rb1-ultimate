@@ -897,3 +897,18 @@
       }
    }
 }
+{func insert_milo
+   ($dir $file)
+   {do
+      ($milo {load_objects $file})
+      {if_else $milo
+         {do
+            {$milo delete_loader}
+            {reserve_to_fit $milo $dir 0}
+            {merge_dirs $milo $dir kMergeMerge}
+            {delete $milo}
+         }
+         {print {sprint "WARNING! failed to load " $milo}}
+      }
+   }
+}

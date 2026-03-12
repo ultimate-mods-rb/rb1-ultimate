@@ -38,6 +38,12 @@
             #include ../ulti/track/gems/gems_scripting.dta
          }
       }
+      {do
+         ($smashers_dir {new RndDir smashers_dir})
+         {switch $smashers
+            #include ../ulti/track/smashers/smashers_scripting.dta
+         }
+      }
       {cond
          ({exists vocals} ;coop
             {player_feedback_01 insert (subdirs 0) "ulti/track/countdown_0.milo"}
