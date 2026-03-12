@@ -2759,6 +2759,7 @@
                (skye (genre shell_shop_charstore))
                (helsie (genre shell_shop_charstore))
                (nemia (genre shell_shop_charstore))
+               (lace (genre shell_shop_charstore))
                (empty (ui_name none) (exclude TRUE))
             )
          )

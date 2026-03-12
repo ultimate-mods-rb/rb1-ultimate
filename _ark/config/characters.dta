@@ -810,6 +810,35 @@
       (tattoo)
    )
    #endif
+   (drum_lace
+      (gender female)
+      (attitude kGenreDramatic)
+      CUSTOM_DRUM
+      (weight 0.5)
+      (height 0.5)
+      (skin_color_index 0)
+      (eye_color_index 0)
+      (eyebrow_color_index 0)
+      (outfit
+         (hair none)
+         (heads empty)
+         (eyes none)
+         (lips none)
+         (torso lace)
+         (hands empty)
+         (legs empty)
+         (feet empty)
+         (glasses none)
+         (wrist none)
+         (rings none)
+         (earrings none)
+         (guitar none)
+         (bass none)
+         (drum oysterpearl (colors 3 0))
+         (mic none)
+      )
+      (tattoo)
+   )
    (guitar0
       (gender male)
       VANILLA_GUITAR
