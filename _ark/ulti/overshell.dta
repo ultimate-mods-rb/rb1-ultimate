@@ -802,6 +802,11 @@
          (bool $skipintro)
          (sel_script {toggle_var skipintro})
       )
+      (os_vchars
+         (type uOnOFF)
+         (bool $vchars)
+         (sel_script {toggle_var vchars})
+      )
       (os_cchars
          (type uOnOFF)
          (bool $cchars)

@@ -128,6 +128,7 @@
 (os_spotlight "Overdrive")
 (os_reset_all "Reset All Settings")
 (os_skipintro "Skip Intro Movie")
+(os_vchars "Normal Characters")
 (os_cchars "Custom Characters")
 (os_cheats "Cheats")
 (os_freecam "Free Camera")

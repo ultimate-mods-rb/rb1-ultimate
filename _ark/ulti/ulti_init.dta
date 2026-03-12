@@ -79,6 +79,8 @@
 
 {set $goldprogress TRUE}
 
+{set $vchars TRUE}
+
 {set $cchars TRUE}
 
 {set $smallworld FALSE}
