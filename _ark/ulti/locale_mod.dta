@@ -317,3 +317,6 @@
 (lace "Festival Lace")
 (drum_lace "Festival Lace")
 (lace_desc "She's ready to experience all the festive frills.")
+(zoey "Zoey")
+(guitar_zoey "Zoey")
+(zoey_desc "Candy-coated chaos.")
