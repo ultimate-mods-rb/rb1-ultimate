@@ -312,11 +312,7 @@
                   }
                )
                (practice_new_section
-                  {if
-                     {&&
-                        {gamemode get is_practice}
-                        {!= vocals {{game get_player_config [player_number]} get_track_sym}}
-                     }
+                  {if {gamemode get is_practice}
                      {set $added TRUE}
                   }
                )
