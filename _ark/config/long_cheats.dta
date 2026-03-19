@@ -22,7 +22,18 @@
       {'||'
          $overshell_up
          {ui in_transition}
-         {find_elem OVERSHELL_DISALLOWED_SCREENS {ui current_screen}}
+         {find_elem
+            (
+               game_screen
+               hth_game_screen
+               practice_game_screen
+               jukebox_game_screen
+            )
+            {ui current_screen}
+         }
+         ; TODO maybe block some screens if online and not the session leader?
+         ; could just do something like {|| {is_leader_local} {pause_panel is_up}} 
+         ; maybe just pop on transition? look into SCREEN_CHANGE_MSG
       }
       {print "overshell blocked from opening"}
       {ui push_screen overshell_main_screen}

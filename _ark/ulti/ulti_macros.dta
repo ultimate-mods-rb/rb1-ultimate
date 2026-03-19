@@ -208,37 +208,6 @@
       }
    }
 )
-#define OVERSHELL_DISALLOWED_SCREENS (
-   (
-      autosave_wait_screen
-      save_screen
-      song_select_screen
-      song_select_tour_screen
-      test_game_screen
-      practice_game_screen
-      meta_loading_screen
-      meta_loading_continue_screen
-      shop_hair
-      shop_heads
-      shop_tops
-      shop_legs
-      shop_instruments
-      drum_trainer_beats_screen
-      drum_trainer_fills_screen
-      drum_trainer_freestyle_screen
-      tutorials_guitar_main_screen
-      tutorials_drums_main_screen
-      tutorials_vocals_main_screen
-      play_a_show_screen
-      play_a_show_tour_screen
-      cutscene_screen
-      jukebox_game_screen
-      camera_debug_game_screen
-      autoplay_game_screen
-      main_startscreen
-      attract_screen
-   )
-)
 #define HANDLE_MIC_DEPLOY (
    (BUTTON_DOWN_MSG
       {if_else
