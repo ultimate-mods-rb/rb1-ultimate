@@ -1,0 +1,76 @@
+{hospital_rooftop set_local_rot 180 0 0}
+{hospital_rooftop set_local_scale 29 29 29}
+{hospital_rooftop set_local_pos 390 -1380 -665.4}
+
+{foreach $d
+   (
+      room_back.grp 
+      room_geom_opaque.grp
+      room_geom_opaque_rafters.grp
+      props_boxes.grp
+      hanging_lightbulb.mesh
+      front_01.5.spot
+      front_01.spot
+      front_02.spot
+      front_03.5.spot
+      front_03.spot
+      front_04.spot
+   )
+   {$d set_showing FALSE}
+}
+
+; TODO disable a few shots that go into the vents 
+
+{new Trans spot_left}
+{spot_left set_local_pos -50 75 -25}
+{foreach $s
+   (
+      left_wall_01.spot
+      left_wall_02.spot
+      left_wall_03.spot
+   )
+   {$s set_trans_parent spot_left}
+}
+
+{new Trans spot_right}
+{spot_right set_local_pos 50 95 -23}
+{foreach $s
+   (
+      right_wall_01.spot
+      right_wall_02.spot
+   )
+   {$s set_trans_parent spot_right}
+}
+{right_wall_03.spot set_showing FALSE}
+
+{new Trans spot_back}
+{spot_back set_local_pos 0 0 -24}
+{foreach $s
+   (
+      back_01.spot
+      back_02.spot
+      back_03.spot
+      back_04.spot
+      back_05.spot
+      back_06.spot
+      back_07.spot
+      back_08.spot
+      back_09.spot
+      back_010.spot
+      'Flood light02.mesh'
+   )
+   {$s set_trans_parent spot_back}
+}
+{back_09.spot set_showing FALSE}
+{back_02.spot set_showing FALSE}
+
+
+{master_can.mesh set_local_pos 0 -100 0}
+
+#ifdef HX_XBOX ; fixes egregious lighting issues. properly fix eventually!
+   {room.env remove (lights 1)}
+   {room.env remove (lights 0)}
+#endif
+
+; TODO move crowd so they aren't like clipping into the floor.
+; moving the WorldCrowd only seems to move the 2d crowd and the 3d crowd doesn't move

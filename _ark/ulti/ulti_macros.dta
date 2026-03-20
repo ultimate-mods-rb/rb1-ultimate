@@ -1,5 +1,6 @@
 #define ULTI_VENUES (
    small_club_battle
+   small_club_rooftop
 )
 
 #define uNormal    (0)
