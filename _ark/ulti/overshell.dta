@@ -815,10 +815,10 @@
          (type uOnOFF)
          (bool $honestmode)
          (sel_script
-            ;{unless $honestmilo
-            ;   {set $honestmilo {load_objects ulti/honestbob.milo}}
-            ;   {$honestmilo delete_loader}
-            ;}
+            {unless $honestmilo
+               {set $honestmilo {load_objects ulti/honestbob.milo}}
+               {$honestmilo delete_loader}
+            }
             {toggle_var honestmode}
          )
       )
