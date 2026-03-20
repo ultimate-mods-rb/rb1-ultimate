@@ -1107,6 +1107,7 @@
                (worntshirt_guitarcenter)
                (worntshirt_line6)
                (spiderman (genre shell_shop_charstore))
+               (batman (genre shell_shop_charstore))
                (empty (ui_name none) (exclude TRUE))
             )
          )
