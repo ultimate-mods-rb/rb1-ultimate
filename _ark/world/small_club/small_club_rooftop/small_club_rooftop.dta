@@ -67,10 +67,5 @@
 
 {master_can.mesh set_local_pos 0 -100 0}
 
-#ifdef HX_XBOX ; fixes egregious lighting issues. properly fix eventually!
-   {room.env remove (lights 1)}
-   {room.env remove (lights 0)}
-#endif
-
 ; TODO move crowd so they aren't like clipping into the floor.
 ; moving the WorldCrowd only seems to move the 2d crowd and the 3d crowd doesn't move
