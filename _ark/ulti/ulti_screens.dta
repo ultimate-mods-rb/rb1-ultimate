@@ -162,3 +162,21 @@
       kDataUnhandled
    )
 }
+{new UIScreen
+   early_warning_screen
+   (panels dialog_panel)
+   (focus dialog_panel)
+   (destination '')
+   (enter
+      {dialog_panel set_yesno
+         {localize_token early_warning}
+         no.btn
+      }
+   )
+   (SELECT_START_MSG
+      {if {== $component yes.btn}
+         {ui pop_screen}
+      }
+      kDataUnhandled
+   )
+}

@@ -97,10 +97,15 @@
    )
    (enter_time 0.0)
    (attract_timeout_done FALSE)
+   (warned FALSE)
    (enter
       {set [enter_time] {taskmgr ui_seconds}}
       {set [attract_timeout_done] FALSE}
       {meta music_start}
+      {unless [warned]
+         {set [warned] TRUE}
+         {ui push_screen early_warning_screen}
+      }
    )
    (poll
       {if

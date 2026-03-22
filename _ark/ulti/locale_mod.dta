@@ -324,3 +324,8 @@
 (batman "Batman")
 (vocals_batman "Batman")
 (batman_desc "Yeah, I'm Man. Manman.")
+(early_warning "
+	RB1 Ultimate is in an alpha phase and very incomplete.\n
+	Please report any bugs or issues on the GitHub page.\n
+	Do you understand?
+")
