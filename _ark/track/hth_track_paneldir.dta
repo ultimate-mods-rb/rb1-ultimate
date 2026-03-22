@@ -210,9 +210,12 @@
                {head2head_meter set max_diff {beatmatch max_delta_points}}
                {head2head_meter set tie_window {beatmatch get_tie_window}}
             }
-            {if {! [vocal_game]}
-               {$this apply_track_speed}
-            }
+            ; if reset is called before configure_tracks (which it is when loading into a second song???)
+            ; then this crashes the game as [gem_track] just has two <null> entries
+            ; there is literally no need to update the track speed here anyways as configure_tracks does it
+            ;{if {! [vocal_game]}
+            ;   {$this apply_track_speed}
+            ;}
             {if $edit_mode
                {$this play_intro}
             }
