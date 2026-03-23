@@ -13,7 +13,9 @@
    (animate_track_out)
    (animate_track_out_fast)
    (animate_track_in_fast)
-   (finish_load
+   (finish_load {do
+      ($pro_drums {new RndDir pro_drums})
+      {$pro_drums insert (subdirs 0) "ulti/track/pro_drums.milo"}
       {$this iterate TrackDir $dir
          {with $dir
             {foreach $wid
@@ -28,8 +30,24 @@
                   cymbal_gem_orange.wid
                )
                {{new TrackWidget $wid} copy drum_red.wid 0}
-               {drum_gems.grp add_object $wid}
+               {drum_gems.grp insert (objects 5) $wid}
             }
+            {foreach $color (red yellow blue green orange) {do
+               ($wid {sprintf "cymbal_gem_%s.wid" $color})
+               {clear_array $wid meshes}
+               {$wid insert (meshes 0) {$pro_drums find {sprintf "cymbal_gem_%s.mesh" $color}}}
+            }}
+
+            {clear_array cymbal_gem_star.wid meshes}
+            {cymbal_gem_star.wid insert (meshes 0) {$pro_drums find cymbal_gem_style.mesh}}
+
+            {clear_array dynamic_crash_gem_cymbal.wid meshes}
+            {dynamic_crash_gem_cymbal.wid insert (meshes 0) {$pro_drums find cymbal_gem_green.mesh}}
+
+            {clear_array dynamic_crash_gem_cymbal_lefty.wid meshes}
+            {dynamic_crash_gem_cymbal_lefty.wid insert (meshes 0) {$pro_drums find cymbal_gem_red.mesh}}
+
+            {$this sync_objects}
          }
       }
       {do
@@ -77,7 +95,7 @@
       }
       {$this set_showing FALSE}
       {$this set_track_out}
-   )
+   })
    (intro_start
       {$this reset}
       {$this set_showing {if_else $nohud FALSE {gamemode get show_track}}}

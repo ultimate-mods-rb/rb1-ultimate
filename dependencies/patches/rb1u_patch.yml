@@ -1,0 +1,46 @@
+# IF YOU DO NOT KNOW WHAT THIS FILE IS IGNORE IT
+Version: 1.2
+
+PPU-0e7aaaa2ed0f2d8f8769b6e6d9dba0c2f2cdca7e:
+  "cymbals or whatever":
+    Games:
+      "Rock Band":
+        BLUS30050: [ 01.07 ]
+    Author: "Synchrony"
+    Notes: "yawn"
+    Patch Version: 1.0
+    Patch:
+      # if gem is in phrase just set 7 to a probably unused register ~_~
+      - [ be32, 0x0066060c, 0x3a200007 ] # li r17,0x7
+      - [ be32, 0x00660610, 0x4bffff78 ] # b LAB_00660588
+
+      # when branching to normal
+      - [ be32, 0x00660600, 0x4bbf77f1 ] # bl 0x00257df0
+
+      # load normal
+      - [ be32, 0x00257df0, 0x801f0008 ] # lwz r0,0x8(r31)
+
+      # check if r17 isn't 7
+      - [ be32, 0x00257df4, 0x2c110007 ] # cmpwi r17,0x7
+      - [ be32, 0x00257df8, 0x4082000c ] # bne 0x00257e04
+      # load star
+      - [ be32, 0x00257dfc, 0x801f0018 ] # lwz r0,0x18(r31)
+      - [ be32, 0x00257e00, 0x3a200000 ] # li r17, 0x0
+
+      - [ be32, 0x00257e04, 0x4e800020 ] # blr
+
+
+      # when branching to tom
+      - [ be32, 0x0066062c, 0x4bbf77dd ] # bl 0x00257e08
+
+      # load tom
+      - [ be32, 0x00257e08, 0x801f0058 ] # lwz r0,0x58(r31)
+
+      # check if r17 isn't 7
+      - [ be32, 0x00257e0c, 0x2c110007 ] # cmpwi r17,0x7
+      - [ be32, 0x00257e10, 0x4082000c ] # bne 0x00257e1c
+      # load unison
+      - [ be32, 0x00257e14, 0x801f0028 ] # lwz r0,0x28(r31)
+      - [ be32, 0x00257e18, 0x3a200000 ] # li r17, 0x0
+
+      - [ be32, 0x00257e1c, 0x4e800020 ] # blr

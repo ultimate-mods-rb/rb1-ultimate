@@ -1,0 +1,78 @@
+# IF YOU DO NOT KNOW WHAT THIS FILE IS IGNORE IT
+title_name = "Rock Band"
+title_id = "45410829"
+hash = "0C3EB532F32AAE70" # default.xex
+
+[[patch]]
+    name = "cymbals or whatever"
+    author = "Synchrony"
+    is_enabled = true
+
+    # if gem is in phrase just set 7 to a probably unused register ~_~
+    [[patch.be32]]
+        address = 0x8283d64c
+        value   = 0x3bc00007    # li r30,0x7
+    [[patch.be32]]
+        address = 0x8283d650
+        value   = 0x42800018    # b 0x8283d668
+
+    # when branching to normal
+    [[patch.be32]]
+        address = 0x8283d6cc
+        value   = 0x4bfdc87d    # bl 0x82819f48
+
+    # load normal
+    [[patch.be32]]
+        address = 0x82819f48
+        value   = 0x81700000    # lwz r11,0x0(r16)
+
+    # check if r30 isn't 7
+    [[patch.be32]]
+        address = 0x82819f4c
+        value   = 0x2c1e0007    # cmpwi r30,0x7
+    [[patch.be32]]
+        address = 0x82819f50
+        value   = 0x4082000c    # bne 0x82819f5c
+
+    # load star
+    [[patch.be32]]
+        address = 0x82819f54
+        value   = 0x81720000    # lwz r11,0x0(r18)
+    [[patch.be32]]
+        address = 0x82819f58
+        value   = 0x3bc00000    # li r30, 0x0
+
+    [[patch.be32]]
+        address = 0x82819f5c
+        value   = 0x4e800020    # blr
+
+
+    # when branching to tom
+    [[patch.be32]]
+        address = 0x8283d6c4
+        value   = 0x4bfdc89d    # bl 0x82819f60
+
+    # load tom
+    [[patch.be32]]
+        address = 0x82819f60
+        value   = 0x81740000    # lwz r11,0x0(r20)
+
+    # check if r30 isn't 7
+    [[patch.be32]]
+        address = 0x82819f64
+        value   = 0x2c1e0007    # cmpwi r30,0x7
+    [[patch.be32]]
+        address = 0x82819f68
+        value   = 0x4082000c    # bne 0x82819f74
+
+    # load unison
+    [[patch.be32]]
+        address = 0x82819f6c
+        value   = 0x81730000    # lwz r11,0x0(r19)
+    [[patch.be32]]
+        address = 0x82819f70
+        value   = 0x3bc00000    # li r30, 0x0
+
+    [[patch.be32]]
+        address = 0x82819f74
+        value   = 0x4e800020    # blr
