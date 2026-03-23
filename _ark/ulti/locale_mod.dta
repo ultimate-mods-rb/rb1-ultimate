@@ -324,6 +324,9 @@
 (batman "Batman")
 (vocals_batman "Batman")
 (batman_desc "Yeah, I'm Man. Manman.")
+(miku "Hatsune Miku")
+(vocals_miku "Hatsune Miku")
+(miku_desc "A virtual singer and cultural icon.")
 (early_warning "
 	RB1 Ultimate is in an alpha phase and very incomplete.\n
 	Please report any bugs or issues on the GitHub page.\n

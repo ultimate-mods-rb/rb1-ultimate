@@ -2762,6 +2762,7 @@
                (nemia (genre shell_shop_charstore))
                (lace (genre shell_shop_charstore))
                (zoey (genre shell_shop_charstore))
+               (miku (genre shell_shop_charstore))
                (empty (ui_name none) (exclude TRUE))
             )
          )
