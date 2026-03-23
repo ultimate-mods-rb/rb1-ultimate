@@ -19,60 +19,60 @@ hash = "0C3EB532F32AAE70" # default.xex
     # when branching to normal
     [[patch.be32]]
         address = 0x8283d6cc
-        value   = 0x4bfdc87d    # bl 0x82819f48
+        value   = 0x480632cd    # bl 0x828a0998
 
     # load normal
     [[patch.be32]]
-        address = 0x82819f48
+        address = 0x828a0998
         value   = 0x81700000    # lwz r11,0x0(r16)
 
     # check if r30 isn't 7
     [[patch.be32]]
-        address = 0x82819f4c
+        address = 0x828a099c
         value   = 0x2c1e0007    # cmpwi r30,0x7
     [[patch.be32]]
-        address = 0x82819f50
-        value   = 0x4082000c    # bne 0x82819f5c
+        address = 0x828a09a0
+        value   = 0x4082000c    # bne 0x828a09ac
 
     # load star
     [[patch.be32]]
-        address = 0x82819f54
+        address = 0x828a09a4
         value   = 0x81720000    # lwz r11,0x0(r18)
     [[patch.be32]]
-        address = 0x82819f58
+        address = 0x828a09a8
         value   = 0x3bc00000    # li r30, 0x0
 
     [[patch.be32]]
-        address = 0x82819f5c
+        address = 0x828a09ac
         value   = 0x4e800020    # blr
 
 
     # when branching to tom
     [[patch.be32]]
         address = 0x8283d6c4
-        value   = 0x4bfdc89d    # bl 0x82819f60
+        value   = 0x480632ed    # bl 0x828a09b0
 
     # load tom
     [[patch.be32]]
-        address = 0x82819f60
+        address = 0x828a09b0
         value   = 0x81740000    # lwz r11,0x0(r20)
 
     # check if r30 isn't 7
     [[patch.be32]]
-        address = 0x82819f64
+        address = 0x828a09b4
         value   = 0x2c1e0007    # cmpwi r30,0x7
     [[patch.be32]]
-        address = 0x82819f68
-        value   = 0x4082000c    # bne 0x82819f74
+        address = 0x828a09b8
+        value   = 0x4082000c    # bne 0x828a09c4
 
     # load unison
     [[patch.be32]]
-        address = 0x82819f6c
+        address = 0x828a09bc
         value   = 0x81730000    # lwz r11,0x0(r19)
     [[patch.be32]]
-        address = 0x82819f70
+        address = 0x828a09c0
         value   = 0x3bc00000    # li r30, 0x0
 
     [[patch.be32]]
-        address = 0x82819f74
+        address = 0x828a09c4
         value   = 0x4e800020    # blr
