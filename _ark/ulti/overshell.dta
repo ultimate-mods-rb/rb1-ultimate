@@ -773,6 +773,11 @@
       )
    ))
    (enter {os_setup_common})
+   (exit
+      {unless {|| $vchars $cchars}
+         {set $vchars TRUE}
+      }
+   )
    (BUTTON_DOWN_MSG {os_down_common})
    (SELECT_MSG {os_sel_common})
 }
