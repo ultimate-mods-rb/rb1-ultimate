@@ -304,6 +304,7 @@
 (vocals20 "Penelope McQueen")
 (shell_shop_charstore "CUSTOM CHARACTERS")
 (shop_clear_info "Do you want to clear customization options for this character? This will make things look as intended.")
+; chars
 (skye "Skye")
 (guitar_skye "Skye")
 (skye_desc "Find your greatest adventure.")
@@ -328,6 +329,24 @@
 (miku "Hatsune Miku")
 (vocals_miku "Hatsune Miku")
 (miku_desc "A virtual singer and cultural icon.")
+; guitar
+(mustang02 "Fender<sup>TM</sup> '65 Mustang<sup>TM</sup>")
+(mustang02_desc
+   "A favorite among grunge aficionados and the eternally hip, this reissue of the classic '65 boasts pickup switches and a tremolo arm and will instantly boost your punk points by 4."
+)
+(mustang02_paint "Paint")
+(mustang02_sparkle "Sparkle")
+(mustang02_sunburstblack "Black & 2-color Sunburst")
+(mustang02_sunburstpearl "Pearl & 2-color Sunburst")
+(mustang02_sunbursttortoise "Tortoiseshell & Sunburst")
+(mustang02_sunburstwhite "White & 2-color Sunburst")
+(mustang02_triburstblack "Black & 3-color Sunburst")
+(mustang02_triburstpearl "Pearl & 3-color Sunburst")
+(mustang02_tribursttortoise "Tortoiseshell & Triburst")
+(mustang02_triburstwhite "White & 3-color Sunburst")
+(mustang02_woodash "Ash")
+(mustang02_woodmaple "Maple")
+; mic
 (e935_resource "Sennheiser e 935")
 (e935_resource_desc
    "Sennheiser created the e 935 microphone to ensure your vocals cut through the mix with authority. With its sleek black handle and gunmetal grey basket, this microphone is almost as sexy as you are."
