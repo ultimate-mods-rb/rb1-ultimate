@@ -328,6 +328,58 @@
 (miku "Hatsune Miku")
 (vocals_miku "Hatsune Miku")
 (miku_desc "A virtual singer and cultural icon.")
+(e935_resource "Sennheiser e 935")
+(e935_resource_desc
+   "Sennheiser created the e 935 microphone to ensure your vocals cut through the mix with authority. With its sleek black handle and gunmetal grey basket, this microphone is almost as sexy as you are."
+)
+(md441u_resource "Sennheiser MD 441")
+(md441u_resource_desc
+   "A studio staple used by countless legends, the Sennheiser MD 441 will make you sound like you actually do those warm-up vocal exercises like you're supposed to."
+)
+(kms104_resource "Neumann KMS 104")
+(kms104_resource_desc
+   "Bringing the famed \qNeumann sound\q from the studio to the stage, the KMS 104 will impress both the crowd and the soundman with its delicate yet powerful sound."
+)
+(ksm9wireless_resource "Shure KSM9 Wireless Transmitter")
+(ksm9wireless_resource_desc
+   "Not only is the KSM9 crafted to ensure clear articulation and precise vocals, it's also wireless, so you can feel free to jump down in the pit with your drooling, rabid fans. Just don't let them mess up your hair."
+)
+(sm58_resource "Shure SM58®")
+(sm58_resource_desc
+   "The most iconic vocal microphone in existence for rock musicians, the Shure SM58® is the classic choice for all types of vocalists, from the wussiest shoegazer to the most metalliest of metalheads."
+)
+(md431ii_resource "Sennheiser MD 431 II")
+(md431ii_resource_desc
+   "Sennheiser's MD 431 II is a popular choice for its advanced shock-resistant design and very high-quality sound. The on/off switch can be very useful when opting to shout at your bandmates between songs."
+)
+(beta57_resource "Shure Beta 57")
+(beta57_resource_desc
+   "The Shure Beta 57's steel grille resists wear and abuse... unlike your ultra sensitive cry-baby bassist."
+)
+(beta87_resource "Shure Beta 87A")
+(beta87_resource_desc
+   "In addition to having particularly smooth frequency response, the Shure Beta 87A operates on phantom power, which should add a little mystery and intrigue to even the most straightforward performance. Phantom power!"
+)
+(sm57_resource "Shure SM57")
+(sm57_resource_desc
+   "With its effective cardioid pickup pattern, the SM57 is ideal for recording drums, guitar, and woodwinds. And also pretty darn good for singing into, as is evidenced by the variety of innovative artists who have favored it."
+)
+(bonesandspikes_resource "The MicroBone")
+(bonesandspikes_resource_desc
+   "You may say that it's a femur, but it's not the only one."
+)
+(brokenmic_resource "Sonic Transducer")
+(brokenmic_resource_desc
+   "You ain't no loser with this rebellious mic -- perfect for your next basement show or animal rights rally!"
+)
+(goth_resource "The Claw")
+(goth_resource_desc
+   "Crafted from antique silver and just a smattering of evil, The Claw is guaranteed to bring out your most blood-curdling scream."
+)
+(knife_resource "Studded Belter")
+(knife_resource_desc
+   "Belt out those high notes into this studded leather microphone, with an aggressive arrowhead attachment!"
+)
 (early_warning "
 	RB1 Ultimate is in an alpha phase and very incomplete.\n
 	Please report any bugs or issues on the GitHub page.\n
