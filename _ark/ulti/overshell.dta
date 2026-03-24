@@ -395,7 +395,7 @@
          (fmt_type uLocalize)
          (hide_on_sel TRUE)
          (var gems)
-         (array (rb2 rb1 rb3 tbrb lrb gh2 gh3 ghwt ghwor ghl))
+         (array (rb1 rb2 rb2_wii rb3 tbrb lrb gh2 gh3 ghwt ghwor ghl))
       )
       (os_smashers
          (type uFakeSld)

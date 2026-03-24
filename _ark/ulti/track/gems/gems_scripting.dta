@@ -68,13 +68,13 @@
    {$this load_gems
       {sprintf "ulti/track/gems/%s/gems.milo" $gems}
       (
-         (gem_green_hopo.wid (prism_glow_hopo_green.mesh prism_gem_hopo_green.mesh) FALSE)
-         (gem_red_hopo.wid (prism_glow_hopo_red.mesh prism_gem_hopo_red.mesh) FALSE)
-         (gem_yellow_hopo.wid (prism_glow_hopo_yellow.mesh prism_gem_hopo_yellow.mesh) FALSE)
-         (gem_blue_hopo.wid (prism_glow_hopo_blue.mesh prism_gem_hopo_blue.mesh) FALSE)
-         (gem_orange_hopo.wid (prism_glow_hopo_orange.mesh prism_gem_hopo_orange.mesh) FALSE)
-         (gem_miss_hopo.wid (prism_glow_hopo_miss.mesh prism_gem_hopo_miss.mesh) FALSE)
-         (star_hopo.wid (prism_glow_hopo_style.mesh prism_gem_hopo_style.mesh) FALSE)
+         (gem_green_hopo.wid (prism_glow_hopo_green.mesh prism_gem_hopo_green.mesh))
+         (gem_red_hopo.wid (prism_glow_hopo_red.mesh prism_gem_hopo_red.mesh))
+         (gem_yellow_hopo.wid (prism_glow_hopo_yellow.mesh prism_gem_hopo_yellow.mesh))
+         (gem_blue_hopo.wid (prism_glow_hopo_blue.mesh prism_gem_hopo_blue.mesh))
+         (gem_orange_hopo.wid (prism_glow_hopo_orange.mesh prism_gem_hopo_orange.mesh))
+         (gem_miss_hopo.wid (prism_glow_hopo_miss.mesh prism_gem_hopo_miss.mesh))
+         (star_hopo.wid (prism_glow_hopo_style.mesh prism_gem_hopo_style.mesh))
       )
    }
    {$this iterate TrackDir $dir
@@ -86,6 +86,42 @@
          {{$gems_dir find prism_glow_hopo_style.mesh} set_mat prism_glow_blue.mat}
          {{$gems_dir find prism_gem_hopo_style.mesh} set_mat prism_mat.mat}
       }
+   }
+)
+(rb2_wii
+   {$this load_gems
+      {sprintf "ulti/track/gems/%s/gems.milo" $gems}
+      (
+         (gem_green.wid (prism_glow_green.mesh prism_gem_stepped_green.mesh) FALSE)
+         (gem_red.wid (prism_glow_red.mesh prism_gem_stepped_red.mesh) FALSE)
+         (gem_yellow.wid (prism_glow_yellow.mesh prism_gem_stepped_yellow.mesh) FALSE)
+         (gem_blue.wid (prism_glow_blue.mesh prism_gem_stepped_blue.mesh) FALSE)
+         (gem_orange.wid (prism_glow_orange.mesh prism_gem_stepped_orange.mesh) FALSE)
+         (gem_miss.wid (prism_glow_stepped_miss.mesh prism_gem_stepped_miss.mesh) FALSE)
+         (star_gem.wid (prism_glow_style.mesh prism_gem_stepped_style.mesh) FALSE)
+
+         (gem_green_hopo.wid (prism_glow_hopo_green.mesh prism_gem_hopo_green.mesh) FALSE)
+         (gem_red_hopo.wid (prism_glow_hopo_red.mesh prism_gem_hopo_red.mesh) FALSE)
+         (gem_yellow_hopo.wid (prism_glow_hopo_yellow.mesh prism_gem_hopo_yellow.mesh) FALSE)
+         (gem_blue_hopo.wid (prism_glow_hopo_blue.mesh prism_gem_hopo_blue.mesh) FALSE)
+         (gem_orange_hopo.wid (prism_glow_hopo_orange.mesh prism_gem_hopo_orange.mesh) FALSE)
+         (gem_miss_hopo.wid (prism_glow_hopo_miss.mesh prism_gem_hopo_miss.mesh) FALSE)
+         (star_hopo.wid (prism_glow_hopo_style.mesh prism_gem_hopo_style.mesh) FALSE)
+
+         (drum_red.wid (prism_glow_drum_red.mesh prism_gem_drum_red.mesh) FALSE)
+         (drum_yellow.wid (prism_glow_drum_yellow.mesh prism_gem_drum_yellow.mesh) FALSE)
+         (drum_blue.wid (prism_glow_drum_blue.mesh prism_gem_drum_blue.mesh) FALSE)
+         (drum_green.wid (prism_glow_drum_green.mesh prism_gem_drum_green.mesh) FALSE)
+         (drum_miss.wid (prism_glow_drum_miss.mesh prism_gem_drum_miss.mesh) FALSE)
+         (drum_star.wid (prism_glow_drum_style.mesh prism_gem_drum_style.mesh) FALSE)
+
+         (gem_kick.wid (prism_gem_kick_glow.mesh prism_gem_kick.mesh) FALSE)
+         (kick_miss.wid (prism_gem_kick_miss_glow.mesh prism_gem_kick_miss.mesh) FALSE)
+         (star_kick.wid (prism_gem_kick_glow_style.mesh prism_gem_kick_style.mesh) FALSE)
+
+         (dynamic_crash_gem.wid dynamic_crash_green.mesh)
+         (dynamic_crash_gem_lefty.wid dynamic_crash_red.mesh)
+      )
    }
 )
 (tbrb
