@@ -131,6 +131,9 @@
             {$player set_crowd_rating 0.66}
          }
       }
+      {unless {&& {gamemode get is_practice} {gamecfg get practice_speed}}
+         {beatmatch set_music_speed {get_song_speed}}
+      }
    )
    (do_stuff
       {if {gems_dir exists animate.trig}

@@ -238,7 +238,15 @@
    )
    #define SELECTED_AWARDS (())
    (set_results
-      {heading.lbl set_localized {song_mgr song_name {game get_song}}}
+      {heading.lbl set_localized
+         {if_else {> {get_song_speed} 1.00}
+            {sprintf "%s (%d% Speed)"
+               {song_mgr song_name {game get_song}}
+               {int {* 100 {get_song_speed}}}
+            }
+            {song_mgr song_name {game get_song}}
+         }
+      }
       {if {! {gamemode is_hth_arrangement}}
          {score.lbl set_localized {fmt_score {{beatmatch main_performer} score}}}
          {stars.lbl set_localized {{beatmatch main_performer} star_rating}}

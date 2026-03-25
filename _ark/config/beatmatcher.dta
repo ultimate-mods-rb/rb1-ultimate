@@ -211,7 +211,12 @@
 )
 (watcher
    (can_switch_tracks FALSE)
-   (slop 100)
+   (slop
+      {if_else {gamemode get is_practice}
+         100
+         {int {+ {* 100 {get_song_speed}} 0.5}}
+      }
+   )
    (cheat_error 0)
    (autoplay_accuracy (100 100 100 100))
    (pitch_bend_range $whammypb)

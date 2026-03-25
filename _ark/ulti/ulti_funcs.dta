@@ -481,7 +481,7 @@
             }
          }
       )
-      ($view_time {* {* {/ $diff_view_time $ts} $hwss} $speedmod})
+      ($view_time {* {* {/ $diff_view_time $ts} $hwss} {get_song_speed}})
       {print {sprint $obj " " $diff_view_time " " $ts " " $hwss " " $view_time}}
       {$obj set y_per_second {/ {$obj get top_y} $view_time}}
    }}
@@ -910,5 +910,11 @@
          }
          {print {sprint "WARNING! failed to load " $milo}}
       }
+   }
+}
+{func get_song_speed
+   {if_else {== {session mode} kNetLocal}
+      {clamp $speedmod 1.00 2.50}
+      1.00
    }
 }
