@@ -359,6 +359,10 @@
          {beatmatch jump $start_ms}
          {beatmatch start}
          {set [jump_frame] TRUE}
+         {script_task kTaskUISeconds
+            (delay 0.5)
+            (script {coop_track_panel do_stuff})
+         }
       }
    )
    (BUTTON_DOWN_MSG

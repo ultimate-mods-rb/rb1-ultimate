@@ -242,7 +242,7 @@
          {if_else {> {get_song_speed} 1.00}
             {sprintf "%s (%d% Speed)"
                {song_mgr song_name {game get_song}}
-               {int {* 100 {get_song_speed}}}
+               {int {+ {* 100 {get_song_speed}} 0.5}}
             }
             {song_mgr song_name {game get_song}}
          }

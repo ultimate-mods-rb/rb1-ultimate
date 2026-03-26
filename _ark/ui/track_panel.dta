@@ -106,6 +106,7 @@
       {$this set_showing {if_else $nohud FALSE {gamemode get show_track}}}
       {$this set_track_out}
       {$this play_intro}
+      {$this do_stuff}
    )
    (on_reset
       {beatmatch foreach_active_player $m

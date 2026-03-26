@@ -142,7 +142,24 @@
          }
          {do
             {print {sprint {game get_venue} " is an unknown venue. a fallback will be loaded."}}
-            "../world/small_club/small_club_01/small_club_01.milo"
+            {cond
+               ({startswith {game get_venue} "small_club"}
+                  "../world/small_club/small_club_01/small_club_01.milo"
+               )
+               ({startswith {game get_venue} "arena"}
+                  "../world/arena/arena_01/arena_01.milo"
+               )
+               ({startswith {game get_venue} "theater"}
+                  "../world/theater/theater_01/theater_01.milo"
+               )
+               ({startswith {game get_venue} "big_club"}
+                  "../world/big_club/big_club_01/big_club_01.milo"
+               )
+               ({== {gamemode get player_arrangement} kArrangeHth}
+                  "../world/big_club/big_club_01/big_club_01.milo"
+               )
+               (TRUE "../world/small_club/small_club_01/small_club_01.milo")
+            }
          }
       }
    )
