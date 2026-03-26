@@ -1,0 +1,3 @@
+{{Back_L03.spot dir} iterate_self Spotlight $s
+   {$s set_showing FALSE}
+}
