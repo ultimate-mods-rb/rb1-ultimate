@@ -43,13 +43,15 @@
    (flip_check_index 0)
    (hud_check_index 0)
    (pause_commands
-      (pause_resume
+      (
+         pause_resume
          pause_restart
          lefty_flip
          vocal_hud
          vocal_options
          practice_new_section
          new_song
+         practice
          gig_guide
          band_members
          forfeit
@@ -224,6 +226,10 @@
                {ui goto_screen {gamemode get confirm_quit_screen}}
             }
          )
+         (practice
+            {set [exit_destination] exit_practice}
+            {ui goto_screen {gamemode get confirm_quit_screen}}
+         )
          (band_members
             {set [exit_destination] exit_change_band}
             {ui goto_screen {gamemode get confirm_quit_screen}}
@@ -330,6 +336,16 @@
                      }
                   }
                )
+               (practice
+                  {if
+                     {&&
+                        {== {session num_players} 1}
+                        {! {gamemode get is_practice}}
+                        {! {gamemode get is_jukebox}}
+                     }
+                     {set $added TRUE}
+                  }
+               )
                (gig_guide
                   {if
                      {&&
@@ -429,6 +445,10 @@
          )
          (exit_quit {ui goto_screen meta_loading_quit_early_screen})
          (exit_restart {$this on_restart})
+         (exit_practice
+            {session end_game kQuit}
+            {band_ui_sink sync_screen goto_practice_screen 1}
+         )
       }
    )
 }
