@@ -48,6 +48,9 @@
       goldprogress
       vchars
       cchars
+      normal_venues
+      rb2_venues
+      custom_venues
       crowd
       gtrgem1
       gtrgem2

@@ -918,3 +918,26 @@
       1.00
    }
 }
+{func get_venues
+   ($s) {do
+   ($a {array 0})
+   {push_back $a blank_01}
+   {if $normal_venues
+      {foreach $v {if_else {!= $s hth} (VENUES) (HTH_VENUES)}
+         {unless {find_elem $a $v}
+            {push_back $a $v}
+         }
+      }
+   }
+   {if $rb2_venues
+      {foreach $v {if_else {!= $s hth} (RB2_VENUES) (RB2_H2H_VENUES)}
+         {push_back $a $v}
+      }
+   }
+   {if $custom_venues
+      {foreach $v {if_else {!= $s hth} (ULTI_VENUES) (ULTI_H2H_VENUES)}
+         {push_back $a $v}
+      }
+   }
+   $a
+}}

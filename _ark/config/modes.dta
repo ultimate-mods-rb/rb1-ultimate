@@ -108,7 +108,7 @@
    (pause_screen pause_screen)
    (practice_mode_fx FALSE)
    (render_practice_loop FALSE)
-   (venues (VENUES ULTI_VENUES))
+   (venues {get_venues coop})
    (always_allow_player FALSE)
    (unlock_song_initial_num 58)
    (unlock_song_instrument '')
@@ -153,7 +153,7 @@
    (max_players 2)
    (player_arrangement kArrangeHth)
    (login_status kProhibited)
-   (venues (HTH_VENUES ULTI_H2H_VENUES))
+   (venues {get_venues hth})
    (unlock_song_instrument
       {{{game get_player_config {game get leader_num}} get_char} get_instrument}
    )

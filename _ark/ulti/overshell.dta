@@ -764,6 +764,21 @@
          (bool $cchars)
          (sel_script {toggle_var cchars})
       )
+      (os_normal_venues
+         (type uOnOFF)
+         (bool $normal_venues)
+         (sel_script {toggle_var normal_venues})
+      )
+      (os_rb2_venues
+         (type uOnOFF)
+         (bool $rb2_venues)
+         (sel_script {toggle_var rb2_venues})
+      )
+      (os_custom_venues
+         (type uOnOFF)
+         (bool $custom_venues)
+         (sel_script {toggle_var custom_venues})
+      )
       (os_reset_all
          (type uNormal)
          (sel_script
@@ -776,6 +791,9 @@
    (exit
       {unless {|| $vchars $cchars}
          {set $vchars TRUE}
+      }
+      {unless {|| $normal_venues $rb2_venues $custom_venues}
+         {set $normal_venues TRUE}
       }
    )
    (BUTTON_DOWN_MSG {os_down_common})

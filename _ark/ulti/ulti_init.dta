@@ -83,6 +83,12 @@
 
 {set $cchars TRUE}
 
+{set $normal_venues TRUE}
+
+{set $rb2_venues TRUE}
+
+{set $custom_venues TRUE}
+
 {set $smallworld FALSE}
 
 {set $bigmode FALSE}

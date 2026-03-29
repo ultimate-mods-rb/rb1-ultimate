@@ -130,7 +130,7 @@
 {new UIPanel
    world_panel
    (file
-      {if_else {find_elem {gamemode get venues} {game get_venue}}
+      {if_else {find_elem (VENUES RB2_VENUES ULTI_VENUES) {game get_venue}}
          {sprint
             "../world/"
             {game get_venue_dir}
