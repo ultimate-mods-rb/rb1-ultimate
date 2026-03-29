@@ -13,3 +13,4 @@ _ark/*.py
 *.bak
 _temp*
 *.xcf
+/dependencies/__pycache__
