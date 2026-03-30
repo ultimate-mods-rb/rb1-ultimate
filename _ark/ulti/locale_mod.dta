@@ -351,6 +351,9 @@
 (miku "Hatsune Miku")
 (vocals_miku "Hatsune Miku")
 (miku_desc "A virtual singer and cultural icon.")
+(tracy "Tracy Trouble")
+(drum_tracy "Tracy Trouble")
+(tracy_desc "She's got you in her sights.")
 ; guitar
 (mustang02 "Fender<sup>TM</sup> '65 Mustang<sup>TM</sup>")
 (mustang02_desc

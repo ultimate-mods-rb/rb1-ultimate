@@ -2763,6 +2763,7 @@
                (lace (genre shell_shop_charstore))
                (zoey (genre shell_shop_charstore))
                (miku (genre shell_shop_charstore))
+               (tracy (genre shell_shop_charstore))
                (empty (ui_name none) (exclude TRUE))
             )
          )
