@@ -95,7 +95,9 @@
    (file "")
    (enter
       {platform_mgr add_sink $this connection_status_changed}
-      {server add_sink $this server_status_changed}
+      {if {server is_connected}
+         {server add_sink $this server_status_changed}
+      }
    )
    (return_screen main_community_screen)
    (exit
@@ -376,7 +378,8 @@
          }
       }
       #endif
-      {if_else {server is_connected}
+      ; the leaderboards for the hth modes still work on xbox live
+      {if_else #ifdef HX_PS3 {server is_connected} #else {platform_mgr is_connected} #endif
          {$this enable leaderboards.btn}
          {$this disable leaderboards.btn}
       }
@@ -436,7 +439,16 @@
 #define COMMON_LEADERBOARD_PANEL (
    (focus solo.btn)
    LIMIT_TO_SESSION_IF_LEADER
-   (enter {leaderboards clear_type})
+   (enter {leaderboards clear_type}
+      #ifdef HX_XBOX
+      {unless {server is_connected}
+         {foreach $btn (solo.btn band_song.btn band_fans.btn)
+            {$this disable $btn}
+         }
+         {$this set_focus hth_pro_ranked.btn}
+      }
+      #endif
+   )
    (login_status kDesirable)
    (SELECT_MSG
       {leaderboards set_player_num $player_num}
