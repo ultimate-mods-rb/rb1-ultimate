@@ -8,19 +8,19 @@ buildark.build_ark(
 	"patch_ps3",
 	"rb1_patch",
 	[
-		r".*\.bik",
-		r".*\..*_wii",
-		r".*\.xbvwii",
-		r".*\..*_xbox",
+		r".*\.bik$",
+		r".*\..*_wii$",
+		r".*\.xbvwii$",
+		r".*\..*_xbox$",
 		r".*_out.*",
 		r".*_dbg\.milo.*",
 		r".*_rt\.milo.*",
-		r".*\.bak",
-		r".*\.png",
-		r".*\.jpg",
-		r".*\.dds",
-		r".*\.xcf",
-		r".*\.sh",
-		r".*\.py"
+		r".*\.bak$",
+		r".*\.png$",
+		r".*\.jpg$",
+		r".*\.dds$",
+		r".*\.xcf$",
+		r".*\.sh$",
+		r".*\.py$"
 	]
 )

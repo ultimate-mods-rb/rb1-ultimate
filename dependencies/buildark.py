@@ -44,7 +44,7 @@ def build_ark(srcs, dest, temp_ark, ark_name, game, excludes):
 					if platform.system() == "Windows":
 						shutil.copy(file, file_temp)
 					else:
-						subprocess.run(["ln", file, file_temp])
+						subprocess.run(["ln", file, file_temp, "-f"])
 
 	# build ark
 	run = [arkhelper_path, "dir2ark",  temp_ark, dest, "-n", ark_name, "-s", "2147483647"]
