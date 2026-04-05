@@ -1,4 +1,4 @@
-((gh3 ghwor ghl)
+((gh3 gh3_beta ghwor ghl)
    {with $smashers_dir
       {foreach $dir (guitar bass)
          {new ObjectDir $dir}

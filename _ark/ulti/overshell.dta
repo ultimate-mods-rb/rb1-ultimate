@@ -402,7 +402,7 @@
          (fmt_type uLocalize)
          (hide_on_sel TRUE)
          (var smashers)
-         (array (rb1 gh2 gh3 ghwor ghl))
+         (array (rb1 gh2 gh3 gh3_beta ghwor ghl))
       )
       (os_colors
          (type uNormal)
