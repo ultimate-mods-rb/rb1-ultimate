@@ -834,6 +834,11 @@
          (bool $bigmode)
          (sel_script {toggle_var bigmode})
       )
+      (os_scale_head
+         (type uOnOFF)
+         (bool $scale_head)
+         (sel_script {toggle_var scale_head})
+      )
       (os_honestmode
          (type uOnOFF)
          (bool $honestmode)

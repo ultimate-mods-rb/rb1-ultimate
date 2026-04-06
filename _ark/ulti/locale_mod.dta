@@ -149,6 +149,7 @@
 (os_honestmode "Honest Mode")
 (os_hidechars "Hide Characters")
 (os_selectvenue "Select Venue Screen")
+(os_scale_head "Scale Head")
 (time_total "Time & Total")
 (remaining_total "Remaining & Total")
 (remaining "Remaining")

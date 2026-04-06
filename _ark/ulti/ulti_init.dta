@@ -101,6 +101,8 @@
 
 {set $flashbang FALSE}
 
+{set $scale_head FALSE}
+
 {set $cnt_slot1 kPad_L2}
 {set $cnt_slot2 kPad_L1}
 {set $cnt_slot3 kPad_R1}

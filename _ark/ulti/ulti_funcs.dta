@@ -587,6 +587,18 @@
          {$c set_showing FALSE}
       }
    }
+   {if $scale_head
+      {$world iterate CompositeCharacter $c
+         {if {$c exists bone_head.mesh} {with $c
+            {unless {exists scale_head}
+               {new Trans scale_head}
+            }
+            {scale_head set_local_scale 2 2 2}
+            {scale_head set_trans_parent bone_head_nod.mesh}
+            {bone_head.mesh set_trans_parent scale_head}
+         }}
+      }
+   }
 }
 {func tolower ; fuck you harmonix
    ($string)
