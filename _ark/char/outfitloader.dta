@@ -1841,6 +1841,7 @@
          )
          (rings
             (closet TRUE)
+            (has_unlocks TRUE)
             (outfits
                (none (ui_name naked_rings))
                (malerings_bandaid
@@ -1915,6 +1916,7 @@
                   (ui_name rings_wings)
                   (cost 60)
                )
+               (halo)
             )
          )
          (earrings
@@ -3563,6 +3565,7 @@
          )
          (rings
             (closet TRUE)
+            (has_unlocks TRUE)
             (outfits
                (none (ui_name naked_rings))
                (femalerings_bandaid
@@ -3637,6 +3640,7 @@
                   (ui_name rings_wings)
                   (cost 60)
                )
+               (halo)
             )
          )
          (earrings

@@ -427,6 +427,9 @@
 (knife_resource_desc
    "Belt out those high notes into this studded leather microphone, with an aggressive arrowhead attachment!"
 )
+; etc
+(halo "Halo")
+(halo_desc "You're Winner!")
 (early_warning "
 	RB1 Ultimate is in an alpha phase and very incomplete.\n
 	Please report any bugs or issues on the GitHub page.\n

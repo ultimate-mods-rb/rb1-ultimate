@@ -1075,6 +1075,20 @@
             (display_song TRUE)
             (reward_per_star 30)
             (songs (unlock 12))
+            (outfit
+               (guitar
+                  (male rings halo)
+                  (female rings halo)
+               )
+               (vocals
+                  (male rings halo)
+                  (female rings halo)
+               )
+               (drum
+                  (male rings halo)
+                  (female rings halo)
+               )
+            )
          )
          (unlock13
             (display_song TRUE)
