@@ -1,0 +1,37 @@
+{foreach $d
+   (
+      room_back.grp 
+      room_geom_opaque.grp
+      room_geom_opaque_rafters.grp
+      props_boxes.grp
+      hanging_lightbulb.mesh
+      front_mid02_spotlight.spot
+      front_right02_spotlight.spot
+      front_right02_spotlight2.spot
+      left_wall_01.spot
+      left_wall_02.spot
+      left_wall_03.spot
+      right_wall_01.spot
+      right_wall_02.spot
+      right_wall_03.spot
+      back_01.spot
+      back_02.spot
+      back_03.spot
+      back_04.spot
+      back_05.spot
+      back_06.spot
+      back_07.spot
+      back_08.spot
+      back_09.spot
+      back_010.spot
+      front_01.5.spot
+      front_01.spot
+      front_02.spot
+      front_03.5.spot
+      front_03.spot
+      front_04.spot
+   )
+   {$d set_showing FALSE}
+}
+{'Flood light02.mesh' set_trans_parent spot_back}
+{master_can.mesh set_local_pos 0 -1000 0}
