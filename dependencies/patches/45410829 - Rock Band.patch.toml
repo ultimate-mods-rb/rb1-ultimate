@@ -1,7 +1,7 @@
 # IF YOU DO NOT KNOW WHAT THIS FILE IS IGNORE IT
 title_name = "Rock Band"
 title_id = "45410829"
-hash = "0C3EB532F32AAE70" # default.xex
+hash = "5A2F3006CD9A4C53" # default.xex
 
 [[patch]]
     name = "cymbals or whatever"
@@ -75,4 +75,12 @@ hash = "0C3EB532F32AAE70" # default.xex
 
     [[patch.be32]]
         address = 0x828a09c4
+        value   = 0x4e800020    # blr
+[[patch]]
+    name = "disable texture compression"
+    author = "Synchrony"
+    is_enabled = true
+
+    [[patch.be32]]
+        address = 0x822eb398    # CompositeCharacter::CompressTextures according to rb2 wii
         value   = 0x4e800020    # blr
