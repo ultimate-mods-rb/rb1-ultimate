@@ -529,6 +529,9 @@
             {$cs set (keyframes $i shake_maxangle y) 0}
          }
       }
+      {if $force_per_pixel
+         {$cs set ps3_per_pixel TRUE}
+      }
    }
    {if $bigmode {do
       ($x) ($y) ($z)

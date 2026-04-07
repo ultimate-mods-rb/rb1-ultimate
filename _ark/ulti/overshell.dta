@@ -232,6 +232,13 @@
          (bool $crowd)
          (sel_script {toggle_var crowd})
       )
+      #ifdef HX_PS3
+      (os_force_per_pixel
+         (type uOnOFF)
+         (bool $force_per_pixel)
+         (sel_script {toggle_var force_per_pixel})
+      )
+      #endif
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})

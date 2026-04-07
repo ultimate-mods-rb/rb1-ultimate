@@ -35,6 +35,8 @@
 
 {set $crowd TRUE}
 
+{set $force_per_pixel FALSE}
+
 {set $emulatefps 24}
 
 {set $vsyncrate 1}

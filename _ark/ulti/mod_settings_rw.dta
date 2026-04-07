@@ -52,6 +52,7 @@
       rb2_venues
       custom_venues
       crowd
+      force_per_pixel
       gtrgem1
       gtrgem2
       gtrgem3
