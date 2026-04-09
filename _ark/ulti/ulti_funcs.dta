@@ -956,3 +956,36 @@
    }
    $a
 }}
+{func unlock_event_clothing
+   ($event) {do
+   ($c {find_exists $syscfg event_unlocks $event})
+   ;{print {sprint $event " " $c}}
+   {if {&& $c {== {type $c} kDataArray}}
+      {game foreach_local_player $p {do
+         ($char {$p get_char})
+         ($gc {find_exists $c {$char get_gender}})
+         ($inst {$char get_instrument})
+         ;{print {sprint $gc " " $inst}}
+         {if $gc
+            {foreach $e $gc
+               {if {== {type $e} kDataArray} {do
+                  ($cat {elem $e 0})
+                  ($outfit {elem $e 1})
+                  ($valid
+                     {switch $cat
+                        ((guitar bass) {== $inst guitar})
+                        (drum {== $inst drum})
+                        (mic {== $inst vocals})
+                        TRUE
+                     }
+                  )
+                  ;{print {sprint $cat " " $outfit " " $valid}}
+                  {if $valid
+                     {$char buy_outfit $cat $outfit 0}
+                  }
+               }}
+            }
+         }
+      }}
+   }
+}}
