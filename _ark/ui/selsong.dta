@@ -279,8 +279,9 @@
                {do
                   {song_preview ''}
                   {session send_to_all (song_preview '') kNetReliable}
-                  {ss_song.lst set_provider song_provider}
-                  {ui goto_screen tour_selsong_screen}
+                  ;{ss_song.lst set_provider song_provider}
+                  ;{ui goto_screen tour_selsong_screen}
+                  {$this select_first_selectable}
                   {$this update_setlist_progress}
                   {$this update_search_mode FALSE}
                }
