@@ -358,6 +358,9 @@
 (tracy "Tracy Trouble")
 (drum_tracy "Tracy Trouble")
 (tracy_desc "She's got you in her sights.")
+(lisa "LISA")
+(vocals_lisa "LISA")
+(lisa_desc "Please don't call her phone again.")
 ; guitar
 (mustang02 "Fender<sup>TM</sup> '65 Mustang<sup>TM</sup>")
 (mustang02_desc
