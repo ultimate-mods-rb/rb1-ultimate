@@ -401,6 +401,15 @@
             {$lbl set_type kabel_bold}
          }
       }
+      {if {== $this tour_nextsong_panel}
+         {foreach $dir {players.set get_array objects} {with $dir
+            {new BandLabel streak.lbl}
+            {streak.lbl copy award.lbl 0}
+            {streak.lbl set_local_pos_index 2 -120.00}
+            {player.grp add_object streak.lbl}
+            {$this sync_objects}
+         }}
+      }
    )
 )
 {new UIPanel
