@@ -28,6 +28,9 @@
                hth_game_screen
                practice_game_screen
                jukebox_game_screen
+               drum_trainer_beats_screen
+               drum_trainer_fills_screen
+               drum_trainer_freestyle_screen
             )
             {ui current_screen}
          }
