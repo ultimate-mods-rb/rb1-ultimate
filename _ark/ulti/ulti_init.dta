@@ -35,7 +35,7 @@
 
 {set $crowd TRUE}
 
-{set $force_per_pixel FALSE}
+{set $force_per_pixel TRUE}
 
 {set $emulatefps 24}
 
