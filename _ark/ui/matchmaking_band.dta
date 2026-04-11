@@ -841,6 +841,7 @@
          }
       }
       {char_cache cache_update}
+      {qp_selsong_panel set players {array 0}}
    )
    (on_dismiss_event {$this transition_complete '' ''})
    (TRANSITION_COMPLETE_MSG

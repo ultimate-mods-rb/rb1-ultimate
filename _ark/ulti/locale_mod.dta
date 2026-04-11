@@ -439,6 +439,7 @@
 	Please report any bugs or issues on the GitHub page.\n
 	Do you understand?
 ")
+(waiting_for_player "Waiting for %s...")
 ;;;
 ;;; DRUM TRAINER
 ;;;

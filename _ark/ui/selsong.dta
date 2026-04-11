@@ -18,7 +18,11 @@
             {== {game get leader_num} -1}
             {game is_player_participating $player_num}
          }
-         {&& {is_leader_local} {game is_player_participating $player_num}}
+         {&&
+            {!= [sel_leader] -1}
+            {gamecfg is_player_local [sel_leader]}
+            {game is_player_participating $player_num}
+         }
       }
    )
    (exiting_sel_song FALSE)
@@ -26,7 +30,7 @@
    (inhibit_refresh FALSE)
    (focus ss_song.lst)
    (joypad
-      (hold_ms 500)
+      (hold_ms 100)
       (repeat_ms 80)
    )
    (load
@@ -65,7 +69,9 @@
       {ss_song.lst set_provider song_provider}
       {meta music_stop}
       {platform_mgr disable_xmp}
-      {$this sync_grouping_method}
+      {if {is_leader_local}
+         {$this sync_grouping_method}
+      }
       {if {!= [song_mode] leaderboards}
          {$this select_first_selectable}
       }
@@ -110,10 +116,15 @@
          }
       }
       {$this update_filter {song_provider get_display}}
+      {$this update_leader}
    )
    (exit
       {set [search_mode] FALSE}
       {set [results] {array 0}}
+      {set [sel_leader] -1}
+      {if {size [players]}
+         {remove_elem [players] {get_elem [players] 0}}
+      }
       {platform_mgr enable_xmp}
       {platform_mgr remove_sink $this storage_changed}
       {session remove_sink $this change_game_msg}
@@ -126,7 +137,14 @@
    )
    (SELECT_START_MSG
       {if {$this try_save_song}
-         {$this select_song}
+         {if_else {is_leader_local}
+            {$this select_song}
+            {session send_to_player
+               {gamecfg get leader_num}
+               {` ({, $this} select_song)}
+               kNetReliable
+            }
+         }
       }
       kDataUnhandled
    )
@@ -322,7 +340,7 @@
       {$this update_filter {song_provider get_display}}
    )
    (sync_grouping_method
-      {if {&& {is_leader_local} {!= [song_mode] leaderboards}}
+      {if {!= [song_mode] leaderboards}
          {session send_to_all
             {'`'
                ({',' $this}
@@ -551,6 +569,95 @@
             {{selsong_lower3rd_panel find filter_title.lbl} set_showing TRUE}
          }
       }
+   )
+   (sel_leader -1)
+   (players ())
+   (update_leader
+      {if {is_leader_local} {do
+         ($any_net FALSE)
+         {gamecfg foreach_player_config $pcfg
+            {unless {$pcfg is_local_player}
+               {set $any_net TRUE}
+            }
+         }
+         {if_else {== [song_mode] game}
+            {do
+               {if {size [players]}
+                  {foreach $p [players]
+                     {unless {game is_player_participating $p}
+                        ; clear players if one left anytime
+                        {resize [players] 0}
+                     }
+                  }
+               }
+               {unless {size [players]}
+                  ; fill players array
+                  {gamecfg foreach_player_config $pcfg
+                     {push_back [players] {$pcfg get player_num}}
+                  }
+               }
+            }
+            ; just set sel leader to leader if not in qp/hth
+            {set [players] {eval_array ({$pcfg get player_num})}}
+         }
+         {if_else $any_net
+            {do
+               ; set and send leader
+               {$this set_sel_leader {elem [players] 0}}
+               {session send_to_all
+                  {` ({, $this} set_sel_leader {, [sel_leader]})}
+                  kNetReliable
+               }
+               ; ensure the sel leader is on ulti and have them correct if not
+               {unless {gamecfg is_player_local [sel_leader]}
+                  {session send_to_player
+                     [sel_leader]
+                     {`(
+                        {unless {{, $this} has (players)}
+                           {session send_to_player
+                              {gamecfg get leader_num}
+                              {` ({, $this} correct_leader)}
+                              kNetReliable
+                           }
+                        }
+                     )}
+                     kNetReliable
+                  }
+               }
+            }
+            {set [sel_leader] {gamecfg get leader_num}}
+         }
+      }}
+   )
+   (set_sel_leader
+      ($player_num)
+      {set [sel_leader] $player_num}
+      {script_task kTaskUISeconds
+         (delay 0.25) ; with no delay this breaks with lots of songs
+         (script
+            {if_else {gamecfg is_player_local $player_num}
+               {do
+                  {helpbar set_config
+                     (helpbar_back_search helpbar_choosesong helpbar_songfilter)
+                  }
+                  {helpbar set_waiting FALSE}
+               }
+               {do
+                  {helpbar set_config (helpbar_leave_session)}
+                  {helpbar set_waiting
+                     {sprintf
+                        {localize waiting_for_player}
+                        {{game get_player_config $player_num} get player_name}
+                     }
+                  }
+               }
+            }
+         )
+      }
+   )
+   (correct_leader {$this set_sel_leader {gamecfg get leader_num}})
+   (REMOTE_PLAYER_LEFT_MSG ; not tested!
+      {$this update_leader}
    )
 )
 {new UIScreen
