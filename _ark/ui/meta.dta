@@ -15,7 +15,7 @@
    (null_config ())
    (buttons (B A R X))
    (frets (r g y b))
-   (pads (2 1 F 3))
+   (pads ('2' '1' F '3'))
    (limit_to_player_num -1)
    (enter {$this set_mode_left})
    (poll {all.grp set showing {! {ui in_transition}}})
