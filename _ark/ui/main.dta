@@ -25,7 +25,7 @@
 }
 {new MoviePanel
    movie_panel
-   (preload TRUE)
+   (preload FALSE) ; normally true but the game would very often crash when leaving practice?
    (audio FALSE)
    (loop TRUE)
    (update_presence FALSE)

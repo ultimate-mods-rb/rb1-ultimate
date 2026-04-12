@@ -402,6 +402,7 @@
    (main_mode_screen drum_trainer_menu_screen)
    (main_screen main_screen)
    (crowd_reacts FALSE)
+   (show_loading_images FALSE)
 )
 (drum_trainer_beats
    DRUM_TRAINER_MODE
@@ -445,6 +446,7 @@
    (play_streak_sfx FALSE)
    (pause_screen '')
    (crowd_reacts FALSE)
+   (show_loading_images FALSE)
 )
 (tutorial_drums
    TUTORIALS_MODE
@@ -541,6 +543,7 @@
    (enable_bre TRUE)
    (enable_streak TRUE)
    (enable_star_power FALSE)
+   (show_loading_images FALSE)
 )
 (community_leaderboards
    (community_screen main_leaderboard_screen)
