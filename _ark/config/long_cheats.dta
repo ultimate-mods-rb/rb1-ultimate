@@ -20,7 +20,7 @@
    (kPad_Select kPad_Select)
    {if_else
       {'||'
-         $overshell_up
+         {startswith {{ui current_screen} name} "overshell"}
          {ui in_transition}
          {find_elem
             (
@@ -34,9 +34,10 @@
             )
             {ui current_screen}
          }
-         ; TODO maybe block some screens if online and not the session leader?
-         ; could just do something like {|| {is_leader_local} {pause_panel is_up}} 
-         ; maybe just pop on transition? look into SCREEN_CHANGE_MSG
+         {&& ; if screens are synced and online
+            {band_ui_sink net_sync}
+            {!= {session mode} kNetLocal}
+         }
       }
       {print "overshell blocked from opening"}
       {ui push_screen overshell_main_screen}

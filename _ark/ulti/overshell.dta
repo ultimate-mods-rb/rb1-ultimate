@@ -49,17 +49,13 @@
          (sel_script {pop_and_goto_screen overshell_other_screen})
       )
    ))
-   (enter
-      {os_setup_common}
-      {set $overshell_up TRUE}
-   )
+   (enter {os_setup_common})
    (SELECT_MSG {os_sel_common})
    (BUTTON_DOWN_MSG
       {if {== $button kPad_Tri}
          {mod_settings_rw save_settings}
          {set [pos] (0 0)}
          {ui pop_screen}
-         {set $overshell_up FALSE}
       }
       kDataUnhandled
    )
