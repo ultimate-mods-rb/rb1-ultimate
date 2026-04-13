@@ -86,7 +86,7 @@
          )
       }
    )
-   (load {main_panel set mode_focus options.btn})
+   (load {main_panel set mode_focus store.btn})
    (finish_load
       {audio.btn set text_token os_ultisettings}
       {gameplay.btn set text_token jukebox}
@@ -188,4 +188,4 @@
       {delete $this}
    )
 }
-{memcardmgr add_sink on_save_load (save_load_all_complete_msg)}
+{memcardmgr add_sink on_save_load save_load_all_complete_msg}
