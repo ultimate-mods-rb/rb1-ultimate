@@ -752,35 +752,18 @@
          (type uNormal)
          (sel_script {pop_and_goto_screen overshell_cheats_screen})
       )
+      (os_av
+         (type uNormal)
+         (sel_script {pop_and_goto_screen overshell_av_screen})
+      )
+      (os_ven
+         (type uNormal)
+         (sel_script {pop_and_goto_screen overshell_ven_screen})
+      )
       (os_skipintro
          (type uOnOFF)
          (bool $skipintro)
          (sel_script {toggle_var skipintro})
-      )
-      (os_vchars
-         (type uOnOFF)
-         (bool $vchars)
-         (sel_script {toggle_var vchars})
-      )
-      (os_cchars
-         (type uOnOFF)
-         (bool $cchars)
-         (sel_script {toggle_var cchars})
-      )
-      (os_normal_venues
-         (type uOnOFF)
-         (bool $normal_venues)
-         (sel_script {toggle_var normal_venues})
-      )
-      (os_rb2_venues
-         (type uOnOFF)
-         (bool $rb2_venues)
-         (sel_script {toggle_var rb2_venues})
-      )
-      (os_custom_venues
-         (type uOnOFF)
-         (bool $custom_venues)
-         (sel_script {toggle_var custom_venues})
       )
       (os_reset_all
          (type uNormal)
@@ -816,11 +799,6 @@
       (os_freecam
          (type uNormal)
          (sel_script {cycle_free_camera})
-      )
-      (os_selectvenue
-         (type uOnOFF)
-         (bool $selectvenue)
-         (sel_script {toggle_var selectvenue})
       )
       (os_colorshuffle
          (type uOnOFF)
@@ -863,6 +841,11 @@
          (bool $flashbang)
          (sel_script {toggle_var flashbang})
       )
+      (os_cheats
+         (type uOnOFF)
+         (bool $mikan)
+         (sel_script {toggle_var mikan})
+      )
       (os_fakecheat
          (type uNormal)
          (sel_script
@@ -881,4 +864,120 @@
    (back overshell_other_screen)
    (panels overshell_cheats_panel practice_lower3rd_panel helpbar)
    (focus overshell_cheats_panel)
+}
+{new UIPanel
+   overshell_av_panel
+   OVERSHELL_LIST_FILE
+   (title os_av)
+   (data (
+      (bass_boost
+         (type uOnOFF)
+         (bool {profile_mgr get_bass_boost})
+         (sel_script {profile_mgr set_bass_boost {! {profile_mgr get_bass_boost}}})
+      )
+      (os_dolby
+         (type uOnOFF)
+         (bool {profile_mgr get_dolby})
+         (sel_script {profile_mgr set_dolby {! {profile_mgr get_dolby}}})
+      )
+      #ifdef HX_PS3
+      (mono
+         (type uOnOFF)
+         (bool {profile_mgr get_mono})
+         (sel_script {profile_mgr set_mono {! {profile_mgr get_mono}}})
+      )
+      #endif
+      (os_overscan
+         (type uOnOFF)
+         (bool {profile_mgr get_overscan})
+         (sel_script {profile_mgr set_overscan {! {profile_mgr get_overscan}}})
+      )
+      (os_ivol_fmt VOL_SLD
+         (get {profile_mgr get_foreground_volume})
+         (set {profile_mgr set_foreground_volume $r})
+      )
+      (os_bvol_fmt VOL_SLD
+         (get {profile_mgr get_background_volume})
+         (set {profile_mgr set_background_volume $r})
+      )
+      (os_cvol_fmt VOL_SLD
+         (get {profile_mgr get_crowd_volume})
+         (set {profile_mgr set_crowd_volume $r})
+      )
+      (os_svol_fmt VOL_SLD
+         (get {profile_mgr get_fx_volume})
+         (set {profile_mgr set_fx_volume $r})
+      )
+      (os_avs_fmt CALI_SLD
+         (get {int {profile_mgr get_song_to_taskmgr_ms_ui}})
+         (set {profile_mgr set_song_to_taskmgr_ms_ui $r})
+      )
+      (os_lo_fmt CALI_SLD
+         (get {int {profile_mgr get_sync_offset_ui}})
+         (set {profile_mgr set_sync_offset_ui $r})
+      )
+   ))
+   (enter {os_setup_common})
+   (BUTTON_DOWN_MSG {os_down_common})
+   (SELECT_MSG {os_sel_common})
+}
+{new UIScreen
+   overshell_av_screen
+   (back overshell_other_screen)
+   (panels overshell_av_panel practice_lower3rd_panel helpbar)
+   (focus overshell_av_panel)
+}
+{new UIPanel
+   overshell_ven_panel
+   OVERSHELL_LIST_FILE
+   (title os_ven)
+   (data (
+      (os_selectvenue
+         (type uOnOFF)
+         (bool $selectvenue)
+         (sel_script {toggle_var selectvenue})
+      )
+      (os_normal_venues
+         (type uOnOFF)
+         (bool $normal_venues)
+         (sel_script {toggle_var normal_venues})
+      )
+      (os_rb2_venues
+         (type uOnOFF)
+         (bool $rb2_venues)
+         (sel_script {toggle_var rb2_venues})
+      )
+      (os_custom_venues
+         (type uOnOFF)
+         (bool $custom_venues)
+         (sel_script {toggle_var custom_venues})
+      )
+      (os_vchars
+         (type uOnOFF)
+         (bool $vchars)
+         (sel_script {toggle_var vchars})
+      )
+      (os_cchars
+         (type uOnOFF)
+         (bool $cchars)
+         (sel_script {toggle_var cchars})
+      )
+      ''
+      (os_force_venue
+         (type uFakeSld)
+         (fmt_type uLocalize)
+         (hide_on_sel TRUE)
+         (var force_venue)
+         (array (off random VENUES RB2_VENUES ULTI_VENUES))
+      )
+   ))
+   (enter {os_setup_common})
+   (BUTTON_DOWN_MSG {os_down_common})
+   (SELECT_MSG {os_sel_common})
+}
+{new UIScreen
+   overshell_ven_screen
+   (back overshell_other_screen)
+   (panels overshell_ven_panel practice_lower3rd_panel helpbar)
+   (focus overshell_ven_panel)
 }

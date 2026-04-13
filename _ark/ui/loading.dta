@@ -113,6 +113,21 @@
             }
          }
       }
+      {if {&& {== {session mode} kNetLocal} $force_venue}
+         {switch $force_venue
+            (off kDataUnhandled)
+            (random
+               {do
+                  ($v {random_elem {gamemode get venues}})
+                  {while {== $v blank_01}
+                     {set $v {random_elem {gamemode get venues}}}
+                  }
+                  {gamecfg set_venue $v}
+               }
+            )
+            {gamecfg set_venue $force_venue}
+         }
+      }
       #ifdef IGNORE_PRELOAD_OK
       {ui goto_screen real_loading_screen}
       #else

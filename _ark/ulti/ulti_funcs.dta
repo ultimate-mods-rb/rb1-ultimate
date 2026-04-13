@@ -78,12 +78,23 @@
                            FALSE
                         }
                      )
+                     ($data
+                        {cond
+                           ({find_exists $entry var}
+                              {eval_var {elem {find $entry var} 1}}
+                           )
+                           ({find_exists $entry get}
+                              {eval {elem {find $entry get} 1}}
+                           )
+                           (TRUE {fail "unable to find data for sld"})
+                        }
+                     )
                      ($fmt
                         {switch $fmt_type
-                           (uNormal {eval_var {elem {find $entry var} 1}})
+                           (uNormal $data)
                            (uColor
                               {localize
-                                 {switch {eval_var {elem {find $entry var} 1}}
+                                 {switch $data
                                     (0 color_green)
                                     (1 color_red)
                                     (2 color_yellow)
@@ -95,7 +106,7 @@
                            )
                            (uDrumColor
                               {localize
-                                 {switch {eval_var {elem {find $entry var} 1}}
+                                 {switch $data
                                     (0 kick)
                                     (1 color_red)
                                     (2 color_yellow)
@@ -107,7 +118,7 @@
                            )
                            (uCunt
                               {localize
-                                 {switch {eval_var {elem {find $entry var} 1}}
+                                 {switch $data
                                     (kPad_L2 os_pad_l2)
                                     (kPad_L1 os_pad_l1)
                                     (kPad_R1 os_pad_r1)
@@ -129,7 +140,7 @@
                            )
                            (uSync
                               {localize
-                                 {switch {eval_var {elem {find $entry var} 1}}
+                                 {switch $data
                                     (0 infinite)
                                     (1 full)
                                     (2 half)
@@ -140,7 +151,7 @@
                            )
                            (uInst
                               {localize
-                                 {switch {eval_var {elem {find $entry var} 1}}
+                                 {switch $data
                                     (kControllerGuitar guitar_sym)
                                     (kControllerDrum drum_sym)
                                     (kControllerVocals vocals_sym)
@@ -150,7 +161,7 @@
                            )
                            (uMapping
                               {localize
-                                 {switch {eval_var {elem {find $entry var} 1}}
+                                 {switch $data
                                     (0 custom)
                                     (1 guitar_sym)
                                     (2 gh_guitar)
@@ -160,10 +171,10 @@
                                  }
                               }
                            )
-                           (uSpeed {int {+ {* {eval_var {elem {find $entry var} 1}} 100} 0.5}})
+                           (uSpeed {int {+ {* $data 100} 0.5}})
                            (uTimer
                               {localize
-                                 {switch {eval_var {elem {find $entry var} 1}}
+                                 {switch $data
                                     (0 off)
                                     (1 time_total)
                                     (2 remaining_total)
@@ -174,7 +185,7 @@
                                  }
                               }
                            )
-                           (uLocalize {localize {eval_var {elem {find $entry var} 1}}})
+                           (uLocalize {localize $data})
                         }
                      )
                      {cond
@@ -234,7 +245,17 @@
             )
             ((uSld uFakeSld)
                {$this set focused TRUE}
-               {OS_LIST set store {eval_var {elem {find $entry var} 1}}}
+               {OS_LIST set store
+                  {cond
+                     ({find_exists $entry var}
+                        {eval_var {elem {find $entry var} 1}}
+                     )
+                     ({find_exists $entry get}
+                        {eval {elem {find $entry get} 1}}
+                     )
+                     (TRUE {fail "unable to find data for sld"})
+                  }
+               }
             )
          }
       }
@@ -259,48 +280,89 @@
                   (kPad_Tri
                      {synth play button_back}
                      {$this set focused FALSE}
-                     {set_var {elem {find $entry var} 1} {OS_LIST get store}}
+                     {cond
+                        ({find_exists $entry var}
+                           {set_var {elem {find $entry var} 1} {OS_LIST get store}}
+                        )
+                        ({find_exists $entry get} {do
+                           ($r {OS_LIST get store})
+                           {eval {elem {find $entry set} 1}}
+                        })
+                        (TRUE {fail "unable to find data for sld"})
+                     }
                      {OS_LIST set store 0}
                      {lst_reset}
                   )
-                  ((kPad_DUp kPad_DLeft)
+                  ((kPad_DUp kPad_DLeft) {do
+                     ($data '')
+                     ($type '')
+                     ($r)
                      {synth play button_toggle}
-                     {set_var {elem {find $entry var} 1}
+                     {cond
+                        ({find_exists $entry var}
+                           {set $data {eval_var {elem {find $entry var} 1}}}
+                           {set $type var}
+                        )
+                        ({find_exists $entry get}
+                           {set $data {eval {elem {find $entry get} 1}}}
+                           {set $type get}
+                        )
+                        (TRUE {fail "unable to find data for sld"})
+                     }
+                     {set $r
                         {if_else {== {elem {find $entry type} 1} uSld}
                            {clamp
-                              {- {eval_var {elem {find $entry var} 1}}
-                                 {elem {find $entry step} 1}
-                              }
+                              {- $data {elem {find $entry step} 1}}
                               {elem {find $entry range} 1}
                               {elem {find $entry range} 2}
                            }
                            {prev_elem
                               {eval {elem {find $entry array} 1}}
-                              {eval_var {elem {find $entry var} 1}}
+                              $data
                            }
                         }
                      }
+                     {switch $type
+                        (var {set_var {elem {find $entry var} 1} $r})
+                        (get {eval {elem {find $entry set} 1}})
+                     }
                      {lst_reset}
-                  )
-                  ((kPad_DDown kPad_DRight)
+                  })
+                  ((kPad_DDown kPad_DRight) {do
+                     ($data '')
+                     ($type '')
+                     ($r)
                      {synth play button_toggle}
-                     {set_var {elem {find $entry var} 1}
+                     {cond
+                        ({find_exists $entry var}
+                           {set $data {eval_var {elem {find $entry var} 1}}}
+                           {set $type var}
+                        )
+                        ({find_exists $entry get}
+                           {set $data {eval {elem {find $entry get} 1}}}
+                           {set $type get}
+                        )
+                        (TRUE {fail "unable to find data for sld"})
+                     }
+                     {set $r
                         {if_else {== {elem {find $entry type} 1} uSld}
                            {clamp
-                              {+ {eval_var {elem {find $entry var} 1}}
-                                 {elem {find $entry step} 1}
-                              }
+                              {+ $data {elem {find $entry step} 1}}
                               {elem {find $entry range} 1}
                               {elem {find $entry range} 2}
                            }
                            {next_elem
                               {eval {elem {find $entry array} 1}}
-                              {eval_var {elem {find $entry var} 1}}
+                              $data
                            }
                         }
                      }
+                     {switch $type
+                        (var {set_var {elem {find $entry var} 1} $r})
+                        (get {eval {elem {find $entry set} 1}})
+                     }
                      {lst_reset}
-                  )
+                  })
                }
                {os_unhandled_down}
             }

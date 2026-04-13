@@ -95,6 +95,20 @@
 
 )
 
+#define VOL_SLD (
+   (type uSld)
+   (fmt_type uNormal)
+   (step 1)
+   (range 0 11)
+)
+#define CALI_SLD (
+   (type uSld)
+   (fmt_type uNormal)
+   (step 1)
+   (range -500 500)
+   (block_ingame TRUE)
+)
+
 #define OS_LIST (sel_section.lst)
 #define SMASHER_COLORS ((green red yellow blue orange))
 #define NORMALGEM_SET (
