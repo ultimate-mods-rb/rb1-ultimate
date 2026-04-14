@@ -479,7 +479,9 @@
    (BUTTON_DOWN_MSG
       {cond
          ({== $button kPad_X}
-            {$this update_selection}
+            {if {== {{tour solo_event_provider} get mode} kTourVenueDownload}
+               {$this update_selection}
+            }
             {do
                ($selected {event.lst selected_sym})
                {if_else
@@ -555,7 +557,18 @@
          {== download {event.lst selected_sym}}
       }
    )
-   (SCROLL_MSG)
+   (SCROLL_MSG
+      {if
+         {!=
+            {{tour solo_event_provider} town {event.lst selected_pos}}
+            {{tour performer} town}
+         }
+         {synth play bwt_swish.cue}
+      }
+      {unless {== {{tour solo_event_provider} get mode} kTourVenueDownload}
+         {$this update_selection}
+      }
+   )
    (SELECT_START_MSG
       {if
          {&&

@@ -280,7 +280,7 @@
       {if
          {&&
             {== {gamecfg get leader_num} -1}
-            {find_elem (kNetLocal kNetHost) {session mode}} ; idk if this is being done right but i'll never be able to debug it
+            {find_elem (kNetLocal kNetHost) {session mode}}
          }
          {do
             ($i 0)
@@ -1094,12 +1094,19 @@
    )
    (update_preview
       ($on)
+      {if {is_leader_local}
+         {$this play_preview $on}
+         {session send_to_all
+            {` ({, $this} play_preview {, $on})} ; in retail $on isn't quoted. probably a bug XD
+            kNetReliable
+         }
+      }
    )
    (update_selection
       {{tour performer} set_event {event.lst selected_sym} {game get leader_num}}
    )
    (is_event_playable {!= kTourLocked {{tour performer} event_status}})
-   (SCROLL_MSG)
+   (SCROLL_MSG {$this update_selection})
    (start_event_select
       {if_else {== {{tour performer} next_any_index} -1}
          {do
@@ -1110,7 +1117,6 @@
       }
    )
    (SELECT_START_MSG
-      {$this update_selection}
       {if_else {$this is_event_playable}
          {$this start_event_select}
          {ui goto_screen tour_eventdetails_screen}
@@ -1121,7 +1127,6 @@
       {cond
          ({== $button kPad_R1}
             {synth play button_select}
-            {$this update_selection}
             {ui goto_screen tour_eventdetails_screen}
          )
          ({$this is_updown $button}
