@@ -180,6 +180,109 @@
       kDataUnhandled
    )
 }
+{new UIPanel
+   tour_pre_selsongsync_panel
+   (remote_players ())
+   (local_players ())
+   (msg_data ())
+   (send_songs_on_enter FALSE)
+   (load
+      {content_mgr start_refresh}
+      {qp_selsong_panel set inhibit_refresh TRUE}
+      {tour_selsong_panel set inhibit_refresh TRUE}
+      {leaderboard_selsong_panel set inhibit_refresh TRUE}
+   )
+   (is_loaded {content_mgr refresh_done})
+   (TRANSITION_COMPLETE_MSG
+      {session add_sink $this}
+      {resize [remote_players] 0}
+      {if_else {is_leader_local}
+         {do
+            {song_mgr reset_shared_songs FALSE}
+            {game foreach_player_config $pcfg
+               {if {&& {$pcfg is_participating} {! {$pcfg is_local_player}}}
+                  {push_back [remote_players] {$pcfg get player_num}}
+               }
+            }
+            {session send_to_all {'`' ({',' $this} ready_for_songs)} kNetReliable}
+            {$this check_for_advance}
+         }
+         {if [send_songs_on_enter]
+            {$this send_songs}
+         }
+      }
+   )
+   (ready_for_songs
+      {if_else {&& {$this is_up} {! {ui in_transition}}}
+         {$this send_songs}
+         {$this set send_songs_on_enter TRUE}
+      }
+   )
+   (send_songs
+      {resize [local_players] 0}
+      {resize [msg_data] 0}
+      {game foreach_player_config $pcfg
+         {if {&& {$pcfg is_participating} {$pcfg is_local_player}}
+            {push_back [local_players] {$pcfg get player_num}}
+         }
+      }
+      {push_back [msg_data] [local_players]}
+      {push_back [msg_data] {song_mgr get_local_unlocked_songs_glob}}
+      {session send_to_player
+         {game get leader_num}
+         {'`'
+            ({',' $this}
+               process_remote_songs
+               {',' [msg_data]}
+            )
+         }
+         kNetReliable
+      }
+   )
+   (exit
+      {$this set send_songs_on_enter FALSE}
+      {session remove_sink $this}
+   )
+   (process_remote_songs
+      ($song_info)
+      {set $pnums {elem $song_info 0}}
+      {set $song_info {elem $song_info 1}}
+      {song_mgr process_remote_shared_songs $song_info}
+      {foreach $pnum $pnums
+         {remove_elem [remote_players] $pnum}
+      }
+      {$this check_for_advance}
+   )
+   (REMOTE_PLAYER_LEFT_MSG
+      {if {is_leader_local}
+         {remove_elem [remote_players] $player_num}
+         {$this check_for_advance}
+      }
+   )
+   (check_for_advance
+      {if {== {size [remote_players]} 0}
+         {if {is_leader_local}
+            {session send_to_all
+               {'`' (song_mgr sync_shared_songs {',' {song_mgr get_shared_songs}})}
+               kNetReliable
+            }
+         }
+         {tour_band_waiting_panel real_advance}
+      }
+   )
+}
+{new UIScreen
+   tour_pre_selsongsync_screen
+   (panels meta practice_space_panel tour_pre_selsongsync_panel helpbar fx)
+   (focus tour_pre_selsongsync_panel)
+   (helpbar ())
+   (helpbar_waiting
+      {if_else {is_leader_local}
+         helpbar_waiting_for_songs
+         helpbar_sending_songs
+      }
+   )
+}
 {new Object
    on_save_load
    (save_load_all_complete_msg

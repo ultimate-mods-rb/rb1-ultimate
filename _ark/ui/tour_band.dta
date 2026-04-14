@@ -445,8 +445,17 @@
 {new UIPanel
    tour_band_waiting_panel
    (file "tour_band_waiting.milo")
-   LIMIT_TO_SESSION
+   (checking FALSE)
+   (can_sync TRUE)
+   (allow_player
+      ($player_num)
+      {&&
+         {game is_player_participating $player_num}
+         {! [checking]}
+      }
+   )
    (enter
+      {set [can_sync] TRUE}
       {game foreach_local_player_config $pcfg
          {$pcfg set_ui_waiting FALSE}
       }
@@ -456,6 +465,7 @@
       }
    )
    (exit
+      {set [checking] FALSE}
       {if {is_leader_local}
          {session remove_sink $this}
       }
@@ -477,6 +487,35 @@
       }
    )
    (advance
+      {if_else {== {session mode} kNetLocal}
+         {$this real_advance}
+         {do ; ensure everyone is on ulti by checking if this has sync and dont sync if not
+            {set [checking] TRUE}
+            {session send_to_all
+               {`(
+                  {unless {{, $this} has (can_sync)}
+                     {session send_to_player
+                        {gamecfg get leader_num}
+                        {` ({, $this} set can_sync FALSE)}
+                        kNetReliable
+                     }
+                  }
+               )}
+               kNetReliable
+            }
+            {thread_task kTaskUISeconds
+               (delay 1.5)
+               (script
+                  {if_else [can_sync]
+                     {band_ui_sink sync_screen tour_pre_selsongsync_screen}
+                     {$this real_advance}
+                  }
+               )
+            }
+         }
+      }
+   )
+   (real_advance
       {if {tour hint}
          {fx fade_out}
       }

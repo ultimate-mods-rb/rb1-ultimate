@@ -44,3 +44,13 @@ PPU-0e7aaaa2ed0f2d8f8769b6e6d9dba0c2f2cdca7e:
       - [ be32, 0x00257e18, 0x3a200000 ] # li r17, 0x0
 
       - [ be32, 0x00257e1c, 0x4e800020 ] # blr
+  "dont reset shared songs on event set":
+    Games:
+      "Rock Band":
+        BLUS30050: [ 01.07 ]
+    Author: "Synchrony"
+    Notes: "yawn"
+    Patch Version: 1.0
+    Patch:
+      # call to SongMgr::ResetSharedSongs in BaseTourPerformer::SetEvent
+      - [ be32, 0x0011ddb4, 0x60000000 ] # nop
