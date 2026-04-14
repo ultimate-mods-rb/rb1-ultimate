@@ -42,11 +42,8 @@
    (enter
       {$this update_search_mode FALSE}
       {band_ui_sink set_controller_level kControllerLevelSession}
-      {if_else {== [song_mode] leaderboards}
+      {if {|| {== [song_mode] leaderboards} {== {session mode} kNetLocal}}
          {song_mgr reset_shared_songs TRUE}
-         {if {== {session mode} kNetLocal}
-            {song_mgr reset_shared_songs FALSE}
-         }
       }
       {platform_mgr add_sink $this storage_changed}
       {session add_sink $this change_game_msg}
@@ -573,13 +570,7 @@
    (sel_leader -1)
    (players ())
    (update_leader
-      {if {is_leader_local} {do
-         ($any_net FALSE)
-         {gamecfg foreach_player_config $pcfg
-            {unless {$pcfg is_local_player}
-               {set $any_net TRUE}
-            }
-         }
+      {if {is_leader_local}
          {if_else {== [song_mode] game}
             {do
                {if {size [players]}
@@ -598,9 +589,9 @@
                }
             }
             ; just set sel leader to leader if not in qp/hth
-            {set [players] {eval_array ({$pcfg get player_num})}}
+            {set [players] {eval_array ({gamecfg get leader_num})}}
          }
-         {if_else $any_net
+         {if_else {!= {session mode} kNetLocal}
             {do
                ; set and send leader
                {$this set_sel_leader {elem [players] 0}}
@@ -627,7 +618,7 @@
             }
             {set [sel_leader] {gamecfg get leader_num}}
          }
-      }}
+      }
    )
    (set_sel_leader
       ($player_num)
@@ -784,7 +775,7 @@
       {resize [remote_players] 0}
       {if_else {is_leader_local}
          {do
-            {song_mgr reset_shared_songs FALSE}
+            {song_mgr reset_shared_songs TRUE}
             {game foreach_player_config $pcfg
                {if {&& {$pcfg is_participating} {! {$pcfg is_local_player}}}
                   {push_back [remote_players] {$pcfg get player_num}}
