@@ -373,6 +373,9 @@
 (lisa "LISA")
 (vocals_lisa "LISA")
 (lisa_desc "Please don't call her phone again.")
+(laufey "Lover Girl Laufey")
+(vocals_laufey "Laufey")
+(laufey_desc "Lovestruck in a reckless fever.")
 ; guitar
 (mustang02 "Fender<sup>TM</sup> '65 Mustang<sup>TM</sup>")
 (mustang02_desc

@@ -2916,6 +2916,34 @@
          (mic sm58_resource)
       )
    )
+   (vocals_laufey
+      (gender female)
+      (attitude kGenreDramatic)
+      CUSTOM_VOCALS
+      (weight 0.5)
+      (height 0.5)
+      (skin_color_index 0)
+      (eye_color_index 0)
+      (eyebrow_color_index 0)
+      (outfit
+         (hair none)
+         (heads empty)
+         (eyes none)
+         (lips none)
+         (torso laufey)
+         (hands empty)
+         (legs empty)
+         (feet empty)
+         (glasses none)
+         (wrist none)
+         (rings none)
+         (earrings none)
+         (guitar none)
+         (bass none)
+         (drum none)
+         (mic md431ii_resource)
+      )
+   )
    #ifndef _SHIP
    #include ../ui/framerate/characters.dta
    #endif

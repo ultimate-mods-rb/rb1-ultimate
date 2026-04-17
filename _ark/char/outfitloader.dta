@@ -2767,6 +2767,7 @@
                (miku (genre shell_shop_charstore))
                (tracy (genre shell_shop_charstore))
                (lisa (genre shell_shop_charstore))
+               (laufey (genre shell_shop_charstore))
                (empty (ui_name none) (exclude TRUE))
             )
          )
