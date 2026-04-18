@@ -271,7 +271,7 @@
                   {if_else [prefab_mode]
                      {do
                         ($inst {game get_instrument_from_controller [player_num]})
-                        ($array {eval_array (Random)})
+                        ($array {eval_array (random)})
                         {foreach $char {find $syscfg characters prefab}
                            {if
                               {&&
@@ -436,12 +436,12 @@
                      {cond
                         ([prefab_mode]
                            {do
-                              ($char {available_prefab [player_num] {game get_instrument_from_controller [player_num]}})
-                              ($i 0)
-                              {while {&& {!= {elem {$char get_char_data} 0} {$component selected_sym}} {< $i 500}}
-                                 {++ $i}
-                                 {set $char {available_prefab [player_num] {game get_instrument_from_controller [player_num]}}}
-                              }
+                              ($char
+                                 {if_else {== {$component selected_sym} random}
+                                    {available_prefab [player_num] {game get_instrument_from_controller [player_num]}}
+                                    {find_prefab {$component selected_sym}}
+                                 }
+                              )
                               {{game get_player_config [player_num]} set_char $char}
                               {char_cache request [player_num] $char}
                               {session_mgr update_band_leader}
