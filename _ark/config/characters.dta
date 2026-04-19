@@ -214,7 +214,7 @@
 (prefab
    (drum0
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum0 male})
       (attitude kGenreSpazz)
       (weight 0.6)
       (height 0.15)
@@ -243,7 +243,7 @@
    )
    (drum1
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum1 male})
       (attitude kGenreBanger)
       (weight 0.8)
       (height 0.5)
@@ -273,7 +273,7 @@
    (drum2
       (gender male)
       (attitude kGenreSpazz)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum2 male})
       (weight 0.25)
       (height 0.65)
       (skin_color_index 4)
@@ -301,7 +301,7 @@
    )
    (drum3
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum3 male})
       (attitude kGenreRocker)
       (skin_color_index 2)
       (eye_color_index 0)
@@ -331,7 +331,7 @@
    )
    (drum4
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum4 male})
       (attitude kGenreRocker)
       (skin_color_index 1)
       (eye_color_index 0)
@@ -361,7 +361,7 @@
    )
    (drum5
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum5 male})
       (attitude kGenreRocker)
       (skin_color_index 2)
       (eye_color_index 9)
@@ -391,7 +391,7 @@
    )
    (drum6
       (gender female)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum6 female})
       (attitude kGenreRocker)
       (skin_color_index 5)
       (eye_color_index 2)
@@ -420,7 +420,7 @@
    )
    (drum7
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum7 male})
       (attitude kGenreRocker)
       (skin_color_index 2)
       (eye_color_index 5)
@@ -464,7 +464,7 @@
    )
    (drum8
       (gender female)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum8 female})
       (attitude kGenreDramatic)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -493,7 +493,7 @@
    )
    (drum9
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum9 male})
       (attitude kGenreSpazz)
       (skin_color_index 3)
       (eye_color_index 9)
@@ -523,7 +523,7 @@
    )
    (drum10
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum10 male})
       (attitude kGenreSpazz)
       (skin_color_index 0)
       (eye_color_index 9)
@@ -562,7 +562,7 @@
    )
    (drum11
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum11 male})
       (attitude kGenreRocker)
       (skin_color_index 2)
       (eye_color_index 0)
@@ -592,7 +592,7 @@
    )
    (drum12
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum12 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 7)
@@ -622,7 +622,7 @@
    )
    (drum13
       (gender female)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum13 female})
       (attitude kGenreSpazz)
       (skin_color_index 5)
       (eye_color_index 9)
@@ -655,7 +655,7 @@
    )
    (drum14
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum14 male})
       (attitude kGenreBanger)
       (skin_color_index 6)
       (eye_color_index 2)
@@ -685,7 +685,7 @@
    )
    (drum15
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum15 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 7)
@@ -717,7 +717,7 @@
    )
    (drum16
       (gender female)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum16 female})
       (attitude kGenreRocker)
       (skin_color_index 5)
       (eye_color_index 2)
@@ -746,7 +746,7 @@
    )
    (drum17
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum17 male})
       (attitude kGenreRocker)
       (skin_color_index 2)
       (eye_color_index 2)
@@ -777,7 +777,7 @@
    #ifdef RAM_PREFABS
    (drum18
       (gender female)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum18 female})
       (attitude kGenreRocker)
       (skin_color_index 5)
       (eye_color_index 2)
@@ -794,7 +794,7 @@
    )
    (drum19
       (gender male)
-      VANILLA_DRUM
+      (instrument {VANILLA_DRUM drum19 male})
       (attitude kGenreRocker)
       (skin_color_index 2)
       (eye_color_index 2)
@@ -813,7 +813,7 @@
    (drum_lace
       (gender female)
       (attitude kGenreDramatic)
-      CUSTOM_DRUM
+      (instrument {CUSTOM_DRUM drum_lace female})
       (weight 0.5)
       (height 0.5)
       (skin_color_index 0)
@@ -842,7 +842,7 @@
    (drum_tracy
       (gender female)
       (attitude kGenreDramatic)
-      CUSTOM_DRUM
+      (instrument {CUSTOM_DRUM drum_tracy female})
       (weight 0.5)
       (height 0.5)
       (skin_color_index 0)
@@ -870,7 +870,7 @@
    )
    (guitar0
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar0 male})
       (attitude kGenreDramatic)
       (weight 0.4)
       (height 0.85)
@@ -899,7 +899,7 @@
    )
    (guitar1
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar1 female})
       (attitude kGenreBanger)
       (weight 0.5)
       (height 0.5)
@@ -927,7 +927,7 @@
    )
    (guitar2
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar2 female})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -957,7 +957,7 @@
    (guitar3
       (gender male)
       (attitude kGenreRocker)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar3 male})
       (weight 0.8)
       (height 0.85)
       (skin_color_index 3)
@@ -985,7 +985,7 @@
    )
    (guitar4
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar4 male})
       (attitude kGenreBanger)
       (weight 0.4)
       (height 0.75)
@@ -1014,7 +1014,7 @@
    )
    (guitar5
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar5 female})
       (attitude kGenreSpazz)
       (weight 0.35)
       (height 0.65)
@@ -1042,7 +1042,7 @@
    )
    (guitar6
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar6 male})
       (attitude kGenreRocker)
       (skin_color_index 2)
       (eye_color_index 0)
@@ -1072,7 +1072,7 @@
    )
    (guitar7
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar7 female})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -1101,7 +1101,7 @@
    )
    (guitar8
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar8 female})
       (attitude kGenreDramatic)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -1130,7 +1130,7 @@
    )
    (guitar9
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar9 male})
       (attitude kGenreRocker)
       (skin_color_index 1)
       (eye_color_index 0)
@@ -1160,7 +1160,7 @@
    )
    (guitar10
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar10 male})
       (attitude kGenreRocker)
       (skin_color_index 2)
       (eye_color_index 9)
@@ -1190,7 +1190,7 @@
    )
    (guitar11
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar11 female})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -1219,7 +1219,7 @@
    )
    (guitar12
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar12 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 2)
@@ -1249,7 +1249,7 @@
    )
    (guitar13
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar13 female})
       (attitude kGenreRocker)
       (skin_color_index 2)
       (eye_color_index 0)
@@ -1278,7 +1278,7 @@
    )
    (guitar14
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar14 male})
       (attitude kGenreRocker)
       (skin_color_index 3)
       (eye_color_index 0)
@@ -1308,7 +1308,7 @@
    )
    (guitar15
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar15 female})
       (attitude kGenreRocker)
       (skin_color_index 2)
       (eye_color_index 0)
@@ -1337,7 +1337,7 @@
    )
    (guitar16
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar16 male})
       (attitude kGenreBanger)
       (skin_color_index 2)
       (eye_color_index 9)
@@ -1376,7 +1376,7 @@
    )
    (guitar17
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar17 female})
       (attitude kGenreBanger)
       (skin_color_index 3)
       (eye_color_index 9)
@@ -1414,7 +1414,7 @@
    )
    (guitar18
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar18 male})
       (attitude kGenreSpazz)
       (skin_color_index 2)
       (eye_color_index 9)
@@ -1444,7 +1444,7 @@
    )
    (guitar19
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar19 female})
       (attitude kGenreSpazz)
       (skin_color_index 5)
       (eye_color_index 0)
@@ -1473,7 +1473,7 @@
    )
    (guitar20
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar20 male})
       (attitude kGenreRocker)
       (skin_color_index 1)
       (eye_color_index 0)
@@ -1503,7 +1503,7 @@
    )
    (guitar21
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar21 female})
       (attitude kGenreDramatic)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -1532,7 +1532,7 @@
    )
    (guitar22
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar22 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 4)
@@ -1562,7 +1562,7 @@
    )
    (guitar23
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar23 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 2)
@@ -1592,7 +1592,7 @@
    )
    (guitar24
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar24 male})
       (attitude kGenreRocker)
       (skin_color_index 3)
       (eye_color_index 0)
@@ -1626,7 +1626,7 @@
    )
    (guitar25
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar25 male})
       (attitude kGenreRocker)
       (skin_color_index 4)
       (eye_color_index 0)
@@ -1656,7 +1656,7 @@
    )
    (guitar26
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar26 male})
       (attitude kGenreSpazz)
       (skin_color_index 3)
       (eye_color_index 6)
@@ -1706,7 +1706,7 @@
    )
    (guitar27
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar27 female})
       (attitude kGenreDramatic)
       (skin_color_index 3)
       (eye_color_index 9)
@@ -1745,7 +1745,7 @@
    )
    (guitar28
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar28 female})
       (attitude kGenreDramatic)
       (skin_color_index 3)
       (eye_color_index 1)
@@ -1792,7 +1792,7 @@
    )
    (guitar29
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar29 female})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 5)
@@ -1823,7 +1823,7 @@
    )
    (guitar30
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar30 male})
       (attitude kGenreBanger)
       (skin_color_index 3)
       (eye_color_index 9)
@@ -1873,7 +1873,7 @@
    )
    (guitar31
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar31 female})
       (attitude kGenreRocker)
       (skin_color_index 4)
       (eye_color_index 0)
@@ -1902,7 +1902,7 @@
    )
    (guitar32
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar32 male})
       (attitude kGenreRocker)
       (skin_color_index 1)
       (eye_color_index 2)
@@ -1932,7 +1932,7 @@
    )
    (guitar33
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar33 female})
       (attitude kGenreRocker)
       (skin_color_index 6)
       (eye_color_index 0)
@@ -1968,7 +1968,7 @@
    )
    (guitar34
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar34 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 2)
@@ -2003,7 +2003,7 @@
    #ifdef RAM_PREFABS
    (guitar35
       (gender female)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar35 female})
       (attitude kGenreRocker)
       (skin_color_index 6)
       (eye_color_index 0)
@@ -2019,7 +2019,7 @@
    )
    (guitar36
       (gender male)
-      VANILLA_GUITAR
+      (instrument {VANILLA_GUITAR guitar36 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 2)
@@ -2037,7 +2037,7 @@
    (guitar_skye
       (gender female)
       (attitude kGenreDramatic)
-      CUSTOM_GUITAR
+      (instrument {CUSTOM_GUITAR guitar_skye female})
       (weight 0.5)
       (height 0.5)
       (skin_color_index 0)
@@ -2065,7 +2065,7 @@
    (guitar_nemia
       (gender female)
       (attitude kGenreDramatic)
-      CUSTOM_GUITAR
+      (instrument {CUSTOM_GUITAR guitar_nemia female})
       (weight 0.5)
       (height 0.5)
       (skin_color_index 0)
@@ -2093,7 +2093,7 @@
    (guitar_spiderman
       (gender male)
       (attitude kGenreSpazz)
-      CUSTOM_GUITAR
+      (instrument {CUSTOM_GUITAR guitar_spiderman male})
       (weight 0.5)
       (height 0.5)
       (skin_color_index 0)
@@ -2122,7 +2122,7 @@
    (guitar_zoey
       (gender female)
       (attitude kGenreDramatic)
-      CUSTOM_GUITAR
+      (instrument {CUSTOM_GUITAR guitar_zoey female})
       (weight 0.5)
       (height 0.5)
       (skin_color_index 0)
@@ -2149,7 +2149,7 @@
    )
    (vocals0
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals0 male})
       (attitude kGenreRocker)
       (weight 0.5)
       (height 0.5)
@@ -2179,7 +2179,7 @@
    (vocals1
       (gender male)
       (attitude kGenreRocker)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals1 male})
       (weight 0.6)
       (height 0.5)
       (skin_color_index 1)
@@ -2208,7 +2208,7 @@
    (vocals2
       (gender female)
       (attitude kGenreSpazz)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals2 female})
       (weight 0.25)
       (height 0.85)
       (skin_color_index 4)
@@ -2235,7 +2235,7 @@
    )
    (vocals3
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals3 male})
       (attitude kGenreRocker)
       (weight 0.5)
       (height 0.5)
@@ -2264,7 +2264,7 @@
    )
    (vocals4
       (gender female)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals4 female})
       (attitude kGenreBanger)
       (weight 0.35)
       (height 0.5)
@@ -2292,7 +2292,7 @@
    )
    (vocals5
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals5 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -2322,7 +2322,7 @@
    )
    (vocals6
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals6 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 9)
@@ -2352,7 +2352,7 @@
    )
    (vocals7
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals7 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -2382,7 +2382,7 @@
    )
    (vocals8
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals8 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -2415,7 +2415,7 @@
    )
    (vocals9
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals9 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -2447,7 +2447,7 @@
    )
    (vocals10
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals10 male})
       (attitude kGenreSpazz)
       (skin_color_index 1)
       (eye_color_index 9)
@@ -2477,7 +2477,7 @@
    )
    (vocals11
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals11 male})
       (attitude kGenreBanger)
       (skin_color_index 0)
       (eye_color_index 9)
@@ -2516,7 +2516,7 @@
    )
    (vocals12
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals12 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -2546,7 +2546,7 @@
    )
    (vocals13
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals13 male})
       (attitude kGenreRocker)
       (skin_color_index 5)
       (eye_color_index 9)
@@ -2576,7 +2576,7 @@
    )
    (vocals14
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals14 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 2)
@@ -2606,7 +2606,7 @@
    )
    (vocals15
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals15 male})
       (attitude kGenreDramatic)
       (skin_color_index 2)
       (eye_color_index 9)
@@ -2636,7 +2636,7 @@
    )
    (vocals16
       (gender female)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals16 female})
       (attitude kGenreDramatic)
       (skin_color_index 0)
       (eye_color_index 2)
@@ -2676,7 +2676,7 @@
    )
    (vocals17
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals17 male})
       (attitude kGenreRocker)
       (skin_color_index 1)
       (eye_color_index 0)
@@ -2717,7 +2717,7 @@
    )
    (vocals18
       (gender female)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals18 female})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 0)
@@ -2746,7 +2746,7 @@
    )
    (vocals19
       (gender male)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals19 male})
       (attitude kGenreRocker)
       (skin_color_index 0)
       (eye_color_index 2)
@@ -2776,7 +2776,7 @@
    )
    (vocals20
       (gender female)
-      VANILLA_VOCALS
+      (instrument {VANILLA_VOCALS vocals20 female})
       (attitude kGenreSpazz)
       (skin_color_index 1)
       (eye_color_index 8)
@@ -2806,7 +2806,7 @@
    (vocals_helsie
       (gender female)
       (attitude kGenreDramatic)
-      CUSTOM_VOCALS
+      (instrument {CUSTOM_VOCALS vocals_helsie male})
       (weight 0.5)
       (height 0.5)
       (skin_color_index 0)
@@ -2834,7 +2834,7 @@
    (vocals_batman
       (gender male)
       (attitude kGenreBanger)
-      CUSTOM_VOCALS
+      (instrument {CUSTOM_VOCALS vocals_batman male})
       (weight 0.5)
       (height 0.5)
       (skin_color_index 0)
@@ -2863,7 +2863,7 @@
    (vocals_miku
       (gender female)
       (attitude kGenreRocker)
-      CUSTOM_VOCALS
+      (instrument {CUSTOM_VOCALS vocals_miku female})
       (weight 0.5)
       (height 0.5)
       (skin_color_index 0)
@@ -2891,7 +2891,7 @@
    (vocals_lisa
       (gender female)
       (attitude kGenreDramatic)
-      CUSTOM_VOCALS
+      (instrument {CUSTOM_VOCALS vocals_lisa female})
       (weight 0.5)
       (height 0.5)
       (skin_color_index 0)
@@ -2919,7 +2919,7 @@
    (vocals_laufey
       (gender female)
       (attitude kGenreDramatic)
-      CUSTOM_VOCALS
+      (instrument {CUSTOM_VOCALS vocals_laufey male})
       (weight 0.5)
       (height 0.5)
       (skin_color_index 0)

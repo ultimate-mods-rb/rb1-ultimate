@@ -81,15 +81,13 @@
 
 {set $goldprogress TRUE}
 
-{set $vchars TRUE}
-
-{set $cchars TRUE}
-
 {set $normal_venues TRUE}
 
 {set $rb2_venues TRUE}
 
 {set $custom_venues TRUE}
+
+{set $char_list {array 0}}
 
 {set $smallworld FALSE}
 

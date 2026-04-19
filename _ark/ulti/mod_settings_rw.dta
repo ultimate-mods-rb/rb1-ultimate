@@ -46,11 +46,10 @@
       nohud
       micdeploy
       goldprogress
-      vchars
-      cchars
       normal_venues
       rb2_venues
       custom_venues
+      char_list
       crowd
       force_per_pixel
       gtrgem1

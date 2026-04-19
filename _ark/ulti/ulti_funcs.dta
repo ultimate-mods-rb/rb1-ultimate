@@ -62,7 +62,7 @@
                {push_back $array
                   {sprintf
                      {localize os_onoff_fmt}
-                     {localize {elem $entry 0}}
+                     {localize_token {elem $entry 0}}
                      {localize {if_else {eval {elem {find $entry bool} 1}} on off}}
                   }
                }
@@ -1051,3 +1051,10 @@
       }}
    }
 }}
+{func prefab_state
+   ($custom $inst $name $gender)
+   {if_else {! {find_elem $char_list $name}}
+      $inst
+      ''
+   }
+}

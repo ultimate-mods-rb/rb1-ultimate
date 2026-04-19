@@ -774,14 +774,6 @@
       )
    ))
    (enter {os_setup_common})
-   (exit
-      {unless {|| $vchars $cchars}
-         {set $vchars TRUE}
-      }
-      {unless {|| $normal_venues $rb2_venues $custom_venues}
-         {set $normal_venues TRUE}
-      }
-   )
    (BUTTON_DOWN_MSG {os_down_common})
    (SELECT_MSG {os_sel_common})
 }
@@ -855,7 +847,7 @@
          )
       )
    ))
-   (enter  {os_setup_common})
+   (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
    (SELECT_MSG {os_sel_common})
 }
@@ -952,17 +944,30 @@
          (bool $custom_venues)
          (sel_script {toggle_var custom_venues})
       )
-      (os_vchars
-         (type uOnOFF)
-         (bool $vchars)
-         (sel_script {toggle_var vchars})
+      (os_guitar_chars
+         (type uNormal)
+         (sel_script
+            {overshell_char_list_panel set filter guitar}
+            {overshell_char_list_panel set title os_guitar_chars}
+            {pop_and_goto_screen overshell_char_list_screen}
+         )
       )
-      (os_cchars
-         (type uOnOFF)
-         (bool $cchars)
-         (sel_script {toggle_var cchars})
+      (os_drum_chars
+         (type uNormal)
+         (sel_script
+            {overshell_char_list_panel set filter drum}
+            {overshell_char_list_panel set title os_drum_chars}
+            {pop_and_goto_screen overshell_char_list_screen}
+         )
       )
-      ''
+      (os_vocals_chars
+         (type uNormal)
+         (sel_script
+            {overshell_char_list_panel set filter vocals}
+            {overshell_char_list_panel set title os_vocals_chars}
+            {pop_and_goto_screen overshell_char_list_screen}
+         )
+      )
       (os_force_venue
          (type uFakeSld)
          (fmt_type uLocalize)
@@ -972,6 +977,11 @@
       )
    ))
    (enter {os_setup_common})
+   (exit
+      {unless {|| $normal_venues $rb2_venues $custom_venues}
+         {set $normal_venues TRUE}
+      }
+   )
    (BUTTON_DOWN_MSG {os_down_common})
    (SELECT_MSG {os_sel_common})
 }
@@ -980,4 +990,176 @@
    (back overshell_other_screen)
    (panels overshell_ven_panel practice_lower3rd_panel helpbar)
    (focus overshell_ven_panel)
+}
+{new UIPanel
+   overshell_char_list_panel
+   OVERSHELL_LIST_FILE
+   (title os_guitar_chars)
+   (filter guitar)
+   (data    ())
+   (prefabs ())
+   (normal  ())
+   (custom  ())
+   (enter
+      {do
+         ($a
+            {` 
+               (
+                  (os_reset
+                     (type uNormal)
+                     (sel_script {$this reset})
+                  )
+                  (os_clear_normal
+                     (type uNormal)
+                     (sel_script {$this clear [normal]})
+                  )
+                  (os_clear_custom
+                     (type uNormal)
+                     (sel_script {$this clear [custom]})
+                  )
+               )
+            }
+         )
+         {foreach $prefab {find $syscfg characters prefab}
+            {if {== {type $prefab} kDataArray} {do
+               ($data {elem {find $prefab instrument} 1})
+               {if {&& $data {== {type $data} kDataCommand}} {do
+                  ($custom {eval {elem $data 1}})
+                  ($inst   {eval {elem $data 2}})
+                  ($name   {eval {elem $data 3}})
+                  {if {== $inst [filter]}
+                     {push_back [prefabs] $name}
+                     {if_else $custom
+                        {push_back [custom] $name}
+                        {push_back [normal] $name}
+                     }
+                     {push_back $a
+                        {`
+                           ({, $name}
+                              (type uOnOFF)
+                              (bool {$this in_list {, $name}})
+                              (sel_script {$this change_state {, $name}})
+                           )
+                        }
+                     }
+                  }
+               }}
+            }}
+         }
+         {set [data] $a}
+      }
+      {os_setup_common}
+   )
+   (exit
+      {set [data] {array 0}}
+      {set [prefabs] {array 0}}
+      {set [normal] {array 0}}
+      {set [custom] {array 0}}
+   )
+   (reset
+      {foreach $prefab [prefabs]
+         {if {find_elem $char_list $prefab}
+            {remove_elem $char_list $prefab}
+         }
+      }
+   )
+   (clear
+      ($a)
+      {foreach $prefab $a
+         {unless {find_elem $char_list $prefab}
+            {push_back $char_list $prefab}
+         }
+      }
+   )
+   (in_list
+      ($name)
+      {! {find_elem $char_list $name}}
+   )
+   (change_state
+      ($name)
+      {if_else {find_elem $char_list $name}
+         {remove_elem $char_list $name}
+         {push_back $char_list $name}
+      }
+   )
+   (warn
+      ($msg $can_leave)
+      {overshell_warn_screen set msg $msg}
+      {overshell_warn_screen set can_leave $can_leave}
+      {ui push_screen overshell_warn_screen}
+   )
+   (BUTTON_DOWN_MSG
+      {if_else {!= $button kPad_Tri}
+         {os_down_common}
+         {if_else {== {os_down_common} kDataUnhandled}
+            {do
+               ($active 0)
+               ($any_male FALSE)
+               ($any_female FALSE)
+               {foreach $prefab [prefabs]
+                  {unless {find_elem $char_list $prefab}
+                     {++ $active}
+                     {switch {elem {find $syscfg characters prefab $prefab gender} 1}
+                        (male {set $any_male TRUE})
+                        (female {set $any_female TRUE})
+                     }
+                  }
+               }
+               {cond
+                  ({== $active 0} {$this warn os_no_active TRUE})
+                  ({== [filter] vocals}
+                     {cond
+                        ({&& $any_male {! $any_female}}
+                           {$this warn os_no_female_vocals TRUE}
+                        )
+                        ({&& $any_female {! $any_male}}
+                           {$this warn os_no_male_vocals TRUE}
+                        )
+                        (TRUE kDataUnhandled)
+                     }
+                  )
+                  ({== $active 1}
+                     {$this warn os_crash_potential FALSE}
+                  )
+                  (TRUE kDataUnhandled)
+               }
+            }
+            FALSE
+         }
+      }
+   )
+   (SELECT_MSG {os_sel_common})
+}
+{new UIScreen
+   overshell_char_list_screen
+   (back overshell_ven_screen)
+   (panels overshell_char_list_panel practice_lower3rd_panel helpbar)
+   (focus overshell_char_list_panel)
+}
+{new UIScreen
+   overshell_warn_screen
+   (panels dialog_panel)
+   (focus dialog_panel)
+   (destination '')
+   (msg meow)
+   (can_leave TRUE)
+   (enter
+      {if_else [can_leave]
+         {dialog_panel set_ok {localize_token [msg]}}
+         {dialog_panel set_yesno
+            {localize_token [msg]}
+            no.btn
+         }
+      }
+   )
+   (SELECT_START_MSG
+      {ui pop_screen}
+      {if {== $component yes.btn}
+         {thread_task kTaskUISeconds
+            (delay 0.01)
+            (script {pop_and_goto_screen overshell_ven_screen})
+         }
+      }
+      kDataUnhandled
+   )
 }
