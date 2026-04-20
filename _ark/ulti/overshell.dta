@@ -944,6 +944,42 @@
          (bool $custom_venues)
          (sel_script {toggle_var custom_venues})
       )
+      (os_chars
+         (type uNormal)
+         (sel_script {pop_and_goto_screen overshell_chars_screen})
+      )
+      (os_force_venue
+         (type uFakeSld)
+         (fmt_type uLocalize)
+         (hide_on_sel TRUE)
+         (var force_venue)
+         (array (off random VENUES RB2_VENUES ULTI_VENUES))
+      )
+   ))
+   (enter {os_setup_common})
+   (exit
+      {unless {|| $normal_venues $rb2_venues $custom_venues}
+         {set $normal_venues TRUE}
+      }
+   )
+   (BUTTON_DOWN_MSG {os_down_common})
+   (SELECT_MSG {os_sel_common})
+}
+{new UIScreen
+   overshell_ven_screen
+   (back overshell_other_screen)
+   (panels overshell_ven_panel practice_lower3rd_panel helpbar)
+   (focus overshell_ven_panel)
+}
+{new UIPanel
+   overshell_chars_panel
+   OVERSHELL_LIST_FILE
+   (title os_chars)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script {set $char_list {array 0}})
+      )
       (os_guitar_chars
          (type uNormal)
          (sel_script
@@ -968,28 +1004,16 @@
             {pop_and_goto_screen overshell_char_list_screen}
          )
       )
-      (os_force_venue
-         (type uFakeSld)
-         (fmt_type uLocalize)
-         (hide_on_sel TRUE)
-         (var force_venue)
-         (array (off random VENUES RB2_VENUES ULTI_VENUES))
-      )
    ))
    (enter {os_setup_common})
-   (exit
-      {unless {|| $normal_venues $rb2_venues $custom_venues}
-         {set $normal_venues TRUE}
-      }
-   )
    (BUTTON_DOWN_MSG {os_down_common})
    (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
-   overshell_ven_screen
-   (back overshell_other_screen)
-   (panels overshell_ven_panel practice_lower3rd_panel helpbar)
-   (focus overshell_ven_panel)
+   overshell_chars_screen
+   (back overshell_ven_screen)
+   (panels overshell_chars_panel practice_lower3rd_panel helpbar)
+   (focus overshell_chars_panel)
 }
 {new UIPanel
    overshell_char_list_panel
@@ -1132,7 +1156,7 @@
 }
 {new UIScreen
    overshell_char_list_screen
-   (back overshell_ven_screen)
+   (back overshell_chars_screen)
    (panels overshell_char_list_panel practice_lower3rd_panel helpbar)
    (focus overshell_char_list_panel)
 }
@@ -1157,7 +1181,7 @@
       {if {== $component yes.btn}
          {thread_task kTaskUISeconds
             (delay 0.01)
-            (script {pop_and_goto_screen overshell_ven_screen})
+            (script {pop_and_goto_screen overshell_chars_screen})
          }
       }
       kDataUnhandled

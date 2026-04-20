@@ -141,16 +141,17 @@
 (os_rb2_venues "RB2 Venues")
 (os_custom_venues "Custom Venues")
 (os_ven "Venue/Char Options")
-(os_guitar_chars "Active Guitarists")
-(os_drum_chars "Active Drummers")
-(os_vocals_chars "Active Vocalists")
+(os_chars "Active Characters")
+(os_guitar_chars "Guitar Chars")
+(os_drum_chars "Drum Chars")
+(os_vocals_chars "Vocals Chars")
 (os_clear_normal "Remove Normal Chars")
 (os_clear_custom "Remove Custom Chars")
 (os_no_active "You can't leave with no characters active!")
 (os_no_female_vocals "You can't leave with no female vocalist active.")
 (os_no_male_vocals "You can't leave with no male vocalist active.")
 (os_crash_potential "
-   With one character active you will crash in some cases!
+   With one character active you will crash in many cases!
    \nIf you don't know what you're doing you should enable another character.
    \n
    \nDo you want to leave?
