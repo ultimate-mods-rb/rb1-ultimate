@@ -306,6 +306,8 @@
 (vote_on_a_setlist "Vote on a Setlist")
 (vote_song_and_artist_fmt "%s by %s")
 (helpbar_back_search "Back            START Search")
+(helpbar_next_heading "Next Category")
+(change_sort "Change Sorting")
 (search_for_song "Search for a song")
 (search_for_song_desc "Search for a song by name or artist")
 (no_songs_error "No songs found")
@@ -317,9 +319,20 @@
 (very_long "very long")
 (lrb_shop_custom "CUSTOM")
 (lrb_shop_unused "EARLY/UNUSED")
-(rb1 "Rock Band")
+(rb1
+   ; hack! only abuse that this is evaluated in desperate cases.
+   {if_else {{ui current_screen} has (net_sync_scroll)}
+      "Rock Band DLC"
+      "Rock Band"
+   }
+)
 (rb1_alt "Rock Band (alt)")
-(rb2 "Rock Band 2")
+(rb2
+   {if_else {{ui current_screen} has (net_sync_scroll)}
+      "Custom Songs"
+      "Rock Band 2"
+   }
+)
 (rb2_wii "Rock Band 2 (Wii)")
 (rb3 "Rock Band 3")
 (rb4 "Rock Band 4")
@@ -336,6 +349,8 @@
 (ghl "Guitar Hero Live")
 (amp "Amplitude")
 (freq "Frequency")
+#include locale_sources.dta
+(filter_game_origin "by source")
 (drum0 "Tanner Toddler")
 (drum1 "Raven Saunders")
 (drum16 "Deja Dupree")

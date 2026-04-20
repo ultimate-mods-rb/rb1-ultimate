@@ -283,6 +283,49 @@
       }
    )
 }
+{new UIPanel
+   change_sort_panel
+   (file "../ui/player_names_dialog.milo")
+   (focus players.lst)
+   (target '')
+   (helpbar ('' helpbar_select))
+   LIMIT_TO_SESSION
+   (enter
+      {title.lbl set text_token change_sort}
+      {players.lst set display_num 6}
+      {players.lst set_data
+         (
+            filter_difficulty
+            filter_genre
+            filter_decade
+            filter_alphabetic_song
+            filter_alphabetic_band
+            filter_game_origin
+         )
+      }
+      {players.lst set_selected {song_provider get_display}}
+      {players.lst set_local_pos_index 2 63.00}
+   )
+   (BUTTON_DOWN_MSG
+      {if {== $button kPad_Tri}
+         {ui pop_screen}
+      }
+      kDataUnhandled
+   )
+   (SELECT_MSG
+      {ui pop_screen}
+      {unless {== {$component selected_pos} {song_provider get_display}}
+         {[target] set_grouping_method {$component selected_pos}}
+         {[target] sync_grouping_method}
+      }
+   )
+}
+{new UIScreen
+   change_sort_screen
+   (panels change_sort_panel)
+   (focus change_sort_panel)
+   (exit {band_ui_sink set_net_sync TRUE})
+}
 {new Object
    on_save_load
    (save_load_all_complete_msg

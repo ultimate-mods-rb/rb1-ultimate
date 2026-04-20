@@ -352,6 +352,73 @@
    (decade the50s the60s the70s the80s the90s the00s the10s the20s)
    (alpha_song)
    (alpha_artist)
+   ; if a songs source isn't defined in here it will not show up in the song list!
+   (game_origin
+      rb11
+      rb1 ; some rb1 dlc has this as the game origin
+      rb1_dlc
+      '' ; adds in songs without origin (so most rb1 dlc)
+      rb22
+      rb2
+      rb3
+      rb3dlc
+      rb3_dlc
+      rb4
+      rb4dlc
+      rb4_dlc
+      rb4_rivals
+      rbvr
+      blitz
+      rb_blitz
+      lego
+      greenday
+      beatles
+      beatles_dlc
+      pearljam
+      fnfestival
+      freq
+      amp2003
+      amp2016
+      ugc1
+      ugc2
+      ugc_lost
+      ugc
+      ugc_plus
+      customs
+      gh1
+      gh2
+      gh2dlc
+      gh80s
+      gh3
+      gh3dlc
+      gha
+      ghwt
+      ghwtdlc
+      ghm
+      ghmdlc
+      ghsh
+      gh5
+      gh5dlc
+      djhero
+      djherodlc
+      bh
+      bh2
+      ghvh
+      ghwor
+      ghwordlc
+      djhero2
+      djhero2dlc
+      ghl
+      ghtv
+      gh
+      ghdlc
+      ch
+      fof
+      fretsmasher
+      phaseshift
+      yarg
+      yargdlc
+   )
 )
 (song_select_gap 30.0)
 (quick_cheats

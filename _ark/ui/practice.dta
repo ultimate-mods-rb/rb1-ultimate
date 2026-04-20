@@ -38,6 +38,7 @@
    )
    (focus practice_selsong_panel)
    (sel_song_career FALSE)
+   (net_sync_scroll FALSE)
    (helpbar (back select helpbar_songfilter))
 }
 {new PreloadPanel

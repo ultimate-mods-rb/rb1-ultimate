@@ -198,10 +198,39 @@
                }
             }
          )
+         ({== $button kPad_Select}
+            {unless [search_mode]
+               {synth play button_toggle}
+               ;{$this switch_grouping}
+               {band_ui_sink set_net_sync FALSE}
+               {change_sort_panel set target $this}
+               {ui push_screen change_sort_screen}
+            }
+         )
          ({== $button kPad_R1}
             {unless [search_mode]
                {synth play button_toggle}
-               {$this switch_grouping}
+               {do
+                  ($ix {ss_song.lst selected_pos})
+                  {while
+                     {||
+                        {song_provider is_active $ix}
+                        {song_provider get_song_to_set $ix}
+                     }
+                     {++ $ix}
+                  }
+                  {if {! {song_provider is_active $ix}}
+                     {ss_song.lst set_selected {+ $ix 1} $ix}
+                     {if {!= {ss_song.lst selected_pos} {+ $ix 1}}
+                        {ss_song.lst set_selected 2 1}
+                     }
+                     {$this component_scroll 0 0}
+                     {$this play_preview}
+                     {if {!= [song_mode] leaderboards}
+                        {session send_to_all {'`' ({',' $this} play_preview)} kNetReliable}
+                     }
+                  }
+               }
             }
          )
          ({== $button kPad_Start}
@@ -342,7 +371,10 @@
             {'`'
                ({',' $this}
                   set_grouping_method
-                  {',' {song_provider get_display}}
+                  {min
+                     {',' {song_provider get_display}}
+                     {- {size {find $syscfg song_groupings}} 2}
+                  }
                )
             }
             kNetReliable
@@ -469,6 +501,7 @@
             (decade {$filter set_localized {localize filter_decade}})
             (alpha_song {$filter set_localized {localize filter_alphabetic_song}})
             (alpha_artist {$filter set_localized {localize filter_alphabetic_band}})
+            (game_origin {$filter set_localized {localize filter_game_origin}})
          }
       }
    )
@@ -544,6 +577,9 @@
                {$this update_search_mode TRUE}
                {$this component_scroll 0 0}
                {$this play_preview}
+               {if {!= [song_mode] leaderboards}
+                  {session send_to_all {'`' ({',' $this} play_preview)} kNetReliable}
+               }
             }
             {$this update_search_mode FALSE}
          }
@@ -629,7 +665,7 @@
             {if_else {gamecfg is_player_local $player_num}
                {do
                   {helpbar set_config
-                     (helpbar_back_search helpbar_choosesong helpbar_songfilter)
+                     (helpbar_back_search helpbar_choosesong helpbar_next_heading)
                   }
                   {helpbar set_waiting FALSE}
                }
@@ -712,7 +748,7 @@
 #define COMMON_SONG_SELECT_SCREEN (
    (helpbar
       {if_else {is_leader_local}
-         (helpbar_back_search helpbar_choosesong helpbar_songfilter)
+         (helpbar_back_search helpbar_choosesong helpbar_next_heading)
          (helpbar_leave_session)
       }
    )
