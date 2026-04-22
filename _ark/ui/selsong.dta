@@ -119,6 +119,8 @@
       {set [search_mode] FALSE}
       {set [results] {array 0}}
       {set [sel_leader] -1}
+      {set [hb] FALSE}
+      {set [hbw] FALSE}
       {if {size [players]}
          {remove_elem [players] {get_elem [players] 0}}
       }
@@ -359,11 +361,13 @@
    )
    (set_grouping_method
       ($ix)
-      {song_provider set_display $ix}
-      {ss_song.lst set_provider song_provider}
-      {$this select_first_selectable}
-      {$this play_preview}
-      {$this update_filter {song_provider get_display}}
+      {unless {== $ix {song_provider get_display}}
+         {song_provider set_display $ix}
+         {ss_song.lst set_provider song_provider}
+         {$this select_first_selectable}
+         {$this play_preview}
+         {$this update_filter {song_provider get_display}}
+      }
    )
    (sync_grouping_method
       {if {!= [song_mode] leaderboards}
@@ -652,7 +656,7 @@
                   }
                }
             }
-            {set [sel_leader] {gamecfg get leader_num}}
+            {$this set_sel_leader {gamecfg get leader_num}}
          }
       }
    )
@@ -664,14 +668,12 @@
          (script
             {if_else {gamecfg is_player_local $player_num}
                {do
-                  {helpbar set_config
-                     (helpbar_back_search helpbar_choosesong helpbar_next_heading)
-                  }
-                  {helpbar set_waiting FALSE}
+                  {set [hb] (helpbar_back_search helpbar_choosesong helpbar_next_heading)}
+                  {set [hbw] FALSE}
                }
                {do
-                  {helpbar set_config (helpbar_leave_session)}
-                  {helpbar set_waiting
+                  {set [hb] (helpbar_leave_session)}
+                  {set [hbw]
                      {sprintf
                         {localize waiting_for_player}
                         {{game get_player_config $player_num} get player_name}
@@ -679,12 +681,22 @@
                   }
                }
             }
+            {helpbar set_config [hb]}
+            {helpbar set_waiting [hbw]}
          )
       }
    )
    (correct_leader {$this set_sel_leader {gamecfg get leader_num}})
    (REMOTE_PLAYER_LEFT_MSG ; not tested!
       {$this update_leader}
+   )
+   (hb FALSE)
+   (hbw FALSE)
+   (TRANSITION_COMPLETE_MSG
+      {if {&& {== {$new_screen focus_panel} $this} [hb]}
+         {helpbar set_config [hb]}
+         {helpbar set_waiting [hbw]}
+      }
    )
 )
 {new UIScreen
