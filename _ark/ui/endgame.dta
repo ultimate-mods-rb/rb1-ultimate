@@ -398,7 +398,10 @@
    (finish_load
       {foreach $lbl (heading.lbl score.lbl)
          {if {exists $lbl}
-            {$lbl set_type kabel_bold}
+            {if_else {== $this tour_nextsong_panel}
+               {$lbl set_type dyingmarker}
+               {$lbl set_type blockletters}
+            }
          }
       }
       {if {== $this tour_nextsong_panel}

@@ -118,6 +118,7 @@
    (cannot_connect_warning community_no_server_warning)
    (missing_part_type kMissingSelectCoop)
    (is_jukebox FALSE)
+   (is_permadeath FALSE)
 )
 (init
    (community_screen main_leaderboard_screen)
@@ -264,7 +265,7 @@
    (show_loading_images TRUE)
    (is_tour TRUE)
 )
-(tour_solo
+#define TOUR_SOLO_PROPERTIES (
    TOUR_MODE_PROPERTIES
    (pause_new_song_screen tour_solo_event_screen)
    (continue_screen
@@ -296,6 +297,11 @@
    (cannot_connect_warning solo_no_server_warning)
    (unlock_song_instrument {{tour performer} get_instrument})
    (missing_part_type kMissingSoloTour)
+)
+(tour_solo TOUR_SOLO_PROPERTIES)
+(permadeath
+   TOUR_SOLO_PROPERTIES
+   (is_permadeath TRUE)
 )
 #define TOUR_BAND_PROPERTIES (
    TOUR_MODE_PROPERTIES

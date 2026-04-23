@@ -1917,6 +1917,7 @@
                   (cost 60)
                )
                (halo)
+               (halo_red)
             )
          )
          (earrings
@@ -3643,6 +3644,7 @@
                   (cost 60)
                )
                (halo)
+               (halo_red)
             )
          )
          (earrings

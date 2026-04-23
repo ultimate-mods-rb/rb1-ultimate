@@ -187,6 +187,15 @@
                {$obj init $player $dir}
             }
          }
+         {if {gamemode get is_permadeath}
+            {do
+               ($obj "perma_callback")
+               {if {exists $obj} {delete $obj}}
+               {new Object $obj}
+               {$obj set_type perma_callback}
+               {$obj init $player}
+            }
+         }
       }
    )
    (load_gems

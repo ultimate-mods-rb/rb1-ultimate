@@ -2,6 +2,7 @@
    #include ../ulti/ulti_funcs.dta
    #include ../ulti/ulti_init.dta
    #include ../ulti/ulti_init_apperance.dta
+   #include ../ulti/ulti_pi_screens.dta
    #include init.dta
    #include ../ulti/ulti_screens.dta
    #include ../ulti/mod_settings_rw.dta
@@ -271,6 +272,13 @@
    }
    {if {&& {fx is_up} {fx get in_transition}}
       {fx fade_in}
+   }
+   {if
+      {&&
+         {gamemode get is_permadeath}
+         {permadeath_info_panel is_up}
+      }
+      {permadeath_info_panel update_text}
    }
    kDataUnhandled
 )

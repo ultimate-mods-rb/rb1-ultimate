@@ -346,6 +346,10 @@
          {game reset_config}
       }
       {meta music_start}
+      {if {permadeath_mgr should_warn}
+         {ui push_screen overshell_perma_lost}
+         {permadeath_mgr set should_warn FALSE}
+      }
    )
    (exit
       {fx fade_out}
@@ -521,8 +525,8 @@
 }
 {new SessionPanel
    main_solomode_panel
-   (file "main_solomode.milo")
-   (focus quickplay.btn)
+   (file "main_multimode.milo")
+   (focus bandqp.btn)
    (login_status kDesirable)
    (load {main_panel set mode_focus solo.btn})
    (exit {synth reset_mics_changed})
@@ -534,7 +538,7 @@
          }
          {do
             {switch $component
-               (quickplay.btn
+               (bandqp.btn
                   {cond
                      ({&&
                            {platform_mgr is_player_signed_in $player_num}
@@ -552,7 +556,7 @@
                      )
                   }
                )
-               (tour.btn
+               (bandtour.btn
                   {cond
                      ({!
                            {platform_mgr is_player_signed_in $player_num}}
@@ -567,6 +571,29 @@
                      )
                      (TRUE
                         {gamemode set_mode tour_solo $player_num}
+                        {$this wait_for_session_ready}
+                        {session_mgr add_local_player
+                           $player_num
+                           {gamecfg get_controller_type_from_controller $player_num}
+                        }
+                     )
+                  }
+               )
+               (headtohead.btn
+                  {cond
+                     ({!
+                           {platform_mgr is_player_signed_in $player_num}}
+                        {main_solo_signin_screen set player_num $player_num}
+                        {ui push_screen main_solo_signin_screen}
+                     )
+                     ({&&
+                           {platform_mgr is_player_signed_in $player_num}
+                           {platform_mgr is_player_a_guest $player_num}}
+                        {main_solo_signin_not_guest_screen set player_num $player_num}
+                        {ui push_screen main_solo_signin_not_guest_screen}
+                     )
+                     (TRUE
+                        {gamemode set_mode permadeath $player_num}
                         {$this wait_for_session_ready}
                         {session_mgr add_local_player
                            $player_num
@@ -593,6 +620,14 @@
             {goto_after_network_connect {gamemode get matchmaking_screen} FALSE}
          }
       }
+   )
+   (finish_load
+      {bandqp.btn set text_token main_quickplay}
+      {bandtour.btn set text_token main_solo_tour}
+      {headtohead.btn set text_token main_permadeath}
+      {$this disable headtohead_pro.btn}
+      {headtohead_pro.btn set_showing FALSE}
+      {submenu03.mesh set_showing FALSE}
    )
 }
 {new UIScreen

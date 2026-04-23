@@ -1,0 +1,82 @@
+{new UIPanel
+   permadeath_info_panel
+   (file "perma_bg.milo")
+   (enter {$this update_text})
+   (update_text
+      {$this set_showing {gamemode get is_permadeath}}
+      {if {&& {gamemode get is_permadeath} {permadeath_mgr num_lives}}
+         {lives.lbl set_localized
+            {sprintf {localize info_lives}
+               {permadeath_mgr num_lives}
+               {permadeath_mgr total_lives}
+            }
+         }
+         {songs.lbl set_localized
+            {sprintf {localize info_songs}
+               {permadeath_mgr songs_completed}
+               58
+            }
+         }
+         {notes.lbl set_localized
+            {sprintf {localize info_notes}
+               {permadeath_mgr note_streak}
+            }
+         }
+         {cond
+            ({&& {== {rnd aspect} kWidescreenAspect} {tour_solo_endgame_panel is_up}}
+               {bg.mesh set_local_pos -280 0 -153}
+               {lbl_parent set_local_pos -320 0 -178}
+            )
+            ({== {rnd aspect} kWidescreenAspect}
+               {bg.mesh set_local_pos 280 0 150}
+               {lbl_parent set_local_pos 320 0 173}
+            )
+            (
+               {||
+                  {tour_solo_endgame_panel is_up}
+                  {tour_solo_gigcomplete_panel is_up}
+               }
+               {bg.mesh set_local_pos -190 0 -153}
+               {lbl_parent set_local_pos -220 0 -178}
+            )
+            ({practice_space_panel is_up}
+               {bg.mesh set_local_pos -190 0 150}
+               {lbl_parent set_local_pos -220 0 173}
+            )
+            (TRUE
+               {bg.mesh set_local_pos 190 0 150}
+               {lbl_parent set_local_pos 220 0 173}
+            )
+         }
+      }
+   )
+   (finish_load
+      {bg.mesh set_local_scale 0.75 1 0.50}
+      {bg.mesh set_local_pos 0 0 0}
+
+      {new BandLabel perma.lbl}
+      {new BandLabel lives.lbl}
+      {new BandLabel songs.lbl}
+      {new BandLabel notes.lbl}
+
+      {new Trans lbl_parent}
+
+      {$this iterate BandLabel $lbl
+         {$lbl set_type headline}
+         {$lbl set text_size 25}
+         {$lbl set color_normal {pack_color 1 1 1}}
+         {$lbl set_trans_parent lbl_parent}
+      }
+
+      {perma.lbl set text_token info_perma}
+      {perma.lbl set_local_pos 0 0 40}
+
+      {lives.lbl set_local_pos 0 0 0}
+
+      {songs.lbl set_local_pos 0 0 -20}
+
+      {notes.lbl set_local_pos 0 0 -40}
+
+      {{$this loaded_dir} sync_objects}
+   )
+}

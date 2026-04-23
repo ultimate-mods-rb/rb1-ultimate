@@ -261,6 +261,155 @@
          (track 0)
          (streak_meter 0)
       )
+      (permadeath_mgr
+         (version 0)
+         (num_lives [num_lives])
+         (total_lives [total_lives])
+         (note_streak [note_streak])
+         (songs_completed [songs_completed])
+         (won [won])
+         (should_warn [should_warn])
+         (init
+            {set [num_lives] 0}
+            {set [total_lives] 0}
+            {set [note_streak] 0}
+            {set [songs_completed] 0}
+            {set [won] FALSE}
+            {set [should_warn] FALSE}
+         )
+         (load_data {do
+            ($motto {char_data get_motto})
+            ($array {array 0})
+            ($version)
+            ($str)
+            {foreach_int $elem 0 {strlen $motto} {do
+               ($char {str_elem $motto $elem})
+               {if_else {== $char " "}
+                  {do
+                     {push_back $array $str}
+                     {set $str 0}
+                  }
+                  {set $str
+                     {if_else $str
+                        {sprint $str $char}
+                        $char
+                     }
+                  }
+               }
+            }}
+            {push_back $array $str}
+
+            {set $version          {siti {elem $array 1}}}
+            {set [num_lives]       {siti {elem $array 2}}}
+            {set [total_lives]     {siti {elem $array 3}}}
+            {set [note_streak]     {siti {elem $array 4}}}
+            {set [songs_completed] {siti {elem $array 5}}}
+            {set [won]             {siti {elem $array 6}}}
+
+            {print
+               {sprint
+                  "\n"
+                  "         (version " $version ")\n"
+                  "         (num_lives " [num_lives] ")\n"
+                  "         (total_lives " [total_lives] ")\n"
+                  "         (note_streak " [note_streak] ")\n"
+                  "         (songs_completed " [songs_completed] ")\n"
+                  "         (won " [won] ")"
+                  "\n"
+               }
+            }
+         })
+         (save_data {do
+            ($motto
+               {sprint
+                  "uwurawrxd"
+                  " "
+                  [version]
+                  " "
+                  [num_lives]
+                  " "
+                  [total_lives]
+                  " "
+                  [note_streak]
+                  " "
+                  [songs_completed]
+                  " "
+                  [won]
+               }
+            )
+            {unless {== $motto {char_data get_motto}}
+               {char_data set_motto $motto}
+               {print {char_data get_motto}}
+            }
+         })
+         (remove_life
+            {-- [num_lives]}
+            {set [note_streak] 0}
+            {$this save_data}
+         )
+         (add_event
+            ($streak)
+            {++ [songs_completed]}
+            {+= [note_streak] $streak}
+            {$this save_data}
+         )
+         (reset_char {char_data set_motto ""})
+         (is_char_perma
+            ($char)
+            {char_data set_char $char}
+            {startswith {char_data get_motto} "uwurawrxd"}
+         )
+      )
+      (perma_callback
+         (init
+            ($player)
+            {set [player] $player}
+            {[player] add_sink $this}
+            {game add_sink $this game_lost}
+         )
+         (hit {++ [gems_hit]})
+         (miss
+            {unless {|| {[player] current_streak} {== [gems_hit] 0}}
+               {$this on_miss}
+            }
+         )
+         (pass
+            {unless {[player] current_streak}
+               {$this on_miss}
+            }
+         )
+         (phrase_rating
+            ($rating)
+            {if_else {== $rating 4}
+               {++ [gems_hit]}
+               {$this on_miss}
+            }
+         )
+         (game_lost {$this on_miss})
+         (on_miss
+            {unless [exiting] ; makes u not lose 2/3 lives when missing on drums
+               {set [exiting] TRUE}
+               {permadeath_mgr remove_life}
+               {permadeath_mgr save_data}
+               {permadeath_mgr set should_warn TRUE}
+               {if_else {permadeath_mgr num_lives}
+                  {do
+                     {session end_game kQuit}
+                     {band_ui_sink sync_screen meta_loading_pause_new_song_screen 1}
+                  }
+                  {do
+                     {permadeath_mgr reset_char}
+                     {overshell_perma_lost set name {char_data get_char_name}}
+                     {overshell_perma_lost set player_num {game get leader_num}}
+                     {ui goto_screen meta_loading_quit_early_screen}
+                  }
+               }
+            }
+         )
+         (gems_hit 0)
+         (player 0)
+         (exiting FALSE)
+      )
    )
 )
 (BandList
@@ -431,6 +580,39 @@
          )
          (provider ("Bob"))
       )
+      (perma_char_chooser
+         (resource_file "../ui/resource/list_char_chooser.milo")
+         (vertical TRUE)
+         (element ((text "name.lbl")))
+         (back_arrow "")
+         (next_arrow "")
+         (highlight "")
+         (colors
+            (
+               (
+                  (normal
+                     (normal 0.5 0.5 0.5)
+                     (focused 0.5 0.5 0.5)
+                     (disabled 0.5 0.5 0.5)
+                     (selecting 0.5 0.5 0.5)
+                  )
+                  (highlight
+                     (normal 0.8 0.8 0.8)
+                     (focused 128 128 0)
+                     (disabled 0.8 0.8 0.8)
+                     (selecting 1 1 1)
+                  )
+                  (disabled
+                     (normal 0.2 0.2 0.2)
+                     (focused 0.2 0.2 0.2)
+                     (disabled 0.2 0.2 0.2)
+                     (selecting 0.2 0.2 0.2)
+                  )
+               )
+            )
+         )
+         (provider ("Dan"))
+      )
    )
 )
 (UIList
@@ -482,6 +664,18 @@
       (screen_title_ulti
          (resource_file "resource/avantgarde.milo")
          (texts (text "avantgarde.txt"))
+      )
+      (dyingmarker
+         (resource_file "resource/dyingmarker.milo")
+         (texts (text "dyingmarker.txt"))
+      )
+      (receipt
+         (resource_file "resource/receipt.milo")
+         (texts (text "receipt.txt"))
+      )
+      (blockletters
+         (resource_file "resource/blockletters.milo")
+         (texts (text "blockletters.txt"))
       )
    )
 )

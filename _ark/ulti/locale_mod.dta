@@ -476,13 +476,29 @@
 )
 ; etc
 (halo "Halo")
-(halo_desc "You're Winner!")
+(halo_desc "You're the ultimate freq with this halo on.")
+(halo_red "Halo (red)")
+(halo_red_desc "You're Winner!")
 (early_warning "
 	RB1 Ultimate is in an alpha phase and very incomplete.\n
 	Please report any bugs or issues on the GitHub page.\n
 	Do you understand?
 ")
 (waiting_for_player "Waiting for %s...")
+(main_permadeath "PERMADEATH")
+(perma_lives_fmt "Lives: %d")
+(perma_already_played "You've already played this song")
+(perma_no_dlc "Downloaded songs aren't playable in permadeath")
+(on_lost_life "You lost a life %s\n%s\n\nYou have %d/%d lives remaining.")
+(perma_taunt_0 "You're supposed to hit the notes!")
+(perma_taunt_1 "ur bad")
+(perma_taunt_2 "Have you heard of practice mode?")
+(perma_lost "You've lost all of your lives.\nYour rocker can't play permadeath anymore.\n\nWould you like to delete them?")
+(on_lame_win "You win!\n(next time do it without missing)\n\nWon with %d/%d lives remaining.")
+{info_perma "STATUS"}
+{info_lives "LIVES: %d/%d"}
+{info_songs "SONGS: %d/%d"}
+{info_notes "STREAK: %d"}
 ;;;
 ;;; DRUM TRAINER
 ;;;

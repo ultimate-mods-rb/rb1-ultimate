@@ -335,3 +335,184 @@
    )
 }
 {memcardmgr add_sink on_save_load save_load_all_complete_msg}
+{new UIScreen
+   overshell_perma_msg ; a lie
+   (panels dialog_panel)
+   (focus dialog_panel)
+   (destination '')
+   (msg meow)
+   (enter
+      {dialog_panel set_ok
+         {if_else {== {type [msg]} kDataString}
+            [msg]
+            {localize_token [msg]}
+         }
+      }
+   )
+   (SELECT_START_MSG
+      {if {== $component ok.btn}
+         {ui pop_screen}
+      }
+      kDataUnhandled
+   )
+   (show
+      ($msg)
+      {set [msg] $msg}
+      {ui push_screen $this}
+   )
+}
+{new UIScreen
+   overshell_perma_lost
+   (panels dialog_panel)
+   (focus dialog_panel)
+   (destination '')
+   (name "")
+   (player_num -1)
+   (enter
+      {dialog_panel set_yesno
+         {localize_token perma_lost}
+         yes.btn
+      }
+   )
+   (SELECT_START_MSG
+      {if {== $component yes.btn}
+         {char_data_provider init [player_num]}
+         {foreach_int $i 0 {char_data_provider get_num_chars}
+            {if {== {char_data_provider get_char_name $i} [name]}
+               {char_data_provider delete_character $i}
+            }
+         }
+      }
+      {ui pop_screen}
+      kDataUnhandled
+   )
+}
+{new UIPanel
+   permadeath_setup_panel
+   (file "../ui/tour_solo_guitar_welcome.milo")
+   (enter {$this update_text})
+   (update_text
+      {lives.btn set_localized
+         {sprintf {localize perma_lives_fmt}
+            {+ {permadeath_mgr get num_lives} 1}
+         }
+      }
+   )
+   (SELECT_MSG
+      {switch $component
+         (lives.btn
+            {lives.sld store}
+            {$this set_focus lives.sld}
+         )
+         (ok.btn
+            {ui pop_screen}
+            {permadeath_mgr set num_lives
+               {+ {permadeath_mgr get num_lives} 1}
+            }
+            {permadeath_mgr set total_lives
+               {permadeath_mgr get num_lives}
+            }
+            {permadeath_mgr save_data}
+         )
+      }
+   )
+   (BUTTON_DOWN_MSG
+      {switch {$this focus_name}
+         (lives.sld
+            {switch $button
+               (kPad_X
+                  {lives.sld confirm}
+                  {$this set_focus lives.btn}
+               )
+               (kPad_Tri
+                  {lives.sld undo $player_num}
+                  {$this set_focus lives.btn}
+               )
+               kDataUnhandled
+            }
+         )
+         kDataUnhandled
+      }
+   )
+   (SCROLL_MSG
+      {switch $component
+         (lives.sld
+            {permadeath_mgr set num_lives {$component current}}
+         )
+      }
+      {$this update_text}
+   )
+   (finish_load
+      {mi_logo.mesh set_showing FALSE}
+
+      {town_desc.lbl set_localized
+         "Welcome to permadeatH :3\nMiss and you lose a life.\nRun of of lives and loss!"
+      }
+      {town_desc.lbl set_local_pos_index 2 145}
+
+      {$this iterate BandButton $btn {delete $btn}}
+      {$this iterate UISlider $sld {delete $sld}}
+
+      {new BandButton ok.btn}
+
+      {new BandButton lives.btn}
+
+      {$this iterate BandButton $btn
+         {$btn copy {dialog_panel find no.btn} 0}
+         {tour_band_busavailable.grp add_object $btn}
+         {$btn set_trans_parent tour_band_busavailable.grp}
+      }
+
+      {ok.btn set text_token ok}
+      {ok.btn set_local_pos_index 2 -150}
+
+      {lives.btn set text_token "Lives: 1"}
+      {lives.btn set_local_pos -160 0 -21}
+      {lives.btn set alignment kMiddleLeft}
+      {lives.btn set nav_down ok.btn}
+      
+      {new UISlider lives.sld}
+
+      {$this iterate UISlider $sld
+         {$sld set_type audio}
+         {tour_band_busavailable.grp add_object $sld}
+         {$sld set_trans_parent tour_band_busavailable.grp}
+         {$sld set_local_scale 0.6 0.6 0.6}
+         {$sld set_local_pos 90 0 -20}
+         {$sld set_num_steps 5}
+         {$sld set_current 0}
+      }
+
+
+
+      {$this set_focus lives.btn}
+      {{$this loaded_dir} sync_objects}
+   )
+}
+{new UIScreen
+   permadeath_setup_screen
+   (panels permadeath_setup_panel)
+   (focus permadeath_setup_panel)
+}
+{new UIPanel
+   permadeath_real_win_panel
+   (file "permadeath_real_win.milo")
+   (enter
+      {{tour performer} buy_outfit rings halo_red 0}
+      {{tour performer} select_outfit '' rings halo_red}
+   )
+   (BUTTON_DOWN_MSG
+      {switch $button
+         (kPad_X {ui pop_screen})
+         kDataUnhandled
+      }
+   )
+}
+{new UIScreen
+   permadeath_real_win_screen
+   (panels permadeath_real_win_panel)
+   (focus permadeath_real_win_panel)
+}
+{new CharProfilePanel char_data}
+{{new Object permadeath_mgr} set_type permadeath_mgr}
+{permadeath_mgr init}

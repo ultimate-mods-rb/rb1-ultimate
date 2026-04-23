@@ -5,6 +5,7 @@
    (reset_focus TRUE)
    LIMIT_TO_LEADER_SESSION
    (char_provider {object ""})
+   (to_sel ())
    (enter
       {band_ui_sink set_controller_level kControllerLevelSession}
       {do
@@ -15,12 +16,44 @@
             {get_font_char_from_controller_type {$pcfg get_controller_type}}
          }
          {set [char_provider] {get_solo_char_provider {game get leader_num}}}
-         ;{[char_provider] set_instrument_filter {$pcfg get_controller_sym}}
+         {if_else {gamemode get is_permadeath}
+            {[char_provider] set_instrument_filter {$pcfg get_controller_sym}}
+            {[char_provider] set_instrument_filter ''}
+         }
          {char.lst set_provider [char_provider]}
+         {if {gamemode get is_permadeath}
+            {permadeath_mgr init}
+            {do
+               ($max 0)
+               ($a {eval_array (char_provider_create_new)})
+               ($ia {array 1})
+               {while {== {char.lst selected_pos} $max}
+                  {++ $max}
+                  {char.lst set_selected $max}
+               }
+               {if $max
+                  {foreach_int $i 1 $max
+                     {if
+                        {&&
+                           {permadeath_mgr is_char_perma {[char_provider] get_char $i}}
+                           {== {{[char_provider] get_char $i} get_instrument} {$pcfg get_controller_sym}}
+                        }
+                        {push_back $a {char_data get_char_name}}
+                        {push_back $ia $i}
+                     }
+                  }
+               }
+               {set [to_sel] $ia}
+               {char_perma.lst set_data $a}
+            }
+         }
          {do
             ($char_pos {[char_provider] get_pos_from_char {$pcfg get_char}})
             {unless {== $char_pos -1}
                {char.lst set_selected $char_pos}
+               {if {gamemode get is_permadeath}
+                  {char_perma.lst set_selected {get_elem [to_pos] $char_pos}}
+               }
             }
          }
          {band_ui_sink enable_lefty_override {$pcfg get player_num} TRUE}
@@ -30,6 +63,7 @@
       {tour_solo_event_panel set real_char FALSE}
    )
    (exit
+      {set [to_sel] ()}
       {do
          ($pcfg {game get_player_config {game get leader_num}})
          {band_ui_sink enable_lefty_override {$pcfg get player_num} FALSE}
@@ -37,6 +71,11 @@
    )
    (unload {charcreator_panel free_all})
    (update
+      {if {gamemode get is_permadeath}
+         {char.lst set_selected
+            {elem [to_sel] {char_perma.lst selected_pos}}
+         }
+      }
       {do
          ($pos {char.lst selected_pos})
          ($pcfg {game get_player_config {game get leader_num}})
@@ -63,8 +102,8 @@
       }
    )
    (SELECT_MSG
-      {if_else {== $component char.lst}
-         {if_else {[char_provider] is_create_new {$component selected_pos}}
+      {if_else {find_elem (char.lst char_perma.lst) $component}
+         {if_else {[char_provider] is_create_new {char.lst selected_pos}}
             {if_else
                {profile_mgr can_player_create_char
                   {game get leader_num}
@@ -74,8 +113,27 @@
                {ui push_screen tour_solo_char_no_room_screen}
             }
             {do
-               {tour_solo_hub_panel set reset TRUE}
-               {ui goto_screen {gamemode get post_matchmaking_screen}}
+               ($is_char_perma
+                  {permadeath_mgr is_char_perma
+                     {{game get_player_config {game get leader_num}} get_char}
+                  }
+               )
+               {cond
+                  ({&& {gamemode get is_permadeath} $is_char_perma}
+                     {tour_solo_hub_panel set reset TRUE}
+                     {ui goto_screen {gamemode get post_matchmaking_screen}}
+                  )
+                  ({gamemode get is_permadeath}
+                     {print "char not perma!!"}
+                  )
+                  ($is_char_perma
+                     {print "char perma but not perma mode!"}
+                  )
+                  (TRUE
+                     {tour_solo_hub_panel set reset TRUE}
+                     {ui goto_screen {gamemode get post_matchmaking_screen}}
+                  )
+               }
             }
          }
          {do
@@ -91,8 +149,21 @@
       {$this set_focus
          {if_else $enable
             male.btn
-            char.lst
+            {if_else {gamemode get is_permadeath}
+               char_perma.lst
+               char.lst
+            }
          }
+      }
+   )
+   (finish_load
+      {if {gamemode get is_permadeath}
+         {new BandList char_perma.lst}
+         {char_perma.lst copy char.lst 0}
+         {char_perma.lst set_type perma_char_chooser}
+         {char.grp add_object char_perma.lst}
+         {char.lst set_showing FALSE}
+         {$this sync_objects}
       }
    )
 }
@@ -152,6 +223,11 @@
    (is_loaded {content_mgr refresh_done})
    (enter {$this refresh})
    (refresh
+      {if {gamemode get is_permadeath}
+         {foreach $btn (easy.btn medium.btn hard.btn)
+            {$this disable $btn}
+         }
+      }
       {do
          ($pcfg {game get_player_config {game get leader_num}})
          ($char {$pcfg get_char})
@@ -192,6 +268,7 @@
       practice_space_panel
       tour_solo_diff_panel
       tour_band_lower3rd_panel
+      permadeath_info_panel
       helpbar
       fx
    )
@@ -213,6 +290,12 @@
       }
       {set [reset] FALSE}
       {$this refresh}
+      {if {gamemode get is_permadeath}
+         {if_else {permadeath_mgr is_char_perma {tour performer}}
+            {permadeath_mgr load_data}
+            {ui push_screen permadeath_setup_screen}
+         }
+      }
    )
    (TRANSITION_COMPLETE_MSG {autosave})
    (refresh
@@ -260,6 +343,7 @@
       practice_space_panel
       tour_solo_hub_panel
       tour_band_lower3rd_panel
+      permadeath_info_panel
       helpbar
       fx
    )
@@ -284,13 +368,9 @@
       {$this disable topsongs.btn}
       {do
          ($is_local {$this is_local})
-         ($op
-            {if_else {&& $is_local {== [player_num] [profile_player_num]}}
-               enable
-               disable
-            }
-         )
-         {$this $op motto.btn}
+         {$this disable motto.btn}
+         {motto.btn set_showing FALSE}
+         {motto.lbl set_showing FALSE}
          {if_else $is_local
             {do
                {bands.lst set_provider {$this get_char_band_provider}}
@@ -423,6 +503,42 @@
       {$this refresh}
       {$this play_preview}
       {platform_mgr disable_xmp}
+      {if {permadeath_mgr should_warn}
+         {overshell_perma_msg show
+            {sprintf {localize on_lost_life}
+               {random_elem (":3" "XD" "LMAO")}
+               {localize
+                  {random_elem
+                     (
+                        perma_taunt_0
+                        perma_taunt_1
+                        perma_taunt_2
+                     )
+                  }
+               }
+               {permadeath_mgr num_lives}
+               {permadeath_mgr total_lives}
+            }
+         }
+         {permadeath_mgr set should_warn FALSE}
+      }
+      {if
+         {&&
+            {== {permadeath_mgr songs_completed} 58}
+            {! {permadeath_mgr won}}
+         }
+         {permadeath_mgr set won TRUE}
+         {permadeath_mgr save_data}
+         {if_else {== {permadeath_mgr num_lives} {permadeath_mgr total_lives}}
+            {ui push_screen permadeath_real_win_screen}
+            {overshell_perma_msg show
+               {sprintf {localize on_lame_win}
+                  {permadeath_mgr num_lives}
+                  {permadeath_mgr total_lives}
+               }
+            }
+         }
+      }
    )
    (select_first_unplayed
       {do
@@ -482,16 +598,23 @@
             {if {== {{tour solo_event_provider} get mode} kTourVenueDownload}
                {$this update_selection}
             }
-            {do
-               ($selected {event.lst selected_sym})
-               {if_else
+            {cond
+               (
+                  {&&
+                     {gamemode get is_permadeath}
+                     {! {$this is_mode_selected}}
+                     {== {{tour performer} event_status} kTourPlayed}
+                  }
+                  {overshell_perma_msg show perma_already_played}
+               )
+               (
                   {&&
                      {! {$this is_mode_selected}}
                      {== kTourLocked {{tour performer} event_status}}
                   }
                   TRUE
-                  kDataUnhandled
-               }
+               )
+               (TRUE kDataUnhandled)
             }
          )
          ({== $button kPad_Tri}
@@ -583,7 +706,7 @@
                {print "wrong instrument detected. prefab time!"}
                {set [real_char] {$pcfg get_char}}
                {$pcfg set_char
-                  {available_prefab {game get leader_num} {$pcfg get_controller_sym} female}
+                  {available_prefab {game get leader_num} {$pcfg get_controller_sym}}
                }
             }
             {$pcfg set_track_type {{$pcfg get_char} get_instrument}}
@@ -603,16 +726,21 @@
             {$this play_preview}
          )
          (download
-            {{tour solo_event_provider} set mode kTourVenueDownload}
-            {$this refresh}
-            {$this play_preview}
+            {if_else {gamemode get is_permadeath}
+               {overshell_perma_msg show perma_no_dlc}
+               {do 
+                  {{tour solo_event_provider} set mode kTourVenueDownload}
+                  {$this refresh}
+                  {$this play_preview}
+               }
+            }
          )
       }
    )
 }
 {new UIScreen
    tour_solo_event_screen
-   (panels meta tour_world_bg_panel tour_solo_event_panel helpbar fx)
+   (panels meta tour_world_bg_panel tour_solo_event_panel permadeath_info_panel helpbar fx)
    (focus tour_solo_event_panel)
    (back tour_solo_hub_screen)
    (helpbar (helpbar_back helpbar_select))
@@ -626,13 +754,21 @@
       {platform_mgr set_notify_ui_location kOSNotifyBottomCenter}
       {$this set_results}
       {$this submit_achievements}
+      {if {gamemode get is_permadeath}
+         {permadeath_mgr add_event
+            {if_else {{get_track_panel} exists perma_callback}
+               {{{get_track_panel} find perma_callback} get gems_hit}
+               {print "i sure wonder how you completed a song without the track extending"}
+            }
+         }
+      }
    )
    (exit {platform_mgr set_notify_ui_location kOSNotifyTopRight})
    (SELECT_MSG {ui goto_screen tour_solo_gigcomplete_screen})
 }
 {new UIScreen
    tour_solo_endgame_screen
-   (panels tour_solo_endgame_panel helpbar)
+   (panels tour_solo_endgame_panel permadeath_info_panel helpbar)
    (focus tour_solo_endgame_panel)
    (helpbar ('' helpbar_finishsong))
 }
@@ -756,7 +892,7 @@
 }
 {new UIScreen
    tour_solo_gigcomplete_screen
-   (panels tour_solo_gigcomplete_panel helpbar)
+   (panels tour_solo_gigcomplete_panel permadeath_info_panel helpbar)
    (focus tour_solo_gigcomplete_panel)
    (helpbar ('' helpbar_returntomap))
 }
