@@ -132,6 +132,7 @@
 (os_colorshuffle "Note Color Shuffle")
 (os_countdown "Countdown")
 (os_songtimer "Ò Song Timer: %s Ó")
+(os_ikafont "Uniform Endgame Font")
 (os_videobgs "Video Backgrounds")
 (os_trk "Appearance")
 (os_spotlight "Overdrive")

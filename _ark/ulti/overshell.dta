@@ -164,6 +164,11 @@
          (var songtimer)
          (array (0 1 2 3 4 5))
       )
+      (os_ikafont
+         (type uOnOFF)
+         (bool $ikafont)
+         (sel_script {toggle_var ikafont})
+      )
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})
