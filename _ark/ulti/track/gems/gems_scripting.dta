@@ -228,3 +228,43 @@
       )
    }
 )
+(yarg
+   {$this load_gems
+      "ulti/track/gems/yarg/gems.milo"
+      (
+         (gem_green.wid (guitar_gem_green.mesh guitar_gem_base.mesh))
+         (gem_red.wid (guitar_gem_red.mesh guitar_gem_base.mesh))
+         (gem_yellow.wid (guitar_gem_yellow.mesh guitar_gem_base.mesh))
+         (gem_blue.wid (guitar_gem_blue.mesh guitar_gem_base.mesh))
+         (gem_orange.wid (guitar_gem_orange.mesh guitar_gem_base.mesh))
+         (gem_miss.wid (guitar_gem_red.mesh guitar_gem_base.mesh))
+         (star_gem.wid (guitar_gem_style.mesh guitar_gem_base.mesh))
+
+         (gem_green_hopo.wid (guitar_hopo_gem_green.mesh guitar_hopo_gem_base.mesh))
+         (gem_red_hopo.wid (guitar_hopo_gem_red.mesh guitar_hopo_gem_base.mesh))
+         (gem_yellow_hopo.wid (guitar_hopo_gem_yellow.mesh guitar_hopo_gem_base.mesh))
+         (gem_blue_hopo.wid (guitar_hopo_gem_blue.mesh guitar_hopo_gem_base.mesh))
+         (gem_orange_hopo.wid (guitar_hopo_gem_orange.mesh guitar_hopo_gem_base.mesh))
+         (gem_miss_hopo.wid (guitar_hopo_gem_red.mesh guitar_hopo_gem_base.mesh))
+         (star_hopo.wid (guitar_hopo_gem_style.mesh guitar_hopo_gem_base.mesh))
+
+         (drum_red.wid (drum_gem_red.mesh drum_gem_base.mesh))
+         (drum_yellow.wid (drum_gem_yellow.mesh drum_gem_base.mesh))
+         (drum_blue.wid (drum_gem_blue.mesh drum_gem_base.mesh))
+         (drum_green.wid (drum_gem_green.mesh drum_gem_base.mesh))
+         (drum_miss.wid (drum_gem_red.mesh drum_gem_base.mesh))
+         (drum_star.wid (drum_gem_style.mesh drum_gem_base.mesh))
+
+         (cymbal_gem_red.wid (cymbal_gem_red.mesh cymbal_gem_base.mesh))
+         (cymbal_gem_yellow.wid (cymbal_gem_yellow.mesh cymbal_gem_base.mesh))
+         (cymbal_gem_blue.wid (cymbal_gem_blue.mesh cymbal_gem_base.mesh))
+         (cymbal_gem_green.wid (cymbal_gem_green.mesh cymbal_gem_base.mesh))
+         (cymbal_gem_star.wid (cymbal_gem_style.mesh cymbal_gem_base.mesh))
+
+         (dynamic_crash_gem.wid (drum_gem_green.mesh drum_gem_base.mesh))
+         (dynamic_crash_gem_cymbal.wid (cymbal_gem_green.mesh cymbal_gem_base.mesh))
+         (dynamic_crash_gem_lefty.wid (drum_gem_red.mesh drum_gem_base.mesh))
+         (dynamic_crash_gem_cymbal_lefty.wid (cymbal_gem_red.mesh cymbal_gem_base.mesh))
+      )
+   }
+)
