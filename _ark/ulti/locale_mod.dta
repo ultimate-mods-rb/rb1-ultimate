@@ -296,6 +296,7 @@
 (arena_10 "Echo Hangar")
 (arena_11 "The Manor")
 (arena_12 "Abazan Arena")
+(arena_13 "Sheng Li Stadium (alt)")
 (play_a_show "Play A Show")
 (moreinfo "More ...")
 (vote_obfuscate_song_by_artist_fmt "A song by %s")
