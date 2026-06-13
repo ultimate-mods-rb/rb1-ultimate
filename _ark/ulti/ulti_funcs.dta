@@ -67,9 +67,10 @@
                   }
                }
             )
-            ((uSld uFakeSld)
+            ((uSld uFakeSld uColorSld)
                {push_back $array
                   {do
+                     ($type {elem {find $entry type} 1})
                      ($selected {== {- {size $array} 1} {elem [pos] 0}})
                      ($fmt_type {elem {find $entry fmt_type} 1})
                      ($hide_on_sel
@@ -186,9 +187,27 @@
                               }
                            )
                            (uLocalize {localize $data})
+                           (uColorRGB
+                              {do
+                                 ($r) ($g) ($b)
+                                 ($i
+                                    {if_else {OS_LIST has (color_index)}
+                                       {OS_LIST get color_index}
+                                       0
+                                    }
+                                 )
+                                 {if $selected
+                                    {color.mat set color $data}
+                                 }
+                                 {unpack_color $data $r $g $b}
+                                 {sprintf {localize_token {sprintf "os_color_fmt_%d" $i}} $r $g $b}
+                              }
+                           )
                         }
                      )
                      {cond
+                        ({&& {== $type uColorSld} $selected {$this has (focused)} [focused]} $fmt)
+                        ({== $type uColorSld} {localize {elem $entry 0}})
                         ({&& $hide_on_sel $selected {$this has (focused)} [focused]}
                            {sprint {localize os_l} $fmt {localize os_r}}
                         )
@@ -243,7 +262,7 @@
                   {eval $cmd}
                }
             )
-            ((uSld uFakeSld)
+            ((uSld uFakeSld uColorSld)
                {$this set focused TRUE}
                {OS_LIST set store
                   {cond
@@ -254,6 +273,13 @@
                         {eval {elem {find $entry get} 1}}
                      )
                      (TRUE {fail "unable to find data for sld"})
+                  }
+               }
+               {if {== {elem {find $entry type} 1} uColorSld}
+                  {OS_LIST set color_index 0}
+                  {color.mesh set_showing TRUE}
+                  {color.tnm set_frame
+                     {- {OS_LIST selected_pos} {OS_LIST first_showing}}
                   }
                }
             )
@@ -267,13 +293,14 @@
    ($entry {elem [data] {OS_LIST selected_pos}})
    {if_else {== {type $entry} kDataArray}
       {switch {elem {find $entry type} 1}
-         ((uSld uFakeSld)
+         ((uSld uFakeSld uColorSld)
             {if_else {&& {$this has (focused)} [focused]}
                {switch $button
                   (kPad_X
                      {synth play button_select}
                      {$this set focused FALSE}
                      {OS_LIST set store 0}
+                     {color.mesh set_showing FALSE}
                      {os_update_helpbar}
                      {lst_reset}
                   )
@@ -291,7 +318,21 @@
                         (TRUE {fail "unable to find data for sld"})
                      }
                      {OS_LIST set store 0}
+                     {color.mesh set_showing FALSE}
                      {lst_reset}
+                  )
+                  (kPad_R1
+                     {if {== {elem {find $entry type} 1} uColorSld}
+                        {synth play button_back}
+                        {OS_LIST set color_index
+                           {switch {OS_LIST get color_index}
+                              (0 1)
+                              (1 2)
+                              (2 0)
+                           }
+                        }
+                        {lst_reset}
+                     }
                   )
                   ((kPad_DUp kPad_DLeft) {do
                      ($data '')
@@ -310,16 +351,30 @@
                         (TRUE {fail "unable to find data for sld"})
                      }
                      {set $r
-                        {if_else {== {elem {find $entry type} 1} uSld}
-                           {clamp
-                              {- $data {elem {find $entry step} 1}}
-                              {elem {find $entry range} 1}
-                              {elem {find $entry range} 2}
-                           }
-                           {prev_elem
-                              {eval {elem {find $entry array} 1}}
-                              $data
-                           }
+                        {switch {elem {find $entry type} 1}
+                           (uSld
+                              {clamp
+                                 {- $data {elem {find $entry step} 1}}
+                                 {elem {find $entry range} 1}
+                                 {elem {find $entry range} 2}
+                              }
+                           )
+                           (uFakeSld
+                              {prev_elem
+                                 {eval {elem {find $entry array} 1}}
+                                 $data
+                              }
+                           )
+                           (uColorSld
+                              {do
+                                 ($r) ($g) ($b)
+                                 {unpack_color $data $r $g $b}
+                                 {set_var {elem (r g b) {OS_LIST get color_index}}
+                                    {clamp {- {eval_var {elem (r g b) {OS_LIST get color_index}}} 0.01} 0.00 1.00}
+                                 }
+                                 {pack_color $r $g $b}
+                              }
+                           )
                         }
                      }
                      {switch $type
@@ -345,16 +400,30 @@
                         (TRUE {fail "unable to find data for sld"})
                      }
                      {set $r
-                        {if_else {== {elem {find $entry type} 1} uSld}
-                           {clamp
-                              {+ $data {elem {find $entry step} 1}}
-                              {elem {find $entry range} 1}
-                              {elem {find $entry range} 2}
-                           }
-                           {next_elem
-                              {eval {elem {find $entry array} 1}}
-                              $data
-                           }
+                        {switch {elem {find $entry type} 1}
+                           (uSld
+                              {clamp
+                                 {+ $data {elem {find $entry step} 1}}
+                                 {elem {find $entry range} 1}
+                                 {elem {find $entry range} 2}
+                              }
+                           )
+                           (uFakeSld
+                              {next_elem
+                                 {eval {elem {find $entry array} 1}}
+                                 $data
+                              }
+                           )
+                           (uColorSld
+                              {do
+                                 ($r) ($g) ($b)
+                                 {unpack_color $data $r $g $b}
+                                 {set_var {elem (r g b) {OS_LIST get color_index}}
+                                    {clamp {+ {eval_var {elem (r g b) {OS_LIST get color_index}}} 0.01} 0.00 1.00}
+                                 }
+                                 {pack_color $r $g $b}
+                              }
+                           )
                         }
                      }
                      {switch $type
@@ -390,6 +459,13 @@
    {helpbar set_config
       {if_else {== {type $entry} kDataArray}
          {cond
+            ({&& {== {elem {find $entry type} 1} uColorSld} {$this has (focused)} [focused]}
+               (
+                  helpbar_cancel
+                  helpbar_confirmsetting
+                  os_nextcolor
+               )
+            )
             ({&& {$this has (focused)} [focused]}
                (
                   helpbar_cancel
@@ -498,7 +574,7 @@
          }
          {&& {>= $size 2} $bool}
       }
-      {fail "considering beatmatch doesn't exist it's safe to say vocals isn't on top"}
+      {print "considering beatmatch doesn't exist it's safe to say vocals isn't on top"}
    }
 }
 {func get_dir_from_player
@@ -664,6 +740,7 @@
          }}
       }
    }
+   ; TEST DONT FUCKING PUSH DONT FUCKING PUSH
 }
 {func tolower ; fuck you harmonix
    ($string)
@@ -1060,7 +1137,7 @@
          ; this is cuz the game sends the prefab name instead of the character data for prefabs
          ; if the char is off the game crash because '' is not a valid instrument
          ; i think it's possible to have the game always send the character data
-         ; but i can only find the loading for it in PlayerConfig::NetLoad and not where it sends it
+         ; but i can only find the loading for it in PlayerConfig::NetLoad (or BandUser::SyncLoad in rb2) and not where it sends it
          ; this might be because it's not in the rbctpv2 elf :3
          {!= {session mode} kNetLocal}
       }

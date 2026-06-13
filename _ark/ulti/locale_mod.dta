@@ -158,6 +158,10 @@
    \nDo you want to leave?
 ")
 (os_force_venue "Force Venue")
+(os_nextcolor "Next Color")
+(os_color_fmt_0 "i R %.2f i G %.2f B %.2f")
+(os_color_fmt_1 "R %.2f i G %.2f i B %.2f")
+(os_color_fmt_2 "R %.2f G %.2f i B %.2f i")
 (random "Random")
 (os_cheats "Cheats")
 (os_freecam "Free Camera")

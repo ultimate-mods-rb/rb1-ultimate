@@ -36,6 +36,7 @@
 #define uOnOFF     (1)
 #define uFakeSld   (2)
 #define uSld       (3)
+#define uColorSld  (4)
 
 #define uColor     (1)
 #define uDrumColor (2)
@@ -46,6 +47,7 @@
 #define uSpeed     (7)
 #define uTimer     (8)
 #define uLocalize  (9)
+#define uColorRGB  (10)
 
 #define COLOR_DATA_COMMON (
    (type uFakeSld)
