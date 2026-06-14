@@ -741,6 +741,8 @@
       }
    }
    ; TEST DONT FUCKING PUSH DONT FUCKING PUSH
+   {if $mikan
+   }
 }
 {func tolower ; fuck you harmonix
    ($string)

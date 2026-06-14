@@ -406,13 +406,11 @@
          )
          (ok.btn
             {ui pop_screen}
-            {permadeath_mgr set num_lives
-               {+ {permadeath_mgr get num_lives} 1}
+            {with permadeath_mgr
+               {++ [num_lives]}
+               {set [total_lives] [num_lives]}
+               {$this save_data}
             }
-            {permadeath_mgr set total_lives
-               {permadeath_mgr get num_lives}
-            }
-            {permadeath_mgr save_data}
          )
       }
    )
@@ -445,9 +443,7 @@
    (finish_load
       {mi_logo.mesh set_showing FALSE}
 
-      {town_desc.lbl set_localized
-         "Welcome to permadeatH :3\nMiss and you lose a life.\nRun of of lives and loss!"
-      }
+      {town_desc.lbl set text_token perma_intro}
       {town_desc.lbl set_local_pos_index 2 145}
 
       {$this iterate BandButton $btn {delete $btn}}
