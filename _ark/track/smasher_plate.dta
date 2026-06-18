@@ -40,35 +40,35 @@
                {do
                   {gem_smasher1 set_color
                      {if_else [lefty]
-                        {elem SMASHER_COLORS $drms4}
-                        {elem SMASHER_COLORS $drms1}
+                        {asset_mgr get_smasher_color drum 3}
+                        {asset_mgr get_smasher_color drum 0}
                      }
                   }
                   {gem_smasher2 set_color
                      {if_else [lefty]
-                        {elem SMASHER_COLORS $drms3}
-                        {elem SMASHER_COLORS $drms2}
+                        {asset_mgr get_smasher_color drum 2}
+                        {asset_mgr get_smasher_color drum 1}
                      }
                   }
                   {gem_smasher3 set_color
                      {if_else [lefty]
-                        {elem SMASHER_COLORS $drms2}
-                        {elem SMASHER_COLORS $drms3}
+                        {asset_mgr get_smasher_color drum 1}
+                        {asset_mgr get_smasher_color drum 2}
                      }
                   }
                   {gem_smasher4 set_color
                      {if_else [lefty]
-                        {elem SMASHER_COLORS $drms1}
-                        {elem SMASHER_COLORS $drms4}
+                        {asset_mgr get_smasher_color drum 0}
+                        {asset_mgr get_smasher_color drum 3}
                      }
                   }
                }
                {do
-                  {gem_smasher0 set_color {elem SMASHER_COLORS $gtrsm1}}
-                  {gem_smasher1 set_color {elem SMASHER_COLORS $gtrsm2}}
-                  {gem_smasher2 set_color {elem SMASHER_COLORS $gtrsm3}}
-                  {gem_smasher3 set_color {elem SMASHER_COLORS $gtrsm4}}
-                  {gem_smasher4 set_color {elem SMASHER_COLORS $gtrsm5}}
+                  {gem_smasher0 set_color {asset_mgr get_smasher_color guitar 0}}
+                  {gem_smasher1 set_color {asset_mgr get_smasher_color guitar 1}}
+                  {gem_smasher2 set_color {asset_mgr get_smasher_color guitar 2}}
+                  {gem_smasher3 set_color {asset_mgr get_smasher_color guitar 3}}
+                  {gem_smasher4 set_color {asset_mgr get_smasher_color guitar 4}}
                }
             }
          )

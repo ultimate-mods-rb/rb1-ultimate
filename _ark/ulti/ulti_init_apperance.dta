@@ -24,5 +24,23 @@
 {set $drms3 3}
 {set $drms4 0}
 
+{set $notergb FALSE}
+
+{set $gtr_rgb_1 255}
+{set $gtr_rgb_2 65280}
+{set $gtr_rgb_3 16711680}
+{set $gtr_rgb_4 16711935}
+{set $gtr_rgb_5 16776960}
+{set $gtr_rgb_o 16777215}
+{set $gtr_rgb_m 255}
+
+{set $drum_rgb_1 255}
+{set $drum_rgb_2 65280}
+{set $drum_rgb_3 16711680}
+{set $drum_rgb_4 16711935}
+{set $drum_rgb_o 16777215}
+{set $drum_rgb_m 255}
+{set $drum_rgb_k 16776960}
+
 {set $gems rb2}
 {set $smashers rb1}

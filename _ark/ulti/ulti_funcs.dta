@@ -10,7 +10,8 @@
 {func fail
    ($s)
    {print $s}
-   {exit}
+   ;{exit} ; crashes in some cases
+   {delete rnd} ; will call abort so stable
 }
 #endif
 {func dump_array

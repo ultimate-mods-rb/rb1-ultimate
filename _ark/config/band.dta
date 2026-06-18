@@ -471,6 +471,8 @@
    #include videos.dta
 )
 (event_unlocks #include ../ulti/event_unlocks.dta)
+(gems #include ../ulti/track/gems/gems.dta)
+(smashers #include ../ulti/track/smashers/smashers.dta)
 (data_graveyard)
 (generate_weights FALSE)
 (holmes

@@ -65,6 +65,7 @@
 (os_drm_smasher_color "Drum Smasher Colors")
 (os_gtr_rgb_color "Guitar Note Colors")
 (os_drm_rgb_color "Drum Note Colors")
+(os_notergb "Advanced Colors")
 (os_reset "Reset")
 (os_slot_1_fmt "Ò Slot 1: %s Ó")
 (os_slot_2_fmt "Ò Slot 2: %s Ó")

@@ -512,3 +512,6 @@
 {new CharProfilePanel char_data}
 {{new Object permadeath_mgr} set_type permadeath_mgr}
 {permadeath_mgr init}
+
+{{new Object asset_mgr} set_type asset_mgr}
+{asset_mgr init}

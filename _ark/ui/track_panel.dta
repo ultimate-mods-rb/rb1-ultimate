@@ -50,17 +50,10 @@
             {$this sync_objects}
          }
       }
-      {do
-         ($gems_dir {new RndDir gems_dir})
-         {switch $gems
-            #include ../ulti/track/gems/gems_scripting.dta
-         }
-      }
-      {do
-         ($smashers_dir {new RndDir smashers_dir})
-         {switch $smashers
-            #include ../ulti/track/smashers/smashers_scripting.dta
-         }
+      {asset_mgr load_gems}
+      {asset_mgr load_smashers}
+      {if $notergb
+         {asset_mgr apply_all_rgb}
       }
       {cond
          ({exists vocals} ;coop
@@ -140,6 +133,9 @@
       {if {gems_dir exists animate.trig}
          {{gems_dir find animate.trig} trigger}
       }
+      {if $notergb
+         {asset_mgr apply_all_rgb}
+      }
       {beatmatch foreach_active_player $player ;handle adding the appropriate callbacks to each player
          {if_else {== {$player instrument} vocals}
             {if_else $micdeploy
@@ -198,32 +194,6 @@
          }
       }
    )
-   (load_gems
-      ($file $a) {do
-      ($gems_dir {object gems_dir})
-      {$gems_dir insert (subdirs 0) $file}
-      {$this iterate TrackDir $dir {with $dir
-         {foreach $entry $a
-            {if {exists {elem $entry 0}}
-               {clear_array {elem $entry 0} meshes}
-               {if_else {== {type {elem $entry 1}} kDataArray}
-                  {foreach $m {elem $entry 1}
-                     {{elem $entry 0} insert (meshes 0) {$gems_dir find $m}}
-                  }
-                  {{elem $entry 0} insert (meshes 0) {$gems_dir find {elem $entry 1}}}
-               }
-               #ifdef HX_NG
-               {{elem $entry 0} set multi_mesh
-                  {if_else {== {size $entry} 3}
-                     {elem $entry 2}
-                     TRUE
-                  }
-               }
-               #endif
-            }
-         }
-      }}
-   })
 )
 {new TrackPanel
    coop_track_panel

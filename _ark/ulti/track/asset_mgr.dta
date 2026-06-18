@@ -1,0 +1,445 @@
+(asset_mgr
+   (gems [gems])
+   (gems_dir [gems_dir])
+   (all_gems [all_gems])
+   (all_gems_rgb [all_gems_rgb])
+
+   (smashers [smashers])
+   (smashers_dir [smashers_dir])
+   (all_smashers [all_smashers])
+   (all_smashers_rgb [all_smashers_rgb])
+
+   (init
+      {print "asset_mgr init"}
+
+      {set [gems] ''}
+      {set [gems_dir] ''}
+      {set [all_gems] {array 0}}
+      {set [all_gems_rgb] {array 0}}
+
+      {foreach $a {find $syscfg gems}
+         {if {== {type $a} kDataArray}
+            {unless {$this find_get $a rgb_only}
+               {push_back [all_gems] {elem $a 0}}
+            }
+            {if {$this find_get $a rgb}
+               {push_back [all_gems_rgb] {elem $a 0}}
+            }
+         }
+      }
+
+      {set [smashers] ''}
+      {set [smashers_dir] ''}
+      {set [all_smashers] {array 0}}
+      {set [all_smashers_rgb] {array 0}}
+
+      {foreach $a {find $syscfg smashers}
+         {if {== {type $a} kDataArray}
+            {unless {$this find_get $a rgb_only}
+               {push_back [all_smashers] {elem $a 0}}
+            }
+            {if {$this find_get $a rgb}
+               {push_back [all_smashers_rgb] {elem $a 0}}
+            }
+         }
+      }
+
+      {print "asset_mgr initalized"}
+   )
+   (load_gems {do
+      ($data {find_exists $syscfg gems $gems})
+      {if_else $data
+         {do
+            ($gems_dir '')
+            ($file {$this find_get_opt $data file})
+            ($meshes {$this find_get_opt $data meshes})
+            ($on_load
+               {cond
+                  ({&& $notergb {find_exists $data on_load_rgb}}
+                     {find $data on_load_rgb}
+                  )
+                  ({find_exists $data on_load}
+                     {find $data on_load}
+                  )
+                  (TRUE kDataUnhandled)
+               }
+            )
+
+            {set [gems] $gems}
+            {with {get_track_panel}
+               {if {exists gems_dir}
+                  {fail "gems_dir already exists. it's not safe to load gems!"}
+               }
+               {set $gems_dir {new ObjectDir gems_dir}}
+            }
+            {set [gems_dir] $gems_dir}
+            {if $file
+               {[gems_dir] insert (subdirs 0) $file}
+            }
+
+            {if_else $meshes
+               {{get_track_panel} iterate TrackDir $dir {with $dir
+                  {foreach $entry $meshes
+                     {if {exists {elem $entry 0}}
+                        {clear_array {elem $entry 0} meshes}
+                        {if_else {== {type {elem $entry 1}} kDataArray}
+                           {foreach $m {elem $entry 1}
+                              {{elem $entry 0} insert (meshes 0) {$gems_dir find $m}}
+                           }
+                           {{elem $entry 0} insert (meshes 0) {$gems_dir find {elem $entry 1}}}
+                        }
+                        #ifdef HX_NG
+                        {{elem $entry 0} set multi_mesh
+                           {if_else {== {size $entry} 3}
+                              {elem $entry 2}
+                              TRUE
+                           }
+                        }
+                        #endif
+                     }
+                  }
+               }}
+               {print "no meshes found for " $gems}
+            }
+
+            {if $on_load
+               {foreach $c $on_load
+                  {eval $c}
+               }
+            }
+         }
+         {print {sprint "no gems data for " $gems}}
+      }
+   })
+   (load_smashers {do
+      ($data {find_exists $syscfg smashers $smashers})
+      {if_else $data
+         {do
+            ($smashers_dir '')
+            ($on_load
+               {cond
+                  ({&& $notergb {find_exists $data on_load_rgb}}
+                     {find $data on_load_rgb}
+                  )
+                  ({find_exists $data on_load}
+                     {find $data on_load}
+                  )
+                  (TRUE kDataUnhandled)
+               }
+            )
+
+            {set [smashers] $smashers}
+            {with {get_track_panel}
+               {if {exists smashers_dir}
+                  {fail "smashers_dir already exists. it's not safe to load smashers!"}
+               }
+               {set $smashers_dir {new ObjectDir smashers_dir}}
+            }
+            {set [smashers_dir] $smashers_dir}
+
+            {if $on_load
+               {foreach $c $on_load
+                  {eval $c}
+               }
+            }
+         }
+         {print {sprint "no smasher data for " $smashers}}
+      }
+   })
+   (apply_all_rgb
+      {$this apply_gem_rgb}
+      {$this apply_sus_rgb}
+      {$this apply_smasher_rgb}
+   )
+   (apply_gem_rgb {do
+      ($data {find_exists $syscfg gems [gems]})
+      {if {&& [gems_dir] $data} {do
+         ($rgb_mats {find_exists $data rgb_mats})
+         {if $rgb_mats
+            {foreach $inst (guitar drum) {do
+               ($ma {find_exists $rgb_mats $inst})
+               {if $ma
+                  {foreach_int $i 0 {size $ma}
+                     {if $i {do
+                        ($mar {elem $ma $i})
+                        {if {!= {type $mar} kDataArray}
+                           {set $mar {eval_array ($mar)}}
+                        }
+                        {foreach $mat $mar
+                           {if_else {[gems_dir] exists $mat}
+                              {{[gems_dir] find $mat} set color
+                                 {$this get_color $inst {- $i 1}}
+                              }
+                              {fail {sprint $mat " doesn't exist in gems_dir"}}
+                           }
+                        }
+                     }}
+                  }
+               }
+            }}
+         }
+      }}
+   })
+   (apply_sus_rgb {do
+      ($dirs {array 0})
+      ; as fucking stupid as this looks i think this is the only way of getting the gem_tail dirs
+      ; the loading of these seems to be dynamic and the dir of these dirs is itself so they're def loaded weird
+      {{{get_track_panel} find line01.tex} iterate_refs $ref
+         {push_back $dirs {$ref dir}}
+      }
+      {foreach $dir $dirs {with $dir
+         {unless {exists new_mat}
+            {new Mat new_mat}
+         }
+         {foreach_int $i 0 6 {do
+            ($m
+               {elem
+                  (
+                     tail_green.mat
+                     tail_red.mat
+                     tail_yellow.mat
+                     tail_blue.mat
+                     tail_orange.mat
+                     tail_star.mat
+                  )
+                  $i
+               }
+            )
+            ($mg
+               {elem
+                  (
+                     tail_glow_green.mat
+                     tail_glow_red.mat
+                     tail_glow_yellow.mat
+                     tail_glow_blue.mat
+                     tail_glow_orange.mat
+                     tail_glow_star.mat
+                  )
+                  $i
+               }
+            )
+            ($c {asset_mgr get_color guitar $i})
+
+            {$m copy new_mat}
+            {$m set z_mode kZModeTransparent}
+            {$m set blend kBlendSrcAlphaAdd}
+            {$m set diffuse_tex track_flash_style.tex}
+            {$m set cull FALSE}
+            {$m set use_environ TRUE}
+            {$m set intensify TRUE}
+            {$m set color $c}
+
+            {$mg set color $c}
+            {$mg set diffuse_tex track_flash_style_glow.tex}
+         }}
+      }}
+   })
+   (apply_smasher_rgb {do
+      ($data {find_exists $syscfg smashers [smashers]})
+      {if {&& [smashers_dir] $data} {do
+         ($apply_rgb {find_exists $data apply_rgb})
+         {if $apply_rgb
+            {foreach $c $apply_rgb
+               {eval $c}
+            }
+         }
+      }}
+   })
+   (get_color
+      ($inst $i)
+      {switch $inst
+         (guitar
+            {eval
+               {elem
+                  (
+                     $gtr_rgb_1
+                     $gtr_rgb_2
+                     $gtr_rgb_3
+                     $gtr_rgb_4
+                     $gtr_rgb_5
+                     $gtr_rgb_o
+                     $gtr_rgb_m
+                  )
+                  $i
+               }
+            }
+         )
+         (drum
+            {eval
+               {elem
+                  (
+                     $drum_rgb_1
+                     $drum_rgb_2
+                     $drum_rgb_3
+                     $drum_rgb_4
+                     $drum_rgb_o
+                     $drum_rgb_k
+                     $drum_rgb_m
+                  )
+                  $i
+               }
+            }
+         )
+      }
+   )
+   (get_widget
+      ($type $i)
+      {if {&& {! $prodrums} {== $type cymbal}}
+         {set $type drum}
+      }
+      {do
+         ($wa
+            {switch $type
+               (normal
+                  (
+                     gem_green.wid
+                     gem_red.wid
+                     gem_yellow.wid
+                     gem_blue.wid
+                     gem_orange.wid
+                     star_gem.wid
+                  )
+               )
+               (hopo
+                  (
+                     gem_green_hopo.wid
+                     gem_red_hopo.wid
+                     gem_yellow_hopo.wid
+                     gem_blue_hopo.wid
+                     gem_orange_hopo.wid
+                     star_hopo.wid
+                  )
+               )
+               (gtr_mash
+                  (
+                     gem_mash0.wid
+                     gem_mash1.wid
+                     gem_mash2.wid
+                     gem_mash3.wid
+                     gem_mash4.wid
+                  )
+               )
+               (drum
+                  (
+                     gem_kick.wid
+                     drum_red.wid
+                     drum_yellow.wid
+                     drum_blue.wid
+                     drum_green.wid
+                     drum_star.wid
+                  )
+               )
+               (cymbal
+                  (
+                     gem_kick.wid
+                     cymbal_gem_red.wid
+                     cymbal_gem_yellow.wid
+                     cymbal_gem_blue.wid
+                     cymbal_gem_green.wid
+                     cymbal_gem_star.wid
+                  )
+               )
+               (drum_mash
+                  (
+                     drum_mash4.wid
+                     drum_mash1.wid
+                     drum_mash2.wid
+                     drum_mash3.wid
+                     drum_mash4.wid
+                  )
+               )
+               {fail {sprint $type " is an unhandled widget type"}}
+            }
+         )
+         ($index
+            {if_else $notergb
+               $i
+               {switch $type
+                  ((normal hopo)
+                     {if_else $colorshuffle
+                        {random_int 0 5}
+                        {eval_var {sprint "gtrgem" {+ $i 1}}}
+                     }
+                  )
+                  ((drum cymbal)
+                     {if_else {&& $i $colorshuffle}
+                        {random_int 1 5}
+                        {eval_var {sprint "drmgem" {+ $i 1}}}
+                     }
+                  )
+                  (gtr_mash {eval_var {sprint "gtrsm" {+ $i 1}}})
+                  (drum_mash {eval_var {sprint "drms" $i}})
+               }
+            }
+         )
+         ;{print {sprint $type " " $i " " $index " " {elem $wa $index}}}
+         {elem $wa $index}
+      }
+   )
+   (get_sus
+      ($i)
+      {elem
+         (
+            green
+            red
+            yellow
+            blue
+            orange
+            star
+         )
+         {if_else $notergb
+            $i
+            {if_else $colorshuffle
+               {random_int 0 5}
+               {eval_var {sprint "gtrsus" {+ $i 1}}}
+            }
+         }
+      }
+   )
+   (get_smasher_color
+      ($inst $i)
+      {elem 
+         {if_else {|| {! $notergb} {== $inst guitar}}
+            (green red yellow blue orange)
+            (red yellow blue green)
+         }
+         {if_else $notergb
+            $i
+            {switch $inst
+               (guitar {eval_var {sprint "gtrsm" {+ $i 1}}})
+               (drum {eval_var {sprint "drms" {+ $i 1}}})
+            }
+         }
+      }
+   )
+   (find_get
+      ($a $s)
+      {if_else {find_exists $a $s}
+         {elem {find $a $s} 1}
+         kDataUnhandled
+      }
+   )
+   (find_get_opt
+      ($a $s)
+      {cond
+         ({&& $notergb {find_exists $a {symbol {sprint $s _rgb}}}}
+            {elem {find $a {symbol {sprint $s _rgb}}} 1}
+         )
+         ({find_exists $a $s}
+            {elem {find $a $s} 1}
+         )
+         (TRUE kDataUnhandled)
+      }
+   )
+   (ensure_stuff
+      {foreach $a
+         (
+            (all_gems all_gems_rgb gems)
+            (all_smashers all_smashers_rgb smashers)
+         )
+         {unless {find_elem {$this get {elem $a $notergb}} {eval_var {elem $a 2}}}
+            {set_var {elem $a 2} {elem {$this get {elem $a $notergb}} 0}}
+         }
+      }
+   )
+)

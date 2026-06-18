@@ -403,26 +403,59 @@
          (fmt_type uLocalize)
          (hide_on_sel TRUE)
          (var gems)
-         (array (rb1 rb2 rb2_wii rb3 tbrb lrb gh2 gh3 ghwt ghwor ghl yarg))
+         (array
+            {if_else $notergb
+               {asset_mgr all_gems_rgb}
+               {asset_mgr all_gems}
+            }
+         )
       )
       (os_smashers
          (type uFakeSld)
          (fmt_type uLocalize)
          (hide_on_sel TRUE)
          (var smashers)
-         (array (rb1 gh2 gh3 gh3_beta ghwor ghl))
+         (array
+            {if_else $notergb
+               {asset_mgr all_smashers_rgb}
+               {asset_mgr all_smashers}
+            }
+         )
       )
       (os_colors
          (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_colors_screen})
+         (sel_script
+            {if_else $notergb
+               {pop_and_goto_screen overshell_rgb_colors_screen}
+               {pop_and_goto_screen overshell_colors_screen}
+            }
+         )
+      )
+      (os_notergb
+         (type uOnOFF)
+         (bool $notergb)
+         (block_ingame TRUE)
+         (sel_script
+            {toggle_var notergb}
+            {asset_mgr ensure_stuff}
+         )
+      )
       )
    ))
-   (enter {os_setup_common})
+   (enter
+      {asset_mgr ensure_stuff}
+      {os_setup_common}
+   )
    (BUTTON_DOWN_MSG {os_down_common})
    (SELECT_MSG {os_sel_common})
 }
 {new UIScreen
    overshell_trk_screen
+   (exit
+      {if {&& $notergb {exists beatmatch}}
+         {asset_mgr apply_all_rgb}
+      }
+   )
    (back overshell_main_screen)
    (panels overshell_trk_panel practice_lower3rd_panel helpbar)
    (focus overshell_trk_panel)
@@ -687,6 +720,140 @@
    (back overshell_colors_screen)
    (panels overshell_drm_smasher_color_panel practice_lower3rd_panel helpbar)
    (focus overshell_drm_smasher_color_panel)
+}
+{new UIPanel
+   overshell_rgb_colors_panel
+   OVERSHELL_LIST_FILE
+   (title os_colors)
+   (data (
+      (os_gtr_rgb_color
+         (type uNormal)
+         (sel_script {pop_and_goto_screen overshell_gtr_rgb_color_screen})
+      )
+      (os_drm_rgb_color
+         (type uNormal)
+         (sel_script {pop_and_goto_screen overshell_drm_rgb_color_screen})
+      )
+   ))
+   (enter {os_setup_common})
+   (BUTTON_DOWN_MSG {os_down_common})
+   (SELECT_MSG {os_sel_common})
+}
+{new UIScreen
+   overshell_rgb_colors_screen
+   (back overshell_trk_screen)
+   (panels overshell_rgb_colors_panel practice_lower3rd_panel helpbar)
+   (focus overshell_rgb_colors_panel)
+}
+{new UIPanel
+   overshell_gtr_rgb_color_panel
+   OVERSHELL_LIST_FILE
+   (title os_gtr_rgb_color)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script kDataUnhandled)
+      )
+      (os_slot_1
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_1)
+      )
+      (os_slot_2
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_2)
+      )
+      (os_slot_3
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_3)
+      )
+      (os_slot_4
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_4)
+      )
+      (os_slot_5
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_5)
+      )
+      (os_slot_6
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_o)
+      )
+      (miss
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_m)
+      )
+   ))
+   (enter {os_setup_common})
+   (BUTTON_DOWN_MSG {os_down_common})
+   (SELECT_MSG {os_sel_common})
+}
+{new UIScreen
+   overshell_gtr_rgb_color_screen
+   (back overshell_rgb_colors_screen)
+   (panels overshell_gtr_rgb_color_panel practice_lower3rd_panel helpbar)
+   (focus overshell_gtr_rgb_color_panel)
+}
+{new UIPanel
+   overshell_drm_rgb_color_panel
+   OVERSHELL_LIST_FILE
+   (title os_drm_rgb_color)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script kDataUnhandled)
+      )
+      (os_slot_1
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_1)
+      )
+      (os_slot_2
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_2)
+      )
+      (os_slot_3
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_3)
+      )
+      (os_slot_4
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_4)
+      )
+      (os_slot_6
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_o)
+      )
+      (kick
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_k)
+      )
+      (miss
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_m)
+      )
+   ))
+   (enter {os_setup_common})
+   (BUTTON_DOWN_MSG {os_down_common})
+   (SELECT_MSG {os_sel_common})
+}
+{new UIScreen
+   overshell_drm_rgb_color_screen
+   (back overshell_rgb_colors_screen)
+   (panels overshell_drm_rgb_color_panel practice_lower3rd_panel helpbar)
+   (focus overshell_drm_rgb_color_panel)
 }
 {new UIPanel
    overshell_remap_cnt_panel
