@@ -440,7 +440,6 @@
             {asset_mgr ensure_stuff}
          )
       )
-      )
    ))
    (enter
       {asset_mgr ensure_stuff}
