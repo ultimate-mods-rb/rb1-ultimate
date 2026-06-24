@@ -147,6 +147,7 @@
       }
    })
    (apply_all_rgb
+      {$this apply_default_rgb}
       {$this apply_gem_rgb}
       {$this apply_sus_rgb}
       {$this apply_smasher_rgb}
@@ -245,6 +246,109 @@
          }
       }}
    })
+   (apply_default_rgb
+      {{get_track_panel} iterate TrackDir $td
+         {with $td
+            {foreach_int $i 0 7 {do
+               ($base {sprintf "gtr_base_%d.mat" $i})
+               ($color {sprintf "gtr_color_%d.mat" $i})
+               ($c {asset_mgr get_color guitar $i})
+               ($cs {elem (green red yellow blue orange style miss) $i})
+
+               {if_else {exists $color}
+                  {$color set color $c}
+                  {do
+                     {new Mat $base}
+                     {new Mat $color}
+
+                     {$base copy prism_mat.mat kCopyShallow}
+                     {$base set next_pass $color}
+                     {$base set diffuse_tex prism_gems_base.tex}
+                     {$base set emmisive_map prism_gems_emis.tex}
+
+                     {$color copy prism_glow_blue.mat kCopyShallow}
+                     {$color set color $c}
+                     {$color set prelit FALSE}
+                     {$color set blend kBlendAdd}
+                     {$color set diffuse_tex prism_gems_rgb.tex}
+                     {$color set emmisive_map prism_gems_emis_rgb.tex}
+
+                     {if {== $i 5}
+                        {new Mat gtr_glow_style.mat}
+                        {gtr_glow_style.mat copy $color 0}
+                        {gtr_glow_style.mat set color {pack_color 1 1 1}}
+                        {gtr_glow_style.mat set next_pass $color}
+                        {gtr_glow_style.mat set diffuse_tex prism_gems_base.tex}
+                        {gtr_glow_style.mat set emmisive_map prism_gems_emis.tex}
+                        {set $color gtr_glow_style.mat}
+                     }
+
+                     {foreach $m ("prism_gem_stepped_%s.mesh" "prism_gem_hopo_%s.mesh")
+                        {{sprintf $m $cs} set_mat $base}
+                     }
+                     {foreach $m ("prism_glow_%s.mesh" "prism_glow_hopo_%s.mesh")
+                        {{sprintf $m $cs} set_mat $color}
+                     }
+                  }
+               }
+            }}
+         }
+         {foreach $inst (guitar drum) {do
+            ($o {asset_mgr get_color $inst 5})
+            ($dir {sprint "smasher_plate_" $inst})
+            {if {$td exists $dir}
+               {{$td find $dir} iterate RndDir $smasher {do
+                  ($i {siti {str_elem {$smasher name} 11}})
+                  {with $smasher
+                     {if_else {&& {== $inst drum} {== $i 0}}
+                        {print "!!! implement kick stuff !!!"}
+                        {do
+                           ($c {asset_mgr get_color $inst {- $i {== $inst drum}}})
+                           {glow.mat set diffuse_tex white_smasher.tex}
+                           {glow.mat set next_pass smasher_sides.mat}
+                           {glow.mat set color $c}
+
+                           {glow_miss.mat set diffuse_tex white_smasher.tex}
+                           {glow_miss.mat set next_pass smasher_sides.mat}
+                           {glow_miss.mat set color $c}
+
+                           {radial_flare.mat set diffuse_tex flare_style.tex}
+
+                           {foreach $part
+                              (
+                                 sparks01.part
+                                 sparks03.part
+                                 sparks04.part
+                                 big_rock_sparks.part
+                              )
+                              {$part set start_color_low $c}
+                              {$part set start_color_high $c}
+                           }
+                           {foreach $part
+                              (
+                                 sparks01_bonus.part
+                                 sparks03_bonus.part
+                              )
+                              {$part set start_color_low $o}
+                              {$part set start_color_high $o}
+                           }
+                           {foreach $ml
+                              (
+                                 broken_glass_squares.ml
+                                 broken_glass_triangles.ml
+                                 radial_debris.ml
+                              )
+                              {$ml set start_color $c}
+                              {{sprint {basename $ml} "_bonus.ml"} set start_color $o}
+                           }
+                        }
+                     }
+                  }
+               }}
+            }
+         }}
+      }
+   )
    (get_color
       ($inst $i)
       {switch $inst

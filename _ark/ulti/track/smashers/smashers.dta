@@ -1,68 +1,6 @@
-(rb1
-   (rgb TRUE)
-   (on_load_rgb
-      {with $smashers_dir
-         {new Tex white_smasher.tex}
-         {white_smasher.tex set_bitmap "ulti/track/smashers/white_smasher.png"}
-         {foreach $t ; due to annoying propanim stuff
-            (
-               square_smasher_bright_green.tex
-               square_smasher_bright_red.tex
-               square_smasher_bright_yellow.tex
-               square_smasher_bright_blue.tex
-               square_smasher_bright_orange.tex
-            )
-            {$t set_bitmap "ulti/track/smashers/smasher_bright.png"}
-         }
-      }
-   )
-   (apply_rgb
-      {with {{{get_track_panel} find guitar} find smasher_plate_guitar}
-         {foreach_int $i 0 5 {do
-            ($c {asset_mgr get_color guitar $i})
-            ($o {asset_mgr get_color guitar 5})
-            {with {sprint "gem_smasher" $i}
-               {glow.mat set diffuse_tex {{asset_mgr smashers_dir} find white_smasher.tex}}
-               {glow.mat set color $c}
-
-               {glow_miss.mat set diffuse_tex {{asset_mgr smashers_dir} find white_smasher.tex}}
-               {glow_miss.mat set color $c}
-
-               {radial_flare.mat set diffuse_tex flare_style.tex}
-
-               {foreach $part
-                  (
-                     sparks01.part
-                     sparks03.part
-                     sparks04.part
-                     big_rock_sparks.part
-                  )
-                  {$part set start_color_low $c}
-                  {$part set start_color_high $c}
-               }
-               {foreach $part
-                  (
-                     sparks01_bonus.part
-                     sparks03_bonus.part
-                  )
-                  {$part set start_color_low $o}
-                  {$part set start_color_high $o}
-               }
-               {foreach $ml
-                  (
-                     broken_glass_squares.ml
-                     broken_glass_triangles.ml
-                     radial_debris.ml
-                  )
-                  {$ml set start_color $c}
-                  {{sprint {basename $ml} "_bonus.ml"} set start_color $o}
-               }
-            }
-         }} 
-      }
-   )
-)
+(rb1 (rgb TRUE))
 (gh2
+   (rgb TRUE)
    (on_load
       {with $smashers_dir
          {foreach $dir (guitar bass)
@@ -70,53 +8,76 @@
             {insert_milo $dir "ulti/track/smashers/gh2_proxy.milo"}
          }
       }
-      {foreach $inst (guitar bass) {do
-         ($dir {$smashers_dir find $inst})
-         {print $dir}
-         {if
-            {&&
-               {gamemode is_h2h_arrangement}
-               {find_elem (guitar bass) {{game get_participant_config 0} get_track_sym}}
+      {with {get_track_panel}
+         {foreach $inst (guitar bass) {do
+            ($dir {$smashers_dir find $inst})
+            {print $dir}
+            {if
+               {&&
+                  {gamemode is_h2h_arrangement}
+                  {find_elem (guitar bass) {{game get_participant_config 0} get_track_sym}}
+               }
+               {set $inst {switch $inst (guitar track_0) (bass track_1)}}
             }
-            {set $inst {switch $inst (guitar track_0) (bass track_1)}}
-         }
-         {print $inst}
-         {if {exists $inst}
-            {{$inst find bass_superstreak_plane.mesh} set_local_pos_index 1 37.75}
-            {clear_array {$inst find now_bar_rising_sun_draw.grp} objects}
-            {{{$inst find smasher_plate_guitar} find smasher_plate.mesh} set_showing FALSE}
-            {foreach_int $i 0 5 {do
-               ($m {$dir find {sprintf "gem_smasher%d.mesh" $i}})
-               ($r {$dir find {sprintf "smasher_rim%d.mesh" $i}})
-               {print $m}
-               {print $r}
-               {$r set_mat
-                  {$dir find
-                     {sprintf "now_ring_%s.mat"
-                        {elem (green red yellow blue orange) {eval_var {sprint gtrsm {+ $i 1}}}}
+            {print $inst}
+            {if {exists $inst}
+               {{$inst find bass_superstreak_plane.mesh} set_local_pos_index 1 37.75}
+               {clear_array {$inst find now_bar_rising_sun_draw.grp} objects}
+               {{{$inst find smasher_plate_guitar} find smasher_plate.mesh} set_showing FALSE}
+               {foreach_int $i 0 5 {do
+                  ($m {$dir find {sprintf "gem_smasher%d.mesh" $i}})
+                  ($r {$dir find {sprintf "smasher_rim%d.mesh" $i}})
+                  {$r set_mat
+                     {$dir find
+                        {sprintf "now_ring_%s.mat"
+                           {asset_mgr get_smasher_color guitar $i}
+                        }
                      }
                   }
-               }
-               {with {{$inst find smasher_plate_guitar} find {sprint gem_smasher $i}}
-                  {new Trans smashers_parent.trans}
-                  {smashers_parent.trans set_trans_parent smasher_react.trans}
-                  {smashers_parent.trans set_local_pos 0 -1 0.1}
-                  {smashers_parent.trans set_local_scale 1.04 1.04 1.04}
+                  {with {{$inst find smasher_plate_guitar} find {sprint gem_smasher $i}}
+                     {new Trans smashers_parent.trans}
+                     {smashers_parent.trans set_trans_parent smasher_react.trans}
+                     {smashers_parent.trans set_local_pos 0 -1 0.1}
+                     {smashers_parent.trans set_local_scale 1.04 1.04 1.04}
 
-                  {$m set_trans_parent smashers_parent.trans}
-                  {$r set_trans_parent smashers_parent.trans}
+                     {$m set_trans_parent smashers_parent.trans}
+                     {$r set_trans_parent smashers_parent.trans}
 
-                  {clear_array base_bottom.grp objects}
-                  {base_bottom.grp add_object $m}
-                  {base_bottom.grp add_object $r}
+                     {clear_array base_bottom.grp objects}
+                     {base_bottom.grp add_object $m}
+                     {base_bottom.grp add_object $r}
 
-                  {clear_array base_top.grp objects}
+                     {clear_array base_top.grp objects}
 
-                  {$this set custom gh2}
-                  {$this sync_objects}
-               }
-            }}
-         }
+                     {$this set custom gh2}
+                     {$this sync_objects}
+                  }
+               }}
+            }
+         }}
+      }
+   )
+   (apply_rgb
+      {{asset_mgr smashers_dir} iterate ObjectDir $dir {with $dir
+         {foreach_int $i 0 5 {do
+            ($c {asset_mgr get_color guitar $i})
+            ($cs {elem (green red yellow blue orange) $i})
+
+            ($r {sprintf "now_ring_%s.mat" $cs})
+            ($v {sprintf "now_ring_%s_1.mat" $cs})
+            ($s {sprintf "gem_smasher_%s.mat" $cs})
+            ($a {sprintf "gem_smasher_%s_1.mat" $cs})
+
+            {$r set color $c}
+            
+            {$v set blend 0}
+            {$v set diffuse_tex now_white_add.tex}
+
+            {$s set color $c}
+            {$s set diffuse_tex smasher_white.tex}
+
+            {$a set diffuse_tex smasher_add_white.tex}
+         }}
       }}
    )
 )
@@ -132,51 +93,53 @@
             {insert_milo $dir {sprintf "ulti/track/smashers/%s_proxy.milo" $smashers}}
          }
       }
-      {foreach $inst (guitar bass) {do
-         ($dir {$smashers_dir find $inst})
-         {$dir iterate Mat $m
-            {$m set alpha_cut TRUE}
-            {$m set z_mode kZModeTransparent}
-         }
-         {if
-            {&&
-               {gamemode is_h2h_arrangement}
-               {find_elem (guitar bass) {{game get_participant_config 0} get_track_sym}}
+      {with {get_track_panel}
+         {foreach $inst (guitar bass) {do
+            ($dir {$smashers_dir find $inst})
+            {$dir iterate Mat $m
+               {$m set alpha_cut TRUE}
+               {$m set z_mode kZModeTransparent}
             }
-            {set $inst {switch $inst (guitar track_0) (bass track_1)}}
-         }
-         {if {exists $inst}
-            {{$inst find bass_superstreak_plane.mesh} set_local_pos_index 1 37.75}
-            {clear_array {$inst find now_bar_rising_sun_draw.grp} objects}
-            {{{$inst find smasher_plate_guitar} find smasher_plate.mesh} set_showing FALSE}
-            {foreach_int $i 0 5 {do
-               ($m {$dir find {sprintf "fret_%d.mesh" {+ $i 1}}})
-               ($l {$dir find {sprintf "fret_%d_l.mesh" {+ $i 1}}})
-               {$m set_mat {$dir find {sprintf "fret_%d.mat" {+ {eval_var {sprint gtrsm {+ $i 1}}} 1}}}}
-               {$l set_mat {$dir find {sprintf "fret_%d_l.mat" {+ {eval_var {sprint gtrsm {+ $i 1}}} 1}}}}
-               {with {{$inst find smasher_plate_guitar} find {sprint gem_smasher $i}}
-                  {new Trans smashers_parent.trans}
-                  {smashers_parent.trans set_trans_parent smasher_react.trans}
-                  {smashers_parent.trans set_local_pos 0 0.4 0.34}
-                  {smashers_parent.trans set_local_rot 2 0 0}
-                  {smashers_parent.trans set_local_scale 1.07 1 1}
-
-                  {$m set_trans_parent smashers_parent.trans}
-                  {$l set_trans_parent smashers_parent.trans}
-
-                  {clear_array base_bottom.grp objects}
-                  {base_bottom.grp add_object $m}
-
-                  {base_top.grp set_showing FALSE}
-                  {clear_array base_top.grp objects}
-                  {base_top.grp add_object $l}
-
-                  {$this set custom gh3}
-                  {$this sync_objects}
+            {if
+               {&&
+                  {gamemode is_h2h_arrangement}
+                  {find_elem (guitar bass) {{game get_participant_config 0} get_track_sym}}
                }
-            }}
-         }
-      }}
+               {set $inst {switch $inst (guitar track_0) (bass track_1)}}
+            }
+            {if {exists $inst}
+               {{$inst find bass_superstreak_plane.mesh} set_local_pos_index 1 37.75}
+               {clear_array {$inst find now_bar_rising_sun_draw.grp} objects}
+               {{{$inst find smasher_plate_guitar} find smasher_plate.mesh} set_showing FALSE}
+               {foreach_int $i 0 5 {do
+                  ($m {$dir find {sprintf "fret_%d.mesh" {+ $i 1}}})
+                  ($l {$dir find {sprintf "fret_%d_l.mesh" {+ $i 1}}})
+                  {$m set_mat {$dir find {sprintf "fret_%d.mat" {+ {eval_var {sprint gtrsm {+ $i 1}}} 1}}}}
+                  {$l set_mat {$dir find {sprintf "fret_%d_l.mat" {+ {eval_var {sprint gtrsm {+ $i 1}}} 1}}}}
+                  {with {{$inst find smasher_plate_guitar} find {sprint gem_smasher $i}}
+                     {new Trans smashers_parent.trans}
+                     {smashers_parent.trans set_trans_parent smasher_react.trans}
+                     {smashers_parent.trans set_local_pos 0 0.4 0.34}
+                     {smashers_parent.trans set_local_rot 2 0 0}
+                     {smashers_parent.trans set_local_scale 1.07 1 1}
+
+                     {$m set_trans_parent smashers_parent.trans}
+                     {$l set_trans_parent smashers_parent.trans}
+
+                     {clear_array base_bottom.grp objects}
+                     {base_bottom.grp add_object $m}
+
+                     {base_top.grp set_showing FALSE}
+                     {clear_array base_top.grp objects}
+                     {base_top.grp add_object $l}
+
+                     {$this set custom gh3}
+                     {$this sync_objects}
+                  }
+               }}
+            }
+         }}
+      }
    )
 )
 (gh3 GH_SMASHERS_COMMON)

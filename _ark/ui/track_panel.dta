@@ -47,8 +47,27 @@
             {clear_array dynamic_crash_gem_cymbal_lefty.wid meshes}
             {dynamic_crash_gem_cymbal_lefty.wid insert (meshes 0) {$pro_drums find cymbal_gem_red.mesh}}
 
+            {gem_miss.wid set (meshes 0) prism_gem_stepped_miss.mesh}
+            {gem_miss_hopo.wid set (meshes 0) prism_gem_hopo_miss.mesh}
+            {drum_miss.wid set (meshes 0) prism_gem_drum_miss.mesh}
             {$this sync_objects}
          }
+      }
+      {if $notergb
+         {with {dust.tex dir}
+            {$this insert (subdirs 0) "ulti/track/rgb_tex.milo"}
+            {foreach $t ; due to annoying propanim stuff
+               (
+                  square_smasher_bright_green.tex
+                  square_smasher_bright_red.tex
+                  square_smasher_bright_yellow.tex
+                  square_smasher_bright_blue.tex
+                  square_smasher_bright_orange.tex
+               )
+               {$t set_bitmap "ulti/track/smashers/smasher_bright.png"}
+            }
+         }
+         {asset_mgr apply_default_rgb}
       }
       {asset_mgr load_gems}
       {asset_mgr load_smashers}

@@ -1,5 +1,6 @@
-(rb1)
+(rb1 (rgb TRUE))
 (rb2
+   (rgb TRUE)
    (file "ulti/track/gems/rb2/gems.milo")
    (meshes
       (
@@ -23,6 +24,20 @@
             {{$gems_dir find prism_gem_hopo_style.mesh} set_mat prism_mat.mat}
          }
       }
+   )
+   (on_load_rgb
+      {{get_track_panel} iterate TrackDir $dir {with $dir
+         {foreach_int $i 0 7 {do
+            ($base {sprintf "gtr_base_%d.mat" $i})
+            ($color {sprintf "gtr_color_%d.mat" $i})
+            ($cs {elem (green red yellow blue orange style miss) $i})
+            {if {== $i 5}
+               {set $color gtr_glow_style.mat}
+            }
+            {{$gems_dir find {sprintf "prism_gem_hopo_%s.mesh" $cs}} set_mat $base}
+            {{$gems_dir find {sprintf "prism_glow_hopo_%s.mesh" $cs}} set_mat $color}
+         }}
+      }}
    )
 )
 (rb2_wii
@@ -166,7 +181,9 @@
    )
 )
 (gh2
+   (rgb TRUE)
    (file "ulti/track/gems/gh2/gems.milo") ; gems stolen from rb3dx
+   (file_rgb "ulti/track/gems/gh2/gems_rgb.milo")
    (meshes
       (
          (gem_green.wid strum_green.mesh)
@@ -206,6 +223,36 @@
          (dynamic_crash_gem_cymbal.wid cymbal_green_gem.mesh)
          (dynamic_crash_gem_lefty.wid tom_red_gem.mesh)
          (dynamic_crash_gem_cymbal_lefty.wid cymbal_red_gem.mesh)
+      )
+   )
+   (meshes_rgb
+      (
+         (gem_green.wid (strum_base.mesh strum_0.mesh))
+         (gem_red.wid (strum_base.mesh strum_1.mesh))
+         (gem_yellow.wid (strum_base.mesh strum_2.mesh))
+         (gem_blue.wid (strum_base.mesh strum_3.mesh))
+         (gem_orange.wid (strum_base.mesh strum_4.mesh))
+         (gem_miss.wid (strum_base.mesh strum_m.mesh))
+         (star_gem.wid (strum_base.mesh strum_o.mesh))
+
+         (gem_green_hopo.wid (hopo_base.mesh hopo_0.mesh))
+         (gem_red_hopo.wid (hopo_base.mesh hopo_1.mesh))
+         (gem_yellow_hopo.wid (hopo_base.mesh hopo_2.mesh))
+         (gem_blue_hopo.wid (hopo_base.mesh hopo_3.mesh))
+         (gem_orange_hopo.wid (hopo_base.mesh hopo_4.mesh))
+         (gem_miss_hopo.wid (hopo_base.mesh hopo_m.mesh))
+         (star_hopo.wid (hopo_base.mesh hopo_o.mesh))
+      )
+   )
+   (rgb_mats
+      (guitar
+         gem_0.mat
+         gem_1.mat
+         gem_2.mat
+         gem_3.mat
+         gem_4.mat
+         gem_o.mat
+         gem_m.mat
       )
    )
 )
