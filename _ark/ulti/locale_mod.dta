@@ -508,8 +508,11 @@
 (perma_taunt_0 "You're supposed to hit the notes!")
 (perma_taunt_1 "ur bad")
 (perma_taunt_2 "Have you heard of practice mode?")
+(perma_intro "Welcome to permadeath :3\nMiss and you lose a life.\nRun of of lives and you've lost!")
 (perma_lost "You've lost all of your lives.\nYour rocker can't play permadeath anymore.\n\nWould you like to delete them?")
 (on_lame_win "You win!\n(next time do it without missing)\n\nWon with %d/%d lives remaining.")
+(on_insane_win "You somehow beat permadeath on %s without losing a life!?\n\nYou should touch grass :3\n\n\nAn exlusive halo has been unlocked.")
+(perma_w_or_l "To play solo tour with this rocker you have to win or lose permadeath first.")
 {info_perma "STATUS"}
 {info_lives "LIVES: %d/%d"}
 {info_songs "SONGS: %d/%d"}

@@ -462,7 +462,6 @@
       {ok.btn set text_token ok}
       {ok.btn set_local_pos_index 2 -150}
 
-      {lives.btn set text_token "Lives: 1"}
       {lives.btn set_local_pos -160 0 -21}
       {lives.btn set alignment kMiddleLeft}
       {lives.btn set nav_down ok.btn}
@@ -481,6 +480,7 @@
 
 
 
+      {$this update_text}
       {$this set_focus lives.btn}
       {{$this loaded_dir} sync_objects}
    )
@@ -499,7 +499,28 @@
    )
    (BUTTON_DOWN_MSG
       {switch $button
-         (kPad_X {ui pop_screen})
+         (kPad_X
+            {ui pop_screen}
+            {script_task kTaskUISeconds
+               (delay 0.2)
+               (script
+                  {if_else {ui in_transition}
+                     {print "showing win msg is unsafe now (dont spam buttons!)"}
+                     {overshell_perma_msg show
+                        {sprintf {localize_token on_insane_win}
+                           {do
+                              ($pcfg {game get_player_config {game get leader_num}})
+                              {switch {$pcfg get_controller_sym}
+                                 (drum drums)
+                                 {$pcfg get_controller_sym}
+                              }
+                           }
+                        }
+                     }
+                  }
+               )
+            }
+         )
          kDataUnhandled
       }
    )

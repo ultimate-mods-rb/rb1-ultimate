@@ -89,8 +89,6 @@
 
 {set $char_list {array 0}}
 
-{set $ikafont FALSE}
-
 {set $smallworld FALSE}
 
 {set $bigmode FALSE}

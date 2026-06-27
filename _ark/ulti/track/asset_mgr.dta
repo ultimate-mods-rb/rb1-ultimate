@@ -201,7 +201,7 @@
                      tail_yellow.mat
                      tail_blue.mat
                      tail_orange.mat
-                     tail_star.mat
+                     tail_bonus.mat
                   )
                   $i
                }
@@ -221,17 +221,18 @@
             )
             ($c {asset_mgr get_color guitar $i})
 
-            {$m copy new_mat}
+            {$m copy new_mat kCopyShallow}
             {$m set z_mode kZModeTransparent}
-            {$m set blend kBlendSrcAlphaAdd}
-            {$m set diffuse_tex track_flash_style.tex}
+            {$m set blend kBlendSrcAlpha}
+            {$m set diffuse_tex track_flash_white.tex}
             {$m set cull FALSE}
             {$m set use_environ TRUE}
             {$m set intensify TRUE}
             {$m set color $c}
 
             {$mg set color $c}
-            {$mg set diffuse_tex track_flash_style_glow.tex}
+            {$mg set blend kBlendSrcAlpha}
+            {$mg set diffuse_tex track_flash_white_glow.tex}
          }}
       }}
    })

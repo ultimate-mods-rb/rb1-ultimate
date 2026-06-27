@@ -118,6 +118,12 @@
                      {{game get_player_config {game get leader_num}} get_char}
                   }
                )
+               ($won
+                  {if $is_char_perma
+                     {permadeath_mgr load_data}
+                     {permadeath_mgr won}
+                  }
+               )
                {cond
                   ({&& {gamemode get is_permadeath} $is_char_perma}
                      {tour_solo_hub_panel set reset TRUE}
@@ -126,8 +132,8 @@
                   ({gamemode get is_permadeath}
                      {print "char not perma!!"}
                   )
-                  ($is_char_perma
-                     {print "char perma but not perma mode!"}
+                  ({&& $is_char_perma {! $won}}
+                     {overshell_perma_msg show perma_w_or_l}
                   )
                   (TRUE
                      {tour_solo_hub_panel set reset TRUE}
@@ -522,11 +528,7 @@
          }
          {permadeath_mgr set should_warn FALSE}
       }
-      {if
-         {&&
-            {== {permadeath_mgr songs_completed} 58}
-            {! {permadeath_mgr won}}
-         }
+      {if {== {permadeath_mgr songs_completed} 58}
          {permadeath_mgr set won TRUE}
          {permadeath_mgr save_data}
          {if_else {== {permadeath_mgr num_lives} {permadeath_mgr total_lives}}
