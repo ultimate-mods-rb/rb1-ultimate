@@ -419,6 +419,9 @@
 (laufey "Lover Girl Laufey")
 (vocals_laufey "Laufey")
 (laufey_desc "Lovestruck in a reckless fever.")
+(desdemona "Desdemona")
+(drum_desdemona "Desdemona")
+(desdemona_desc "Friend or fiend?")
 ; guitar
 (mustang02 "Fender<sup>TM</sup> '65 Mustang<sup>TM</sup>")
 (mustang02_desc

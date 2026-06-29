@@ -2771,6 +2771,7 @@
                (lisa (genre shell_shop_charstore))
                (laufey (genre shell_shop_charstore))
                (empty (ui_name none) (exclude TRUE))
+               (desdemona (genre shell_shop_charstore))
             )
          )
          (hands

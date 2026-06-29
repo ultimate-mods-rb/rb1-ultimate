@@ -411,7 +411,7 @@
    (update_font {do
       ($s
          {cond
-            ({&& {!= $gems gh2} {!= $smashers gh2}} kabel_bold)
+            ({|| {!= $gems gh2} {!= $smashers gh2}} kabel_bold)
             ({== $this tour_nextsong_panel} dyingmarker)
             (TRUE blockletters)
          }
