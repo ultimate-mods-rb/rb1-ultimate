@@ -2770,8 +2770,10 @@
                (tracy (genre shell_shop_charstore))
                (lisa (genre shell_shop_charstore))
                (laufey (genre shell_shop_charstore))
-               (empty (ui_name none) (exclude TRUE))
                (desdemona (genre shell_shop_charstore))
+               (bunnii_0 (genre shell_shop_charstore))
+               (bunnii_1 (genre shell_shop_charstore))
+               (empty (exclude TRUE))
             )
          )
          (hands

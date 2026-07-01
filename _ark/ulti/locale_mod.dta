@@ -422,6 +422,11 @@
 (desdemona "Desdemona")
 (drum_desdemona "Desdemona")
 (desdemona_desc "Friend or fiend?")
+(bunnii_0 "Bunnii O'Hare")
+(bunnii_1 "Bunnii O'Hare (alt)")
+(guitar_bunnii "Bunnii O'Hare")
+(bunnii_0_desc "The fastest Hopper on the circuit.")
+(bunnii_1_desc "The fastest Hopper on the circuit.")
 ; guitar
 (mustang02 "Fender<sup>TM</sup> '65 Mustang<sup>TM</sup>")
 (mustang02_desc
