@@ -607,16 +607,73 @@
             {ui goto_screen shop_appearance_screen}
             {shop_char_panel select_cam "closeup_idle"}
          )
+         (save.btn {ui push_screen overshell_save_prefab})
       }
    )
    (finish_load
       {new BandButton appearance.btn}
-      {appearance.btn copy instruments.btn 0}
+      {appearance.btn copy instruments.btn kCopyShallow}
       {appearance.btn set text_token create_char_appearance}
       {appearance.btn set_local_pos_index 2 -80.00}
       {instruments.btn set nav_down appearance.btn}
       {buttons.grp add_object appearance.btn}
+
+      {new BandButton save.btn}
+      {save.btn copy appearance.btn kCopyShallow}
+      {save.btn set text_token save_prefab}
+      {save.btn set_local_pos_index 2 -125.00}
+      {appearance.btn set nav_down save.btn}
+      {buttons.grp add_object save.btn}
+
       {$this sync_objects}
+   )
+   (VIRTUAL_KEYBOARD_RESULT_MSG
+      {if {&& $ok $this $text {ui focus_panel} {== {ui focus_panel} $this}}
+         {$this save_prefab {symbol $text}}
+      }
+   )
+   (save_prefab
+      ($name)
+      {if_else {|| {find_exists $syscfg characters prefab $name} {find_exists $user_prefabs $name}}
+         {overshell_ok_msg show p_already_exists}
+         {do
+            ($char {shop_char_panel get char})
+            ($tour_char {shop_char_panel get tour_char})
+            ($ol {$char find OutfitLoader.outfit})
+            ($a {$tour_char get_char_data})
+            ($inst {elem {find $a instrument} 1})
+            {set_elem $a 0 $name}
+            {set_elem {find $a instrument} 1
+               {switch $inst
+                  (guitar {` {USER_GUITAR {, $name}}})
+                  (vocals {` {USER_VOCALS {, $name}}})
+                  (drum   {` {USER_DRUM   {, $name}}})
+               }
+            }
+            {switch $inst ; load instruments so their cfg is loaded
+               (guitar
+                  {$ol select guitar {$tour_char selected_outfit guitar}}
+                  {$ol select bass {$tour_char selected_outfit bass}}
+               )
+               (vocals {$ol select mic {$tour_char selected_outfit mic}})
+               (drum {$ol select drum {$tour_char selected_outfit drum}})
+            }
+            {$ol start_load FALSE} ; afaik bool is for async loading
+            {$char iterate OutfitConfig $cfg {do
+               ($cat {symbol {basename {$cfg name}}})
+               ($ca {eval_array (colors)})
+               {if {find_exists $a outfit $cat}
+                  {foreach_int $i 0 {$cfg size (colors)}
+                     {push_back $ca {$cfg get (colors $i color_index)}}
+                  }
+                  {push_back {find_exists $a outfit $cat} $ca}
+               }
+            }}
+            {push_back $user_prefabs $a}
+            {shop_screen button_down kPad_Tri {shop_char_panel get char_player_num}}
+            {mod_settings_rw save_prefabs}
+         }
+      }
    )
 }
 {new UIScreen

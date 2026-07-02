@@ -680,3 +680,14 @@
       )
    )
 )
+(RndDir
+   (types
+      (mirai
+         ; abusing this to load prefabs before PrefabChar::Init which is ran extremely early
+         ; prefabs are created there with PrefabChar::Create and only then
+         ; autorun doesn't seem to work in this game
+         ; i'm def overlooking a sane way to do this but whatever
+         (change_proxies #include prefab_loader.dta)
+      )
+   )
+)

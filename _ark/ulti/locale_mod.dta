@@ -67,6 +67,7 @@
 (os_drm_rgb_color "Drum Note Colors")
 (os_notergb "Advanced Colors")
 (os_reset "Reset")
+(os_clear_all "Clear All")
 (os_slot_1_fmt "Ò Slot 1: %s Ó")
 (os_slot_2_fmt "Ò Slot 2: %s Ó")
 (os_slot_3_fmt "Ò Slot 3: %s Ó")
@@ -166,6 +167,11 @@
    \n
    \nDo you want to leave?
 ")
+(os_del_prefab "Delete User Prefabs")
+(p_reboot_warning "Changes will only take effect after rebooting the game")
+(p_already_exists "A prefab with this name already exists. Please enter another name.")
+(p_save_info "Do you want to save this character as a prefab?\nTattoos and patches will not be saved.\n\nThe prefab will be availible after rebooting.")
+(save_prefab "Save Prefab")
 (os_force_venue "Force Venue")
 (os_nextcolor "Next Color")
 (os_color_fmt_0 "i R %.2f i G %.2f B %.2f")

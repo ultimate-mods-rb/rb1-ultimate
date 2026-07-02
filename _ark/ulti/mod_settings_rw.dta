@@ -146,5 +146,13 @@
          }
       }
    )
+   (save_prefabs
+      {print "attempting to save user prefabs"}
+      {new ObjectDir user_prefabs}
+      {user_prefabs set user_prefabs $user_prefabs}
+      {user_prefabs save_objects PREFABS_PATH}
+      {delete user_prefabs}
+      {print "user prefabs saved to milo"}
+   )
 }
 {mod_settings_rw load_settings}

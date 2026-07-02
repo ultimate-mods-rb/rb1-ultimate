@@ -1132,19 +1132,20 @@
    }
 }}
 {func prefab_state
-   ($custom $inst $name $gender)
-   {if_else
-      {||
-         {! {find_elem $char_list $name}}
+   ($type $inst $name)
+   {print {sprint $type " " $inst " " $name}}
+   {cond
+      ({&& {== $type uCharUser} {!= {session mode} kNetLocal}} '')
+      ({!= {session mode} kNetLocal}
          ; always enable all chars if online
          ; this is cuz the game sends the prefab name instead of the character data for prefabs
          ; if the char is off the game crash because '' is not a valid instrument
          ; i think it's possible to have the game always send the character data
          ; but i can only find the loading for it in PlayerConfig::NetLoad (or BandUser::SyncLoad in rb2) and not where it sends it
          ; this might be because it's not in the rbctpv2 elf :3
-         {!= {session mode} kNetLocal}
-      }
-      $inst
-      ''
+         $inst
+      )
+      ({! {find_elem $char_list $name}} $inst)
+      (TRUE '')
    }
 }

@@ -133,7 +133,7 @@
                      {print "char not perma!!"}
                   )
                   ({&& $is_char_perma {! $won}}
-                     {overshell_perma_msg show perma_w_or_l}
+                     {overshell_ok_msg show perma_w_or_l}
                   )
                   (TRUE
                      {tour_solo_hub_panel set reset TRUE}
@@ -510,7 +510,7 @@
       {$this play_preview}
       {platform_mgr disable_xmp}
       {if {permadeath_mgr should_warn}
-         {overshell_perma_msg show
+         {overshell_ok_msg show
             {sprintf {localize on_lost_life}
                {random_elem (":3" "XD" "LMAO")}
                {localize
@@ -533,7 +533,7 @@
          {permadeath_mgr save_data}
          {if_else {== {permadeath_mgr num_lives} {permadeath_mgr total_lives}}
             {ui push_screen permadeath_real_win_screen}
-            {overshell_perma_msg show
+            {overshell_ok_msg show
                {sprintf {localize on_lame_win}
                   {permadeath_mgr num_lives}
                   {permadeath_mgr total_lives}
@@ -607,7 +607,7 @@
                      {! {$this is_mode_selected}}
                      {== {{tour performer} event_status} kTourPlayed}
                   }
-                  {overshell_perma_msg show perma_already_played}
+                  {overshell_ok_msg show perma_already_played}
                )
                (
                   {&&
@@ -729,7 +729,7 @@
          )
          (download
             {if_else {gamemode get is_permadeath}
-               {overshell_perma_msg show perma_no_dlc}
+               {overshell_ok_msg show perma_no_dlc}
                {do 
                   {{tour solo_event_provider} set mode kTourVenueDownload}
                   {$this refresh}

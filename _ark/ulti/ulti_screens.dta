@@ -336,7 +336,7 @@
 }
 {memcardmgr add_sink on_save_load save_load_all_complete_msg}
 {new UIScreen
-   overshell_perma_msg ; a lie
+   overshell_ok_msg ; a lie
    (panels dialog_panel)
    (focus dialog_panel)
    (destination '')
@@ -506,7 +506,7 @@
                (script
                   {if_else {ui in_transition}
                      {print "showing win msg is unsafe now (dont spam buttons!)"}
-                     {overshell_perma_msg show
+                     {overshell_ok_msg show
                         {sprintf {localize_token on_insane_win}
                            {do
                               ($pcfg {game get_player_config {game get leader_num}})
@@ -529,6 +529,34 @@
    permadeath_real_win_screen
    (panels permadeath_real_win_panel)
    (focus permadeath_real_win_panel)
+}
+{new UIScreen
+   overshell_save_prefab
+   (panels dialog_panel)
+   (focus dialog_panel)
+   (destination '')
+   (name "")
+   (player_num -1)
+   (enter
+      {dialog_panel set_yesno
+         {localize_token p_save_info}
+         yes.btn
+      }
+   )
+   (SELECT_START_MSG
+      {if {== $component yes.btn}
+         {platform_mgr show_keyboard
+            $player_num
+            {get_char_name_length}
+            {localize create_char_vk_title}
+            {localize create_char_vk_desc}
+            {{shop_char_panel get tour_char} get_char_name}
+            shop_panel
+         }
+      }
+      {ui pop_screen}
+      kDataUnhandled
+   )
 }
 {new CharProfilePanel char_data}
 {{new Object permadeath_mgr} set_type permadeath_mgr}

@@ -1,0 +1,22 @@
+; this is ran before most stuff is intialized!
+{set $user_prefabs {array 0}}
+{print "attempting to load user prefabs"}
+{do
+   ($dir {load_objects PREFABS_PATH})
+   {if_else $dir
+      {do
+         {$dir delete_loader}
+         {if {$dir has (user_prefabs)}
+            {set $user_prefabs {$dir get user_prefabs}}
+         }
+         {delete $dir}
+         {print "user prefabs loaded"}
+      }
+      {print "user prefabs not loaded"}
+   }
+}
+{foreach $prefab $user_prefabs
+   {unless {find_exists $syscfg characters prefab {elem $prefab 0}}
+      {push_back {find $syscfg characters prefab} $prefab}
+   }
+}

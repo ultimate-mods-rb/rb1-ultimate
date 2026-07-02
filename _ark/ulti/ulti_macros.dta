@@ -141,9 +141,25 @@
    )
 )
 
-#define CUSTOM_GUITAR  (prefab_state TRUE guitar)
-#define CUSTOM_VOCALS  (prefab_state TRUE vocals)
-#define CUSTOM_DRUM    (prefab_state TRUE drum)
-#define VANILLA_GUITAR (prefab_state FALSE guitar)
-#define VANILLA_VOCALS (prefab_state FALSE vocals)
-#define VANILLA_DRUM   (prefab_state FALSE drum)
+#define uCharVanilla (0)
+#define uCharCustom  (1)
+#define uCharUser    (2)
+
+#define VANILLA_GUITAR (prefab_state uCharVanilla guitar)
+#define VANILLA_VOCALS (prefab_state uCharVanilla vocals)
+#define VANILLA_DRUM   (prefab_state uCharVanilla drum)
+
+#define CUSTOM_GUITAR  (prefab_state uCharCustom guitar)
+#define CUSTOM_VOCALS  (prefab_state uCharCustom vocals)
+#define CUSTOM_DRUM    (prefab_state uCharCustom drum)
+
+#define USER_GUITAR    (prefab_state uCharUser guitar)
+#define USER_VOCALS    (prefab_state uCharUser vocals)
+#define USER_DRUM      (prefab_state uCharUser drum)
+
+
+#ifdef HX_PS3
+   #define PREFABS_PATH ("GD:/dev_hdd0/game/BLUS30050/USRDIR/user_prefabs.milo")
+#else
+   #define PREFABS_PATH ("GAME:/user_prefabs.milo")
+#endif

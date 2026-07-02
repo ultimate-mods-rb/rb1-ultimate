@@ -1114,6 +1114,10 @@
          (type uNormal)
          (sel_script {pop_and_goto_screen overshell_chars_screen})
       )
+      (os_del_prefab
+         (type uNormal)
+         (sel_script {pop_and_goto_screen overshell_del_prefab_screen})
+      )
       (os_force_venue
          (type uFakeSld)
          (fmt_type uLocalize)
@@ -1352,4 +1356,61 @@
       }
       kDataUnhandled
    )
+}
+{new UIPanel
+   overshell_del_prefab_panel
+   OVERSHELL_LIST_FILE
+   (title os_del_prefab)
+   (data)
+   (update_data
+      {do
+         ($a
+            {` 
+               (
+                  (os_clear_all
+                     (type uNormal)
+                     (sel_script
+                        {resize $user_prefabs 0}
+                        {$this update_data}
+                     )
+                  )
+               )
+            }
+         )
+         {foreach $prefab $user_prefabs
+            {push_back $a {elem $prefab 0}}
+         }
+         {set [data] $a}
+      }
+   )
+   (enter
+      {$this update_data}
+      {os_setup_common}
+      {overshell_ok_msg show p_reboot_warning}
+   )
+   (exit
+      {mod_settings_rw save_prefabs}
+      {set [data] {array 0}}
+   )
+   (SELECT_MSG
+      {if_else {OS_LIST selected_pos}
+         {if {find_exists $user_prefabs {OS_LIST selected_sym}}
+            {foreach_int $i 0 {size $user_prefabs}
+               {if {== {elem {elem $user_prefabs $i} 0} {OS_LIST selected_sym}}
+                  {remove_elem $user_prefabs {elem $user_prefabs $i}}
+               }
+            }
+            {$this update_data}
+            {set [pos] (0 0)}
+            {lst_reset}
+         }
+         {os_sel_common}
+      }
+   )
+}
+{new UIScreen
+   overshell_del_prefab_screen
+   (back overshell_ven_screen)
+   (panels overshell_del_prefab_panel practice_lower3rd_panel helpbar)
+   (focus overshell_del_prefab_panel)
 }
