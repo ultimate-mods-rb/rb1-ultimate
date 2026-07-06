@@ -458,11 +458,6 @@
          {band_ui_sink set_block_mode kBlockRankedResults}
          {band_ui_sink set_net_sync FALSE}
       }
-      #ifdef HX_PS3
-      {trim_animate.mat set color {pack_color 0 1 1}}
-      {overlay.mat set color 0}
-      {tiger.mesh set_showing FALSE}
-      #endif
    )
    (update_true_skill
       ($skill0 $skill1)

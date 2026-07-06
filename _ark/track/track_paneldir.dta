@@ -646,9 +646,12 @@
                   {bass set effect_selector {$this find bass_effects}}
                }
             }
-            {if_else {&& [bass] {&& [drum] [guitar]}}
-               {set $track_LOD 1}
-               {set $track_LOD 0}
+            {set $track_LOD
+               {&&
+                  {&& [bass] {&& [drum] [guitar]}}
+                  {! $notergb}
+                  {find_elem (rb1 rb2) $gems}
+               }
             }
             {bass set_showing [bass]}
             {drum set_showing [drum]}

@@ -189,9 +189,6 @@
          {push_back $dirs {$ref dir}}
       }
       {foreach $dir $dirs {with $dir
-         {unless {exists new_mat}
-            {new Mat new_mat}
-         }
          {foreach_int $i 0 6 {do
             ($m
                {elem
@@ -220,14 +217,7 @@
                }
             )
             ($c {asset_mgr get_color guitar $i})
-
-            {$m copy new_mat kCopyShallow}
-            {$m set z_mode kZModeTransparent}
-            {$m set blend kBlendSrcAlpha}
-            {$m set diffuse_tex track_flash_white.tex}
-            {$m set cull FALSE}
-            {$m set use_environ TRUE}
-            {$m set intensify TRUE}
+            {$m copy tail_base.mat kCopyShallow}
             {$m set color $c}
 
             {$mg set color $c}

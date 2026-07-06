@@ -301,7 +301,7 @@
          {set $game_unpause_on_enter FALSE}
       }
       {if {! {$this check_lost_controller}}
-         {unless $fake_controllers
+         {unless {|| $fake_controllers {gamemode get is_jukebox}}
             {if {'||' {synth did_mics_change} {$this player_missing_mic}}
                {$this pause_for_mic_check}
             }

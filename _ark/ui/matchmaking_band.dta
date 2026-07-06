@@ -357,7 +357,7 @@
                      )
                      (kPad_X
                         {cond
-                           ({gamecfg is_missing_mic $player_num FALSE}
+                           ({&& {gamecfg is_missing_mic $player_num FALSE} {! {gamemode get is_jukebox}}}
                               {vocalist_must_have_mic_screen set message band_vocalist_needs_mic}
                               {ui push_screen vocalist_must_have_mic_screen}
                            )
@@ -822,9 +822,7 @@
             {if
                {&&
                   {!= $leader_num -1}
-                  {!
-                     {gamecfg is_missing_mic $leader_num FALSE}
-                  }
+                  {&& {! {gamecfg is_missing_mic $leader_num FALSE}} {gamemode get is_jukebox}}
                   {game can_local_player_join $leader_num}
                }
                {set [auto_join_state] kAutoJoinLeader}
@@ -936,9 +934,7 @@
                      {&&
                         $player_char
                         {!= $player_num -1}
-                        {!
-                           {gamecfg is_missing_mic $player_num FALSE}
-                        }
+                        {&& {! {gamecfg is_missing_mic $leader_num FALSE}} {gamemode get is_jukebox}}
                         {game can_local_player_join $player_num}
                      }
                      {do

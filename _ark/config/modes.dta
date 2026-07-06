@@ -572,6 +572,7 @@
    (main_mode_screen bonus_screen)
    COOP_MODE_PROPERTIES
    (game_screen jukebox_game_screen)
+   (endgame_screen qp_complete_screen)
    (disable_guitar_fx TRUE)
    (show_hud FALSE)
    (show_track FALSE)
