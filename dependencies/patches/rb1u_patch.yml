@@ -1,7 +1,7 @@
 # IF YOU DO NOT KNOW WHAT THIS FILE IS IGNORE IT
 Version: 1.2
 
-PPU-92a18f5a5a905e1c42e8dc4a38b2fcfcbb310f1d:
+PPU-dad9f4b34e15d7cd98c8f65dc955694641c54397:
   "cymbals or whatever":
     Games:
       "Rock Band":
@@ -54,3 +54,15 @@ PPU-92a18f5a5a905e1c42e8dc4a38b2fcfcbb310f1d:
     Patch:
       # call to SongMgr::ResetSharedSongs in BaseTourPerformer::SetEvent
       - [ be32, 0x0011ddb4, 0x60000000 ] # nop
+  "song_mgr get_data":
+    Games:
+      "Rock Band":
+        BLUS30050: [ 01.07 ]
+    Author: "Synchrony"
+    Notes: "yawn"
+    Patch Version: 1.0
+    Patch:
+      - [ utf8, 0x00923f20, get_data ]   # overwrite has_song name
+      - [ be32, 0x00052aec, 0x4BFF99FD ] # bl SongMgr:Data (0004c4e8)
+      - [ be32, 0x00052af0, 0x3800000a ] # set datanode? type to kDataArray??? this is wrong yet it works?
+      - [ be32, 0x00052af4, 0x60000000 ] # harmful math stuff

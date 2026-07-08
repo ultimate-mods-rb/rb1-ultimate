@@ -300,7 +300,7 @@
    )
    (set_highlit_song
       ($song_symbol)
-      {if {'||' {song_mgr has_song $song_symbol} {== $song_symbol random_song}}
+      {if {'||' {has_song $song_symbol} {== $song_symbol random_song}}
          {ss_song.lst set_selected $song_symbol}
       }
    )
@@ -402,6 +402,7 @@
                {switch [song_mode]
                   (game
                      {game set_song $song}
+                     {update_vocal_gender}
                      {do
                         ($venue {random_elem {gamemode get venues}})
                         {while {== $venue blank_01}
@@ -537,7 +538,7 @@
             {if_else
                {||
                   {song_provider is_invalid_song $i}
-                  {! {song_mgr has_song {song_provider get_song_to_set $i}}}
+                  {! {has_song {song_provider get_song_to_set $i}}}
                }
                {++ $f}
                {do

@@ -1149,3 +1149,10 @@
       (TRUE '')
    }
 }
+{func has_song
+   ($s)
+   {if_else {song_mgr get_data $s}
+      TRUE
+      FALSE
+   }
+}

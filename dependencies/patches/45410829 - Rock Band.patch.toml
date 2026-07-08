@@ -1,7 +1,7 @@
 # IF YOU DO NOT KNOW WHAT THIS FILE IS IGNORE IT
 title_name = "Rock Band"
 title_id = "45410829"
-hash = "5A2F3006CD9A4C53" # default.xex
+hash = "38E508EA02F63013" # default.xex
 
 [[patch]]
     name = "cymbals or whatever"
@@ -77,7 +77,7 @@ hash = "5A2F3006CD9A4C53" # default.xex
         address = 0x828a09c4
         value   = 0x4e800020    # blr
 [[patch]]
-    name = "disable texture compression"
+    name = "disable texture compression"    # not applied to the xex!
     author = "Synchrony"
     is_enabled = true
 
@@ -92,3 +92,39 @@ hash = "5A2F3006CD9A4C53" # default.xex
     [[patch.be32]]
         address = 0x823e8ec4    # call to SongMgr::ResetSharedSongs in BaseTourPerformer::SetEvent
         value   = 0x60000000    # nop
+
+[[patch]]
+    name = "song_mgr get_data"
+    author = "Synchrony"
+    is_enabled = true
+
+    [[patch.string]]
+        address = 0x8207c158
+        value   = "get_data"    # overwrite has_song name
+
+    [[patch.be32]]
+        address = 0x8244e144    # kinda end of inlined SongMgr:HasSong in SongMgr:Handle (every SongMgr:Data call is inlined too. fuck this compiler!)
+        value   = 0x48452884    # b 0x828a09c8
+
+    # done like this because of all the stupid compiler tricks. there's almost enough room not to :(
+    [[patch.be32]]
+        address = 0x828a09c8
+        value   = 0x7c6b1b78    # or r11,r3,r3
+    [[patch.be32]]
+        address = 0x828a09cc
+        value   = 0x3940000a    # li r10,0xa (set return type to kDataArray)
+    [[patch.be32]]
+        address = 0x828a09d0
+        value   = 0x915c0004    # stw r10,0x4(r28)
+    [[patch.be32]]
+        address = 0x828a09d4
+        value   = 0x4BBAD780    # b 0x8244e154
+
+[[patch]]
+    name = "update cache name"
+    author = "Synchrony"
+    is_enabled = true
+
+    [[patch.string]]
+        address = 0x8207c528
+        value   = "rb1uwucache"
