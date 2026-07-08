@@ -128,6 +128,7 @@
             {gamecfg set_venue $force_venue}
          }
       }
+      {update_vocal_gender}
       #ifdef IGNORE_PRELOAD_OK
       {ui goto_screen real_loading_screen}
       #else

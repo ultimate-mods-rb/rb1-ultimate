@@ -471,6 +471,9 @@
    #include videos.dta
 )
 (event_unlocks #include ../ulti/event_unlocks.dta)
+(missing_song_data
+   #include ../ulti/missing_song_data/missing_song_data.dta
+)
 (gems #include ../ulti/track/gems/gems.dta)
 (smashers #include ../ulti/track/smashers/smashers.dta)
 (data_graveyard)

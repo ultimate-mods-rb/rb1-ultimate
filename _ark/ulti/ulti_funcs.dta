@@ -1156,3 +1156,48 @@
       FALSE
    }
 }
+{func update_metadata
+   {foreach $song {find $syscfg missing_song_data}
+      {if {== {type $song} kDataArray}
+         {if {has_song {elem $song 0}} {do
+            ($data {song_mgr get_data {elem $song 0}})
+            {foreach $a $song
+               {if {== {type $a} kDataArray}
+                  {if_else {find_exists $data {elem $a 0}}
+                     {set_elem {find $data {elem $a 0}} 1 {elem $a 1}}
+                     {push_back $data {eval $a}}
+                  }
+               }
+            }
+         }}
+      }
+   }
+}
+{func update_vocal_gender
+   {if {&& $force_vg {!= $force_vg off}}
+      {do
+         ($data {song_mgr get_data {game get_song}})
+         {if
+            {&&
+               $data
+               {find_exists $data vocal_gender}
+               {!= {type {elem {find $data vocal_gender} 0}} kDataCommand}
+            }
+            {set_elem {find $data vocal_gender} 1
+               {`
+                  {get_vocal_gender
+                     {, {elem {find $data vocal_gender} 1}}
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+{func get_vocal_gender
+   ($gender)
+   {if_else {&& $force_vg {!= $force_vg off}}
+      $force_vg
+      $gender
+   }
+}

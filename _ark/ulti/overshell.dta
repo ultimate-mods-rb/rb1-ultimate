@@ -1118,6 +1118,13 @@
          (type uNormal)
          (sel_script {pop_and_goto_screen overshell_del_prefab_screen})
       )
+      (os_force_vg
+         (type uFakeSld)
+         (fmt_type uLocalize)
+         (hide_on_sel TRUE)
+         (var force_vg)
+         (array (off male female))
+      )
       (os_force_venue
          (type uFakeSld)
          (fmt_type uLocalize)
