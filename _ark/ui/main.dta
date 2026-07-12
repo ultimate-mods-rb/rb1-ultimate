@@ -540,7 +540,7 @@
    (load {main_panel set mode_focus solo.btn})
    (exit {synth reset_mics_changed})
    (SELECT_START_MSG
-      {if_else {gamecfg is_missing_mic $player_num FALSE}
+      {if_else {&& {!= $component bandtour.btn} {gamecfg is_missing_mic $player_num FALSE}}
          {do
             {vocalist_must_have_mic_screen set message solo_vocalist_needs_mic}
             {ui push_screen vocalist_must_have_mic_screen}

@@ -318,7 +318,15 @@
    )
    (SELECT_START_MSG
       {switch $component
-         (gigguide.btn {ui goto_screen tour_solo_diff_screen})
+         (gigguide.btn
+            {if_else {gamecfg is_missing_mic $player_num FALSE}
+               {do
+                  {vocalist_must_have_mic_screen set message solo_vocalist_needs_mic}
+                  {ui push_screen vocalist_must_have_mic_screen}
+               }
+               {ui goto_screen tour_solo_diff_screen}
+            }
+         )
          (rokkshoppe.btn
             {shop_char_panel set char_player_num $player_num}
             {shop_panel set reset_on_enter TRUE}

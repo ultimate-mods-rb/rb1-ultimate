@@ -235,6 +235,13 @@
          (sel_script {toggle_var force_per_pixel})
       )
       #endif
+      (os_aspect_fmt
+         (type uFakeSld)
+         (fmt_type uAspect)
+         (get {rnd aspect})
+         (set {rnd set_aspect $r})
+         (array (kSquareAspect kRegularAspect kWidescreenAspect))
+      )
    ))
    (enter {os_setup_common})
    (BUTTON_DOWN_MSG {os_down_common})

@@ -48,6 +48,7 @@
 #define uTimer     (8)
 #define uLocalize  (9)
 #define uColorRGB  (10)
+#define uAspect    (11)
 
 #define COLOR_DATA_COMMON (
    (type uFakeSld)

@@ -16,17 +16,15 @@
 #endif
 {func dump_array
    ($a $p)
-   #ifdef HX_PS3
    {do
       ($o {new ObjectDir temp_dir})
       {$o set array $a}
       {$o save_objects $p}
       {delete $o}
+      #ifdef HX_PS3
       {print {sprint "array dumped to " $p}}
+      #endif
    }
-   #else
-   kDataUnhandled
-   #endif
 }
 {func set_var
    ($var $in)
@@ -202,6 +200,16 @@
                                  }
                                  {unpack_color $data $r $g $b}
                                  {sprintf {localize_token {sprintf "os_color_fmt_%d" $i}} $r $g $b}
+                              }
+                           )
+                           (uAspect
+                              {localize
+                                 {switch $data
+                                    (kSquareAspect aspect_square)
+                                    (kRegularAspect apsect_regular)
+                                    (kWidescreenAspect aspect_widescreen)
+                                    invalid
+                                 }
                               }
                            )
                         }
@@ -1133,11 +1141,11 @@
 }}
 {func prefab_state
    ($type $inst $name)
-   {print {sprint $type " " $inst " " $name}}
+   ;{print {sprint $type " " $inst " " $name}}
    {cond
-      ({&& {== $type uCharUser} {!= {session mode} kNetLocal}} '')
-      ({!= {session mode} kNetLocal}
-         ; always enable all chars if online
+      ({&& {find_elem (uCharCustom uCharUser) $type} {gamemode is_online}} '')
+      ({gamemode is_online}
+         ; only enable normal chars if online
          ; this is cuz the game sends the prefab name instead of the character data for prefabs
          ; if the char is off the game crash because '' is not a valid instrument
          ; i think it's possible to have the game always send the character data
