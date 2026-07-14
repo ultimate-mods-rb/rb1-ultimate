@@ -42,6 +42,7 @@
       cnt_star
       gems
       smashers
+      track_config
       selectvenue
       nohud
       micdeploy

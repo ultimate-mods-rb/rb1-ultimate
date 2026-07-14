@@ -442,6 +442,13 @@
             {asset_mgr ensure_stuff}
          )
       )
+      (os_track_config
+         (type uFakeSld)
+         (fmt_type uLocalize)
+         (hide_on_sel TRUE)
+         (var track_config)
+         (array {asset_mgr track_configs})
+      )
    ))
    (enter
       {asset_mgr ensure_stuff}

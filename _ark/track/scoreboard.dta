@@ -68,14 +68,14 @@
                   }
                }
                {set [sweep_pct] {- $stars [previous_score]}}
-               {if {<= [sweep_pct] 0.95}
-                  {if_else {< [current_star] {size [stars]}}
-                     {{{elem [stars] [current_star]} find sweep.mnm} set_frame [sweep_pct]}
-                     {if $goldprogress
-                        {foreach $s [stars]
-                           {{$s find meter_wipe.mesh} set_showing TRUE}
-                           {{$s find sweep.mnm} set_frame [sweep_pct]}
-                        }
+               {if_else {< [current_star] {size [stars]}}
+                  {{{elem [stars] [current_star]} find sweep.mnm} set_frame
+                     {clamp [sweep_pct] 0.00 0.95}
+                  }
+                  {if $goldprogress
+                     {foreach $s [stars]
+                        {{$s find meter_wipe.mesh} set_showing TRUE}
+                        {{$s find sweep.mnm} set_frame {clamp [sweep_pct] 0.00 0.95}}
                      }
                   }
                }

@@ -74,6 +74,7 @@
       {if $notergb
          {asset_mgr apply_all_rgb}
       }
+      {asset_mgr apply_config}
       {cond
          ({exists vocals} ;coop
             {player_feedback_01 insert (subdirs 0) "ulti/track/countdown_0.milo"}

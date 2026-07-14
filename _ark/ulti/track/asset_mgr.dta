@@ -9,6 +9,8 @@
    (all_smashers [all_smashers])
    (all_smashers_rgb [all_smashers_rgb])
 
+   (track_configs [track_configs])
+
    (init
       {print "asset_mgr init"}
 
@@ -43,6 +45,15 @@
             }
          }
       }
+
+      {set [track_configs] {array 0}}
+
+      {foreach $a {find $syscfg track_configs}
+         {if {== {type $a} kDataArray}
+            {push_back [track_configs] {elem $a 0}}
+         }
+      }
+
 
       {print "asset_mgr initalized"}
    )
@@ -340,6 +351,52 @@
          }}
       }
    )
+   (apply_config {do
+      ($a {find_exists $syscfg track_configs $track_config})
+      {if $a
+         {with {get_track_panel}
+            {foreach $o {elem $a 1}
+               {if {exists {elem $o 0}}
+                  {foreach $p $o
+                     {if {== {type $p} kDataArray}
+                        {if_else {== {elem $p 0} xfm_data}
+                           {with {elem $o 0} {do
+                              ($index 0)
+                              {foreach $obj [objects] {do
+                                 ($e {* $index 9})
+                                 ($data {find_exists $p {symbol {$obj name}}})
+                                 {if $data {do
+                                    ($pos {find_exists $data pos})
+                                    ($rot {find_exists $data rot})
+                                    ($scale {find_exists $data scale})
+                                    {if $pos
+                                       {set_elem [xfms] {+ $e 0} {elem $pos 1}}
+                                       {set_elem [xfms] {+ $e 1} {elem $pos 2}}
+                                       {set_elem [xfms] {+ $e 2} {elem $pos 3}}
+                                    }
+                                    {if $rot
+                                       {set_elem [xfms] {+ $e 3} {elem $rot 1}}
+                                       {set_elem [xfms] {+ $e 4} {elem $rot 2}}
+                                       {set_elem [xfms] {+ $e 5} {elem $rot 3}}
+                                    }
+                                    {if $scale
+                                       {set_elem [xfms] {+ $e 6} {elem $scale 1}}
+                                       {set_elem [xfms] {+ $e 7} {elem $scale 2}}
+                                       {set_elem [xfms] {+ $e 8} {elem $scale 3}}
+                                    }
+                                 }}
+                                 {++ $index}
+                              }}
+                           }}
+                           {{elem $o 0} set {elem $p 0} {elem $p 1}}
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   })
    (get_color
       ($inst $i)
       {switch $inst
