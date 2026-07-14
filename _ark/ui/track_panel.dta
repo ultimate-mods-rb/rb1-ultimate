@@ -165,13 +165,14 @@
          }
          {if_else {gamemode get is_autoplay}
             {do
-               {$player set_auto_play TRUE}
-               {with {$this loaded_dir}
-                  {unless {$this has (init)}
-                     {$player toggle_no_fills}
-                     {$this set init TRUE}
+               ($track {get_dir_from_player $player})
+               ($dir
+                  {if_else {== {type {$track get streak_meter}} kDataSymbol}
+                     {$track find {$track get streak_meter}}
+                     {$track get streak_meter}
                   }
-               }
+               )
+               {{$dir find meter_wipe.mesh} set_showing FALSE}
             }
             {do
                ($obj {sprint {$player track} "_track_callback"})

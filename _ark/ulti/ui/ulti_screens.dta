@@ -1,7 +1,8 @@
 #include overshell.dta
+#include autoplay.dta
 {new UIPanel
    main_bandtour_panel
-   (file "../ui/main_bandcoop.milo")
+   (file "../../ui/main_bandcoop.milo")
    (focus local.btn)
    (enter
       {if {profile_mgr get_all_unlocked}
@@ -47,7 +48,7 @@
 }
 {new UIPanel
    bonus_panel
-   (file "../ui/options.milo")
+   (file "../../ui/options.milo")
    (focus audio.btn)
    (SELECT_START_MSG
       {switch $component
@@ -55,10 +56,12 @@
          (gameplay.btn
             {gamemode set_mode jukebox $player_num}
             {ui goto_screen {gamemode get matchmaking_screen}}
-            kDataUnhandled
+         )
+         (characterdata.btn
+            {gamemode set_mode autoplay $player_num}
+            {ui goto_screen autoplay_mode_setup_screen}
          )
          (calibrate_av.btn kDataUnhandled)
-         (characterdata.btn kDataUnhandled)
          (exportsongs.btn
             #ifdef HX_PS3
             {ui goto_screen store_enter_confirm_screen}
@@ -90,8 +93,8 @@
    (finish_load
       {audio.btn set text_token os_ultisettings}
       {gameplay.btn set text_token jukebox}
+      {characterdata.btn set text_token autoplay}
       {calibrate_av.btn set text_token placeholder}
-      {characterdata.btn set text_token placeholder}
       {exportsongs.btn set text_token musicstore}
    )
    (TRANSITION_COMPLETE_MSG {autosave} kDataUnhandled)
@@ -285,11 +288,17 @@
 }
 {new UIPanel
    change_sort_panel
-   (file "../ui/player_names_dialog.milo")
+   (file "../../ui/player_names_dialog.milo")
    (focus players.lst)
    (target '')
    (helpbar ('' helpbar_select))
-   LIMIT_TO_SESSION
+   (allow_player
+      ($player_num)
+      {if_else {gamemode get is_autoplay}
+         TRUE
+         {game is_player_participating $player_num}
+      }
+   )
    (enter
       {title.lbl set text_token change_sort}
       {players.lst set display_num 6}
@@ -389,7 +398,7 @@
 }
 {new UIPanel
    permadeath_setup_panel
-   (file "../ui/tour_solo_guitar_welcome.milo")
+   (file "../../ui/tour_solo_guitar_welcome.milo")
    (enter {$this update_text})
    (update_text
       {lives.btn set_localized

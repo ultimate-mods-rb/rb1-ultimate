@@ -364,6 +364,7 @@
                         {! {gamemode is_solo}}
                         {== {gamemode get player_arrangement} kArrangeBand}
                         {'||' {gamemode get local_network} {is_leader_local}}
+                        {! {gamemode get is_autoplay}}
                      }
                      {set $added TRUE}
                   }

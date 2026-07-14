@@ -119,6 +119,7 @@
    (missing_part_type kMissingSelectCoop)
    (is_jukebox FALSE)
    (is_permadeath FALSE)
+   (is_autoplay FALSE)
 )
 (init
    (community_screen main_leaderboard_screen)
@@ -585,4 +586,14 @@
    (enable_streak FALSE)
    (enable_star_power FALSE)
    (is_jukebox TRUE)
+)
+(autoplay
+   (main_mode_screen bonus_screen)
+   (endgame_screen qp_complete_screen)
+   (ready_screen autoplay_setup_screen)
+   (continue_screen autoplay_mode_setup_screen)
+   (pause_new_song_screen autoplay_mode_setup_screen)
+   (skip_matchmaking TRUE)
+   (is_autoplay TRUE)
+   COOP_MODE_PROPERTIES
 )

@@ -13,16 +13,21 @@
    COMMON_SONG_PREVIEW
    (allow_player
       ($player_num)
-      {if_else {== [song_mode] leaderboards}
-         {'||'
-            {== {game get leader_num} -1}
-            {game is_player_participating $player_num}
-         }
-         {&&
-            {!= [sel_leader] -1}
-            {gamecfg is_player_local [sel_leader]}
-            {game is_player_participating $player_num}
-         }
+      {cond
+         ({gamemode get is_autoplay} TRUE)
+         ({== [song_mode] leaderboards}
+            {'||'
+               {== {game get leader_num} -1}
+               {game is_player_participating $player_num}
+            }
+         )
+         (TRUE
+            {&&
+               {!= [sel_leader] -1}
+               {gamecfg is_player_local [sel_leader]}
+               {game is_player_participating $player_num}
+            }
+         )
       }
    )
    (exiting_sel_song FALSE)

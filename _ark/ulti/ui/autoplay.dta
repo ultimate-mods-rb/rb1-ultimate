@@ -1,0 +1,192 @@
+{new UIPanel
+   autoplay_setup_panel
+   (file "../../ui/tour_solo_guitar_welcome.milo")
+   (inst guitar)
+   (active TRUE)
+   (diff kDifficultyExpert)
+   (players ())
+   (to_prompt ())
+   (enter {do
+      ($missing {array 0})
+      {song_mgr find_missing_parts {game get_song} $missing}
+      {foreach $inst (guitar drum vocals bass)
+         {unless {find_elem $missing $inst}
+            {push_back [to_prompt] $inst}
+         }
+      }
+      {unless {size [to_prompt]}
+         {fail "autoplay_setup_panel found no insts. something is likely wrong."}
+      }
+      {set [inst] {elem [to_prompt] 0}}
+      {set [diff] kDifficultyExpert}
+      {set [active] TRUE}
+      {$this update_text}
+   })
+   (exit
+      {resize [players] 0}
+      {resize [to_prompt] 0}
+   )
+   (SELECT_MSG
+      {switch $component
+         (diff.btn
+            {diff.sld store}
+            {$this set_focus diff.sld}
+         )
+         (active.btn
+            {set [active] {! [active]}}
+            {$this update_text}
+         )
+         (ok.btn {$this on_next})
+      }
+   )
+   (BUTTON_DOWN_MSG
+      {switch {$this focus_name}
+         (diff.sld
+            {switch $button
+               (kPad_X
+                  {diff.sld confirm}
+                  {$this set_focus diff.btn}
+               )
+               (kPad_Tri
+                  {diff.sld undo $player_num}
+                  {$this set_focus diff.btn}
+               )
+               kDataUnhandled
+            }
+         )
+         kDataUnhandled
+      }
+   )
+   (SCROLL_MSG
+      {switch $component
+         (diff.sld {set [diff] {$component current}})
+      }
+      {$this update_text}
+   )
+   (on_next
+      {remove_elem [to_prompt] [inst]}
+      {if [active]
+         {push_back [players]
+            {eval_array ([inst] [diff])}
+         }
+      }
+      {if_else {size [to_prompt]}
+         {do
+            {set [inst] {elem [to_prompt] 0}}
+            {set [diff] kDifficultyExpert}
+            {set [active] TRUE}
+            {diff.sld set_current 3}
+            {$this set_focus diff.btn}
+            {$this update_text}
+         }
+         {if_else {size [players]}
+            {do
+               {setup_game {game get_song} {game get_venue} [players]}
+               {game foreach_local_player_config $pcfg
+                  {$pcfg set autoplay TRUE}
+               }
+               {ui goto_screen loading_screen}
+            }
+            {ui goto_screen qp_selsong_screen FALSE TRUE}
+         }
+      }
+   )
+   (update_text
+      {active.btn set_localized
+         {sprintf {localize ap_active_fmt}
+            {localize {if_else [active] yes no}}
+         }
+      }
+      {diff.btn set_localized
+         {sprintf {localize ap_diff_fmt}
+            {localize {sprint "diff_icon_" [diff]}}
+         }
+      }
+      {switch [inst]
+         (guitar
+            {town_desc.lbl set_localized "GUITAR"}
+            {icon.lbl set_localized "G"}
+         )
+         (drum
+            {town_desc.lbl set_localized "DRUMS"}
+            {icon.lbl set_localized "D"}
+         )
+         (vocals
+            {town_desc.lbl set_localized "VOCALS"}
+            {icon.lbl set_localized "V"}
+         )
+         (bass
+            {town_desc.lbl set_localized "BASS"}
+            {icon.lbl set_localized "B"}
+         )
+      }
+   )
+   (finish_load
+      {mi_logo.mesh set_showing FALSE}
+
+      {town_desc.lbl set_localized "GUITAR"}
+      {town_desc.lbl set_local_pos_index 2 145}
+
+      {new BandLabel icon.lbl}
+      {icon.lbl copy town_desc.lbl kCopyShallow}
+      {icon.lbl set_type instrument_icons}
+      {icon.lbl set_localized "G"}
+      {icon.lbl set_local_pos -60.00 0.00 138.00}
+
+      {$this iterate BandButton $btn {delete $btn}}
+      {$this iterate UISlider $sld {delete $sld}}
+
+      {new BandButton ok.btn}
+      {new BandButton diff.btn}
+      {new BandButton active.btn}
+
+      {$this iterate BandButton $btn
+         {$btn copy {dialog_panel find no.btn} 0}
+         {tour_band_busavailable.grp add_object $btn}
+         {$btn set_trans_parent tour_band_busavailable.grp}
+      }
+
+      {ok.btn set text_token next}
+      {ok.btn set_local_pos_index 2 -150}
+
+      {diff.btn set_local_pos -160 0 -21}
+      {diff.btn set alignment kMiddleLeft}
+      {diff.btn set nav_down active.btn}
+      {diff.btn set_localized "Diff: X"}
+
+      {active.btn set_local_pos -161 0 -60}
+      {active.btn set alignment kMiddleLeft}
+      {active.btn set nav_down ok.btn}
+      
+      {new UISlider diff.sld}
+
+      {$this iterate UISlider $sld
+         {$sld set_type audio}
+         {tour_band_busavailable.grp add_object $sld}
+         {$sld set_trans_parent tour_band_busavailable.grp}
+         {$sld set_local_scale 0.6 0.6 0.6}
+         {$sld set_local_pos 90 0 -19.5}
+         {$sld set_num_steps 4}
+         {$sld set_current 3}
+      }
+
+      {$this set_focus diff.btn}
+      {{$this loaded_dir} sync_objects}
+   )
+}
+{new UIScreen
+   autoplay_setup_screen
+   (panels meta postsong_sfx_panel movie_panel autoplay_setup_panel)
+   (focus autoplay_setup_panel)
+   (back qp_selsong_screen)
+}
+{new UIScreen
+   autoplay_mode_setup_screen
+   (panels meta movie_panel)
+   (enter
+      {session reset 0 FALSE}
+      {session add_local 0}
+      {game set leader_num 0}
+      {ui goto_screen qp_selsong_screen}
+   )
+}

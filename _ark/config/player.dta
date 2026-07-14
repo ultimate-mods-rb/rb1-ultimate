@@ -195,6 +195,9 @@
    )
    (enable_drum_solos
       ($in_enable)
+      {if {&& {gamemode has (is_autoplay)} {gamemode get is_autoplay}}
+         {set $in_enable FALSE}
+      }
       {if_else $in_enable
          {do
             {$this enable_solos 2400}

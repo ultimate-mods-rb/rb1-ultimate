@@ -2,9 +2,9 @@
    #include ../ulti/ulti_funcs.dta
    #include ../ulti/ulti_init.dta
    #include ../ulti/ulti_init_apperance.dta
-   #include ../ulti/ulti_pi_screens.dta
+   #include ../ulti/ui/ulti_pi_screens.dta
    #include init.dta
-   #include ../ulti/ulti_screens.dta
+   #include ../ulti/ui/ulti_screens.dta
    #include ../ulti/mod_settings_rw.dta
    {meta_loading load TRUE}
    {pause_panel load TRUE}
