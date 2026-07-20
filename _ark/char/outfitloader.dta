@@ -2773,6 +2773,7 @@
                (desdemona (genre shell_shop_charstore))
                (bunnii_0 (genre shell_shop_charstore))
                (bunnii_1 (genre shell_shop_charstore))
+               (komaru (genre shell_shop_charstore))
                (empty (exclude TRUE))
             )
          )

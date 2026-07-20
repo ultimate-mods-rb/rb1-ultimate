@@ -447,6 +447,9 @@
 (guitar_bunnii "Bunnii O'Hare")
 (bunnii_0_desc "The fastest Hopper on the circuit.")
 (bunnii_1_desc "The fastest Hopper on the circuit.")
+(komaru "Komaru Naegi")
+(guitar_komaru "Komaru Naegi")
+(komaru_desc "She doesn't have any special talents.")
 ; guitar
 (mustang02 "Fender<sup>TM</sup> '65 Mustang<sup>TM</sup>")
 (mustang02_desc
