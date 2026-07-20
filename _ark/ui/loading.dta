@@ -55,14 +55,20 @@
       }
       {if_else {== [next_screen] loading_tip_screen}
          {do
+            ($data {song_mgr get_data {game get_song}})
             {Plane01.mesh set_showing TRUE}
             {tip.lbl set_showing TRUE}
             {tip.lbl set_localized
-               {localize
-                  {if_else {gamemode get use_static_tip}
-                     {gamemode get the_static_tip}
-                     {random_context {elem {find $syscfg tips} 1}}
-                  }
+               {cond
+                  ({gamemode get use_static_tip}
+                     {localize {gamemode get the_static_tip}}
+                  )
+                  ({&& $data {find_exists $data loading_phrase}}
+                     {elem {find $data loading_phrase} 1}
+                  )
+                  (TRUE
+                     {localize {random_context {elem {find $syscfg tips} 1}}}
+                  )
                }
             }
          }

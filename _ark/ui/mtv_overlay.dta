@@ -24,6 +24,7 @@
    (setup_text
       {do
          ($song {game get_song})
+         ($data {song_mgr get_data $song})
          ($song_text
             {if_else {> {get_song_speed} 1.00}
                {sprintf "%s (%d% Speed)"
@@ -33,7 +34,22 @@
                {song_mgr song_name $song}
             }
          )
-         ($artist_text {song_mgr song_artist $song})
+         ($author
+            {if_else {&& $data {find_exists $data author}}
+               {elem {find $data author} 1}
+               kDataUnhandled
+            }
+         )
+         ($artist_text
+            {if_else {&& $author {!= $author "Unknown Author"}}
+               {sprint
+                  {song_mgr song_artist $song}
+                  "\n"
+                  $author
+               }
+               {song_mgr song_artist $song}
+            }
+         )
          {if_else {song_mgr is_master $song}
             {do
                ($prefix "mtv_master_line")
@@ -77,12 +93,22 @@
       {foreach $o
          (
             mtv_master_line1.lbl
-            mtv_master_line3.lbl
             mtv_cover_line1.lbl
-            mtv_cover_line3.lbl
          )
          {$o set fit_type kFitJust}
          {$o set height 27}
       }
+      {foreach $o
+         (
+            mtv_master_line3.lbl
+            mtv_cover_line3.lbl
+         )
+         {$o set fit_type kFitWrap}
+         {$o set text_size 27.35}
+         {$o set leading 0.67}
+         {$o set height 27}
+         {$o set width 575.00}
+      }
+      {mtv_cover_line3.lbl set leading 0.60}
    )
 }
