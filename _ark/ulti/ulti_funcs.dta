@@ -442,7 +442,46 @@
                      {lst_reset}
                   })
                }
-               {os_unhandled_down}
+               {switch {elem {find $entry type} 1}
+                  (uColorSld
+                     {switch $button
+                        (kPad_R1
+                           {if_else {&& {OS_LIST has (color)} {!= {OS_LIST get color} -1}}
+                              {do
+                                 {cond
+                                    ({find_exists $entry var}
+                                       {set_var {elem {find $entry var} 1} {OS_LIST get color}}
+                                    )
+                                    ({find_exists $entry get} {do
+                                       ($r {OS_LIST get color})
+                                       {eval {elem {find $entry set} 1}}
+                                    })
+                                    (TRUE {fail "unable to find data for color"})
+                                 }
+                                 {OS_LIST set color -1}
+                              }
+                              {do
+                                 ($data
+                                    {cond
+                                       ({find_exists $entry var}
+                                          {eval_var {elem {find $entry var} 1}}
+                                       )
+                                       ({find_exists $entry get}
+                                          {eval {elem {find $entry get} 1}}
+                                       )
+                                       (TRUE {fail "unable to find data for color"})
+                                    }
+                                 )
+                                 {OS_LIST set color $data}
+                              }
+                           }
+                           {os_update_helpbar}
+                        )
+                        {os_unhandled_down}
+                     }
+                  )
+                  {os_unhandled_down}
+               }
             }
          )
          {os_unhandled_down}
@@ -465,14 +504,34 @@
 }
 {func os_update_helpbar {do
    ($entry {elem [data] {OS_LIST selected_pos}})
+   ($type
+      {if_else {== {type $entry} kDataArray}
+         {elem {find $entry type} 1}
+         kDataUnhandled
+      }
+   )
    {helpbar set_config
       {if_else {== {type $entry} kDataArray}
          {cond
-            ({&& {== {elem {find $entry type} 1} uColorSld} {$this has (focused)} [focused]}
+            ({&& {== $type uColorSld} {$this has (focused)} [focused]}
                (
                   helpbar_cancel
                   helpbar_confirmsetting
                   os_nextcolor
+               )
+            )
+            ({&& {== $type uColorSld} {OS_LIST has (color)} {!= {OS_LIST get color} -1}}
+               (
+                  helpbar_back
+                  os_changecolor
+                  os_paste
+               )
+            )
+            ({== $type uColorSld}
+               (
+                  helpbar_back
+                  os_changecolor
+                  os_copy
                )
             )
             ({&& {$this has (focused)} [focused]}
@@ -481,7 +540,7 @@
                   helpbar_confirmsetting
                )
             )
-            ({find_elem (uOnOFF uSld uFakeSld) {elem {find $entry type} 1}}
+            ({find_elem (uOnOFF uSld uFakeSld) $type}
                (
                   helpbar_back
                   helpbar_changesetting

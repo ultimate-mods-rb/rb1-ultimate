@@ -398,6 +398,7 @@
    (data (
       (os_reset
          (type uNormal)
+         (block_ingame TRUE)
          (sel_script {run ulti/ulti_init_apperance.dta})
       )
       (os_gems
@@ -947,6 +948,7 @@
       )
       (os_reset_all
          (type uNormal)
+         (block_ingame TRUE)
          (sel_script
             {run ulti/ulti_init.dta}
             {run ulti/ulti_init_apperance.dta}
