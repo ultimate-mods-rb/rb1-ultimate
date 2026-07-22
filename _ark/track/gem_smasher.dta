@@ -95,6 +95,18 @@
                   }
                })
                ((gh3 rb3) {base_top.grp set_showing [glow]})
+               (gh_rgb {do
+                  ($i {get_elem (green red yellow blue orange) [color]})
+                  ($m
+                     {if_else [glow]
+                        {sprintf "color_glow_%d.tex" $i}
+                        {sprintf "color_%d.tex" $i}
+                     }
+                  )
+                  {with {{base_bottom.grp get (objects 0)} dir}
+                     {{sprintf "fret_%d_color.mat" {+ $i 1}} set diffuse_tex $m}
+                  }
+               })
             }
             {if {exists smasher_glow.anim}
                {if_else [glow]

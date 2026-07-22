@@ -5,7 +5,7 @@
       {with $smashers_dir
          {foreach $dir (guitar bass)
             {new ObjectDir $dir}
-            {insert_milo $dir "ulti/track/smashers/gh2_proxy.milo"}
+            {insert_milo $dir "ulti/track/smashers/gh2/gh2_proxy.milo"}
          }
       }
       {with {get_track_panel}
@@ -90,7 +90,7 @@
             ; setting the proxy file on a ObjectDir doesn't seem to do anything
             ; can't subdir meshes for obvious reasons
             ; fix eventually as this is done poorly
-            {insert_milo $dir {sprintf "ulti/track/smashers/%s_proxy.milo" $smashers}}
+            {insert_milo $dir {sprintf "ulti/track/smashers/%s/%s_proxy.milo" $smashers $smashers}}
          }
       }
       {with {get_track_panel}
@@ -102,7 +102,7 @@
             }
             {if
                {&&
-                  {gamemode is_h2h_arrangement}
+                  {gamemode is_hth_arrangement}
                   {find_elem (guitar bass) {{game get_participant_config 0} get_track_sym}}
                }
                {set $inst {switch $inst (guitar track_0) (bass track_1)}}
@@ -144,5 +144,69 @@
 )
 (gh3 GH_SMASHERS_COMMON)
 (gh3_beta GH_SMASHERS_COMMON)
-(ghwor GH_SMASHERS_COMMON)
+(ghwor
+   GH_SMASHERS_COMMON
+   (rgb TRUE)
+   (on_load_rgb
+      {with $smashers_dir
+         {foreach $dir (guitar bass)
+            {new ObjectDir $dir}
+            {insert_milo $dir "ulti/track/smashers/ghwor/ghwor_rgb_proxy.milo"}
+         }
+      }
+      {with {get_track_panel}
+         {foreach $inst (guitar bass) {do
+            ($dir {$smashers_dir find $inst})
+            {$dir iterate Mat $m
+               {$m set alpha_cut TRUE}
+               {$m set z_mode kZModeTransparent}
+            }
+            {if
+               {&&
+                  {gamemode is_hth_arrangement}
+                  {find_elem (guitar bass) {{game get_participant_config 0} get_track_sym}}
+               }
+               {set $inst {switch $inst (guitar track_0) (bass track_1)}}
+            }
+            {if {exists $inst}
+               {{$inst find bass_superstreak_plane.mesh} set_local_pos_index 1 37.75}
+               {clear_array {$inst find now_bar_rising_sun_draw.grp} objects}
+               {{{$inst find smasher_plate_guitar} find smasher_plate.mesh} set_showing FALSE}
+               {foreach_int $i 0 5 {do
+                  ($m {$dir find {sprintf "fret_%d.mesh" {+ $i 1}}})
+                  ($l {$dir find {sprintf "fret_%d_l.mesh" {+ $i 1}}})
+                  {with {{$inst find smasher_plate_guitar} find {sprint gem_smasher $i}}
+                     {new Trans smashers_parent.trans}
+                     {smashers_parent.trans set_trans_parent smasher_react.trans}
+                     {smashers_parent.trans set_local_pos 0 0.4 0.34}
+                     {smashers_parent.trans set_local_rot 2 0 0}
+                     {smashers_parent.trans set_local_scale 1.07 1 1}
+
+                     {$m set_trans_parent smashers_parent.trans}
+
+                     {clear_array base_bottom.grp objects}
+                     {base_bottom.grp add_object $m}
+
+                     {base_top.grp set_showing FALSE}
+                     {clear_array base_top.grp objects}
+                     {base_top.grp add_object $m}
+
+                     {$this set custom gh_rgb}
+                     {$this sync_objects}
+                  }
+               }}
+            }
+         }}
+      }
+   )
+   (apply_rgb
+      {{asset_mgr smashers_dir} iterate ObjectDir $dir {with $dir
+         {foreach_int $i 0 5 {do
+            ($c {asset_mgr get_color guitar $i})
+            ($m {sprintf "fret_%d_color.mat" {+ $i 1}})
+            {$m set color $c}
+         }}
+      }}
+   )
+)
 (ghl GH_SMASHERS_COMMON)
