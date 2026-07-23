@@ -266,14 +266,13 @@
                      {$base copy prism_mat.mat kCopyShallow}
                      {$base set next_pass $color}
                      {$base set diffuse_tex prism_gems_base.tex}
-                     {$base set emmisive_map prism_gems_emis.tex}
+                     {$base set emissive_map prism_gems_emis.tex}
 
                      {$color copy prism_glow_blue.mat kCopyShallow}
                      {$color set color $c}
                      {$color set prelit FALSE}
                      {$color set blend kBlendAdd}
                      {$color set diffuse_tex prism_gems_rgb.tex}
-                     {$color set emmisive_map prism_gems_emis_rgb.tex}
 
                      {if {== $i 5}
                         {new Mat gtr_glow_style.mat}
@@ -281,7 +280,6 @@
                         {gtr_glow_style.mat set color {pack_color 1 1 1}}
                         {gtr_glow_style.mat set next_pass $color}
                         {gtr_glow_style.mat set diffuse_tex prism_gems_base.tex}
-                        {gtr_glow_style.mat set emmisive_map prism_gems_emis.tex}
                         {set $color gtr_glow_style.mat}
                      }
 
@@ -294,6 +292,54 @@
                   }
                }
             }}
+            {foreach_int $i 0 7 {do
+               ($base {sprintf "drum_base_%d.mat" $i})
+               ($color {sprintf "drum_color_%d.mat" $i})
+               ($c {asset_mgr get_color drum $i})
+               ($cs {elem (red yellow blue green style '' miss) $i})
+
+               {if_else {exists $color}
+                  {$color set color $c}
+                  {do
+                     {new Mat $base}
+                     {new Mat $color}
+
+                     {$base copy prism_mat.mat kCopyShallow}
+                     {$base set next_pass $color}
+                     {$base set diffuse_tex prism_gems_base.tex}
+                     {$base set emissive_map prism_gems_emis.tex}
+
+                     {$color copy prism_glow_blue.mat kCopyShallow}
+                     {$color set color $c}
+                     {$color set prelit FALSE}
+                     {$color set blend kBlendAdd}
+                     {$color set diffuse_tex prism_gems_rgb.tex}
+
+                     {if {== $i 4}
+                        {new Mat drum_glow_style.mat}
+                        {drum_glow_style.mat copy $color 0}
+                        {drum_glow_style.mat set color {pack_color 1 1 1}}
+                        {drum_glow_style.mat set next_pass $color}
+                        {drum_glow_style.mat set diffuse_tex prism_gems_base.tex}
+                        {set $color drum_glow_style.mat}
+                     }
+
+                     {if $cs
+                        {{sprintf "prism_gem_drum_%s.mesh" $cs} set_mat $base}
+                        {{sprintf "prism_glow_drum_%s.mesh" $cs} set_mat $color}
+                     }
+                  }
+               }
+            }}
+
+            {prism_gem_kick_glow.mesh set_mat drum_color_5.mat}
+            {prism_gem_kick.mesh set_mat drum_base_5.mat}
+
+            {prism_gem_kick_miss.mesh set_mat drum_base_6.mat}
+            {prism_gem_kick_miss_glow.mesh set_mat drum_color_6.mat}
+
+            {prism_gem_kick_style.mesh set_mat drum_base_4.mat}
+            {prism_gem_kick_glow_style.mesh set_mat drum_color_4.mat}
          }
          {foreach $inst (guitar drum) {do
             ($o {asset_mgr get_color $inst 5})
@@ -347,6 +393,37 @@
                      }
                   }
                }}
+            }
+         }}
+      }
+      {with {{get_track_panel} find pro_drums}
+         {foreach_int $i 0 7 {do
+            ($base {sprintf "cymbal_base_%d.mat" $i})
+            ($color {sprintf "cymbal_color_%d.mat" $i})
+            ($c {asset_mgr get_color drum $i})
+            ($cs {elem (red yellow blue green style '' miss) $i})
+
+            {if_else {exists $color}
+               {$color set color $c}
+               {do
+                  {new Mat $base}
+                  {new Mat $color}
+
+                  {$base copy gem_cymbal.mat kCopyShallow}
+                  {$base set next_pass $color}
+                  {$base set diffuse_tex  {{get_track_panel} find cymbal_rgb_base.tex}}
+                  {$base set emissive_map {{get_track_panel} find cymbal_ems_rgb_base.tex}}
+
+                  {$color copy gem_cymbal.mat kCopyShallow}
+                  {$color set color $c}
+                  {$color set blend kBlendAdd}
+                  {$color set z_mode kZModeTransparent}
+                  {$color set diffuse_tex {{get_track_panel} find cymbal_rgb_color.tex}}
+
+                  {if $cs
+                     {{sprintf "cymbal_gem_%s.mesh" $cs} set_mat $base}
+                  }
+               }
             }
          }}
       }
@@ -504,24 +581,33 @@
             }
          )
          ($index
-            {if_else $notergb
-               $i
-               {switch $type
-                  ((normal hopo)
-                     {if_else $colorshuffle
-                        {random_int 0 5}
-                        {eval_var {sprint "gtrgem" {+ $i 1}}}
-                     }
-                  )
-                  ((drum cymbal)
-                     {if_else {&& $i $colorshuffle}
-                        {random_int 1 5}
-                        {eval_var {sprint "drmgem" {+ $i 1}}}
-                     }
-                  )
-                  (gtr_mash {eval_var {sprint "gtrsm" {+ $i 1}}})
-                  (drum_mash {eval_var {sprint "drms" $i}})
-               }
+            {switch $type
+               ((normal hopo)
+                  {cond
+                     ($colorshuffle {random_int 0 5})
+                     ($notergb $i)
+                     (TRUE {eval_var {sprint "gtrgem" {+ $i 1}}})
+                  }
+               )
+               ((drum cymbal)
+                  {cond
+                     ({&& $i $colorshuffle} {random_int 0 5})
+                     ($notergb $i)
+                     (TRUE {eval_var {sprint "drmgem" {+ $i 1}}})
+                  }
+               )
+               (gtr_mash
+                  {if_else $notergb
+                     $i
+                     {eval_var {sprint "gtrsm" {+ $i 1}}}
+                  }
+               )
+               (drum_mash
+                  {if_else $notergb
+                     $i
+                     {eval_var {sprint "drms" $i}}
+                  }
+               )
             }
          )
          ;{print {sprint $type " " $i " " $index " " {elem $wa $index}}}
@@ -539,12 +625,10 @@
             orange
             star
          )
-         {if_else $notergb
-            $i
-            {if_else $colorshuffle
-               {random_int 0 5}
-               {eval_var {sprint "gtrsus" {+ $i 1}}}
-            }
+         {cond
+            ($colorshuffle {random_int 0 5})
+            ($notergb $i)
+            (TRUE {eval_var {sprint "gtrsus" {+ $i 1}}})
          }
       }
    )

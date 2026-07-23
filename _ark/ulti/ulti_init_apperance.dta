@@ -40,7 +40,7 @@
 {set $drum_rgb_4 16711935}
 {set $drum_rgb_o 16777215}
 {set $drum_rgb_m 255}
-{set $drum_rgb_k 16776960}
+{set $drum_rgb_k 29695}
 
 {set $gems rb2}
 {set $smashers rb1}

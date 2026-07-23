@@ -318,7 +318,7 @@
 )
 (ghwt (file "ulti/track/gems/ghwt/gems.milo") GH_GEMS_COMMON)
 (ghwor
-   (file "ulti/track/gems/ghwor/gems_rgb.milo")
+   (file "ulti/track/gems/ghwor/gems.milo")
    (file_rgb "ulti/track/gems/ghwor/gems_rgb.milo")
    GH_GEMS_COMMON
    GH_RGB_COMMON
