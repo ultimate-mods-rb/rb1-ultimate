@@ -422,7 +422,7 @@
       {motto.lbl set_localized {$this get_motto}}
       {instrument.lbl set_localized {$this get_instrument_icon}}
    )
-   (exit {band_ui_sink hide_network_busy_icon})
+   (exit {show_network_busy_icon FALSE})
    (SELECT_MSG
       {switch $component
          (motto.btn
@@ -443,13 +443,13 @@
       {if {&& $ok $this {ui focus_panel} {== {ui focus_panel} $this}}
          {$this set_motto $text}
          {motto.lbl set_localized $text}
-         {band_ui_sink show_network_busy_icon}
+         {show_network_busy_icon TRUE}
          {entity_uploader verify_band_motto $text $this}
       }
    )
    (BUTTON_DOWN_MSG
       {cond
-         ({band_ui_sink is_network_busy} TRUE)
+         ({is_network_busy} TRUE)
          ({== $button kPad_Tri}
             {if_else {== {$this focus_name} bands.lst}
                {do
@@ -463,7 +463,7 @@
       }
    )
    (ROCK_CENTRAL_OP_COMPLETE_MSG
-      {band_ui_sink hide_network_busy_icon}
+      {show_network_busy_icon FALSE}
       {switch $arg1
          (RB_RETCODE_BAND_MOTTO_PROFANE
             {ui push_screen tour_char_motto_profane_screen}

@@ -1,0 +1,56 @@
+(mod_overlay
+   (group [group])
+   (draws [draws])
+   (init
+      {print "mod_overlay init"}
+
+      {set [group] ''}
+      {set [draws] {array 0}}
+
+      {print "mod_overlay initalized"}
+   )
+   (init_group
+      {band_ui_sink show_network_busy_icon}
+      {show_network_busy_icon FALSE}
+      {with {network_busy_icon_panel loaded_dir}
+         {new Group mod_overlay.grp}
+         {mod_overlay.grp set draw_order 999999.99}
+         {mod_overlay.grp sort_draws}
+         {mod_overlay set group {object mod_overlay.grp}}
+         {$this sync_objects}
+      }
+      {$this update}
+   )
+   (add
+      ($draw)
+      {push_back [draws] $draw}
+      {$this update}
+   )
+   (remove
+      ($draw)
+      {remove_elem [draws] $draw}
+      {$this update}
+   )
+   (update
+      {if [group]
+         {[group] clear_objects}
+         {foreach $draw [draws]
+            {cond
+               ({&& {find_elem (kDataSymbol kDataString) {type $draw}} {! {exists $draw}}}
+                  {fail {sprint $draw " doesnt exist. can't overlay"}}
+               )
+               ({! {$draw is_a Draw}}
+                  {fail {sprint $draw " isn't a draw. can't overlay"}}
+               )
+               ({&& {$draw is_a UIPanel} {! {$draw is_loaded}}}
+                  {fail {sprint $draw " isn't loaded. can't overlay"}}
+               )
+               (TRUE
+                  {[group] add_object $draw}
+                  {{[group] dir} sync_objects}
+               )
+            }
+         }
+      }
+   )
+)

@@ -1268,3 +1268,14 @@
       $gender
    }
 }
+{func show_network_busy_icon
+   ($b)
+   {{network_busy_icon_panel find ornate_leader.grp} set_showing $b}
+}
+{func is_network_busy
+   {{network_busy_icon_panel find ornate_leader.grp} showing}
+}
+{func rpm
+   ($str)
+   {passive_messages_panel queue_message $str}
+}

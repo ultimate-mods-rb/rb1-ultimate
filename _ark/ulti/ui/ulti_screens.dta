@@ -573,3 +573,47 @@
 
 {{new Object asset_mgr} set_type asset_mgr}
 {asset_mgr init}
+
+{new UIPanel
+   passive_messages_panel
+   (file passive_messages.milo)
+   (msg_duration 6.0)
+   (msgs ())
+   (waiting FALSE)
+   (queue_message
+      ($msg)
+      {push_back [msgs] $msg}
+      {$this update}
+   )
+   (update
+      {if_else {size [msgs]}
+         {unless [waiting]
+            {set [waiting] TRUE}
+            {thread_task kTaskUISeconds
+               (script
+                  {{$this loaded_dir} set_showing TRUE}
+                  {message_pos.tnm set_frame
+                     {== {ui current_screen} {gamemode get game_screen}}
+                  }
+                  {message.lbl set_localized {elem [msgs] 0}}
+                  {remove_elem [msgs] {elem [msgs] 0}}
+                  {$task sleep [msg_duration]}
+                  {set [waiting] FALSE}
+                  {$this update}
+               )
+            }
+         }
+         {{$this loaded_dir} set_showing FALSE}
+      }
+   )
+   (reset_update
+      {set [waiting] FALSE}
+      {$this update}
+   )
+}
+{passive_messages_panel load TRUE}
+{{passive_messages_panel loaded_dir} set_showing FALSE}
+
+{{new Object mod_overlay} set_type mod_overlay}
+{mod_overlay init}
+{mod_overlay add {passive_messages_panel loaded_dir}}

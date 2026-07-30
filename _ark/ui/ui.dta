@@ -43,6 +43,10 @@
       {gamemode set_mode store}
    }
    {ui goto_screen $first_screen}
+   {thread_task kTaskUISeconds
+      (delay 0.01)
+      (script {mod_overlay init_group})
+   }
 )
 (band_ui_sink
    #include band_ui_sink.dta

@@ -59,7 +59,7 @@
       {hometown.lst set_provider {tour hometown_provider}}
       {$this update_band}
    )
-   (exit {band_ui_sink hide_network_busy_icon})
+   (exit {show_network_busy_icon FALSE})
    (update_band
       {if_else {== {{tour performer} band_name} ''}
          {name.lbl set text_token shell_enter_name}
@@ -125,7 +125,7 @@
                         {ui goto_screen tour_band_hub_screen}
                      }
                      {do
-                        {band_ui_sink show_network_busy_icon}
+                        {show_network_busy_icon TRUE}
                         {entity_uploader update_band {tour performer} $this}
                      }
                   }
@@ -142,7 +142,7 @@
       }
    )
    (ROCK_CENTRAL_OP_COMPLETE_MSG
-      {band_ui_sink hide_network_busy_icon}
+      {show_network_busy_icon FALSE}
       {switch $arg1
          (RB_RETCODE_BAND_NAME_PROFANE
             {ui push_screen tour_band_name_profane_screen}
@@ -158,7 +158,7 @@
    )
    (BUTTON_DOWN_MSG
       {cond
-         ({band_ui_sink is_network_busy} TRUE)
+         ({is_network_busy} TRUE)
          ({== $button kPad_Tri}
             {switch {$this focus_name}
                (hometown.lst
@@ -583,7 +583,7 @@
       {$this enable logo.btn}
       {$this enable motto.btn}
    )
-   (exit {band_ui_sink hide_network_busy_icon})
+   (exit {show_network_busy_icon FALSE})
    (SELECT_MSG
       {switch $component
          (editname.btn
@@ -646,7 +646,7 @@
                      {do
                         {$this set_band_name $text}
                         {editname.btn set_localized $text}
-                        {band_ui_sink show_network_busy_icon}
+                        {show_network_busy_icon TRUE}
                         {entity_uploader verify_band_name {{tour performer} band_name} $this}
                      }
                   }
@@ -655,14 +655,14 @@
             (kKeyboardModeMotto
                {$this set_motto $text}
                {motto.lbl set_localized $text}
-               {band_ui_sink show_network_busy_icon}
+               {show_network_busy_icon TRUE}
                {entity_uploader verify_band_motto $text $this}
             )
          }
       }
    )
    (BUTTON_DOWN_MSG
-      {if_else {band_ui_sink is_network_busy}
+      {if_else {is_network_busy}
          TRUE
          {do
             {if {&& {== $button kPad_Tri} {{tour performer} is_local}}
@@ -673,7 +673,7 @@
       }
    )
    (ROCK_CENTRAL_OP_COMPLETE_MSG
-      {band_ui_sink hide_network_busy_icon}
+      {show_network_busy_icon FALSE}
       {switch {$this get keyboard_mode}
          (kKeyboardModeName
             {switch $arg1
@@ -771,15 +771,15 @@
       {logo.btn set_showing FALSE}
       {fame.lbl set_showing FALSE}
       {fame_icon.lbl set_showing FALSE}
-      {band_ui_sink show_network_busy_icon}
+      {show_network_busy_icon TRUE}
       {$this request_band_profile}
    )
    (exit
       {data.grp set_showing TRUE}
-      {band_ui_sink hide_network_busy_icon}
+      {show_network_busy_icon FALSE}
    )
    (ROCK_CENTRAL_OP_COMPLETE_MSG
-      {band_ui_sink hide_network_busy_icon}
+      {show_network_busy_icon FALSE}
       {if $success
          SET_BAND_PROFILE_DATA
          {data.grp set_showing TRUE}

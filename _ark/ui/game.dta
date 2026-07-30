@@ -126,6 +126,10 @@
          }
       }
    )
+   ; GamePanel::Enter and GamePanel::Exit call TaskMgr::ClearTasks
+   ; so we update the passive msg if that happens
+   (enter {passive_messages_panel reset_update})
+   (exit {passive_messages_panel reset_update})
 }
 {new UIPanel
    world_panel

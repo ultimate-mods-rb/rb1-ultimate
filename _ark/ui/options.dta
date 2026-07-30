@@ -392,14 +392,14 @@
                {set $tour_char
                   {char_data_provider get_tour_char {charlist.lst selected_pos}}
                }
-               {band_ui_sink show_network_busy_icon}
+               {show_network_busy_icon TRUE}
                {entity_uploader verify_char_name [char_name] $this}
             }
          }
       }
    )
    (ROCK_CENTRAL_OP_COMPLETE_MSG
-      {band_ui_sink hide_network_busy_icon}
+      {show_network_busy_icon FALSE}
       {char_data_provider set_char_name {charlist.lst selected_pos} [char_name]}
       {charlist.lst set_dirty}
       {switch $arg1

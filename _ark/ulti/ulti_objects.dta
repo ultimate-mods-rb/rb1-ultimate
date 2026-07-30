@@ -411,6 +411,7 @@
          (exiting FALSE)
       )
       #include track/asset_mgr.dta
+      #include mod_overlay.dta
    )
 )
 (BandList
@@ -677,6 +678,10 @@
       (blockletters
          (resource_file "resource/blockletters.milo")
          (texts (text "blockletters.txt"))
+      )
+      (icons_tour
+         (resource_file "resource/icons_tour.milo")
+         (texts (text "icons_tour.txt"))
       )
    )
 )

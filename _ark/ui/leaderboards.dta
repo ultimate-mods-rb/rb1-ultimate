@@ -32,7 +32,7 @@
       {warning.lbl set_localized $msg}
    )
    (exit
-      {band_ui_sink hide_network_busy_icon}
+      {show_network_busy_icon FALSE}
       {leaderboards cancel_enumerate}
       {leaderboard.lst set_showing FALSE}
       {leaderboard.lst set_provider leaderboard.lst}
@@ -83,11 +83,11 @@
    )
    (show_async_read
       {set [read_done] FALSE}
-      {band_ui_sink show_network_busy_icon}
+      {show_network_busy_icon TRUE}
    )
    (hide_async_read
       {set [read_done] TRUE}
-      {band_ui_sink hide_network_busy_icon}
+      {show_network_busy_icon FALSE}
    )
 }
 {new UIPanel
