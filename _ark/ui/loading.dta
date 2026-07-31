@@ -93,6 +93,9 @@
    loading_screen
    (panels loading_panel wait_on_content_mgr_panel)
    (enter
+      {if {&& {exists overshell} {overshell up}}
+         {overshell set_up FALSE}
+      }
       {band_ui_sink set_net_sync FALSE}
       {ui goto_screen preloading_screen}
    )

@@ -1,1439 +1,662 @@
-#define OVERSHELL_LIST_FILE (
+{new UIPanel overshell
    (file overshell.milo)
    (focus OS_LIST)
-   (pos (0 0))
-   (TRANSITION_COMPLETE_MSG {os_update_helpbar})
-   (SCROLL_MSG
-      {os_update_helpbar}
-      {if {$this has (pos)}
-         {set [pos] {eval_array ({OS_LIST selected_pos} {OS_LIST first_showing})}}
-      }
+   (up [up])
+   (state main)
+   (states (#include overshell_states.dta))
+   (enter
+      {set [state] main}
+      {$this eval_all enter}
    )
-)
-{func pop_and_goto_screen
-   ($gotoscreen)
-   {ui pop_screen}
-   {ui goto_screen $gotoscreen}
-}
-{new UIPanel
-   overshell_main_panel
-   OVERSHELL_LIST_FILE
-   (title os_ultisettings)
-   (data (
-      (os_mod
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_modifier_screen})
-      )
-      (os_spd
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_speed_screen})
-      )
-      (os_vis
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_visual_screen})
-      )
-      (os_trk
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_trk_screen})
-      )
-      (os_gfx
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_graphics_screen})
-      )
-      (os_cnt
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_cnt_screen})
-      )
-      (os_other
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_other_screen})
-      )
-   ))
-   (enter {os_setup_common})
-   (SELECT_MSG {os_sel_common})
    (BUTTON_DOWN_MSG
-      {if {== $button kPad_Tri}
-         {mod_settings_rw save_settings}
-         {set [pos] (0 0)}
-         {ui pop_screen}
-      }
-      kDataUnhandled
-   )
-}
-{new UIScreen
-   overshell_main_screen
-   (panels overshell_main_panel practice_lower3rd_panel helpbar)
-   (focus overshell_main_panel)
-}
-{new UIPanel
-   overshell_modifier_panel
-   OVERSHELL_LIST_FILE
-   (title os_mod)
-   (data (
-      (os_nofail
-         (type uOnOFF)
-         (bool $nofail)
-         (sel_script {toggle_var nofail})
-      )
-      (os_tiltsensor
-         (type uOnOFF)
-         (bool $tiltsensor)
-         (sel_script {toggle_var tiltsensor})
-      )
-      (os_whammypb
-         (type uOnOFF)
-         (bool $whammypb)
-         (sel_script {toggle_var whammypb})
-      )
-      (os_trkmuting
-         (type uOnOFF)
-         (bool $trkmuting)
-         (sel_script {toggle_var trkmuting})
-      )
-      (os_misssounds
-         (type uOnOFF)
-         (bool $misssounds)
-         (sel_script {toggle_var misssounds})
-      )
-      (os_micdeploy
-         (type uOnOFF)
-         (bool $micdeploy)
-         (sel_script {toggle_var micdeploy})
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_modifier_screen
-   (back overshell_main_screen)
-   (panels overshell_modifier_panel practice_lower3rd_panel helpbar)
-   (focus overshell_modifier_panel)
-}
-{new UIPanel
-   overshell_visual_panel
-   OVERSHELL_LIST_FILE
-   (title os_vis)
-   (data (
-      (os_nohud
-         (type uOnOFF)
-         (bool $nohud)
-         (sel_script {toggle_var nohud})
-      )
-      (os_songtitle
-         (type uOnOFF)
-         (bool $songtitle)
-         (sel_script {toggle_var songtitle})
-      )
-      (os_legacybass
-         (type uOnOFF)
-         (bool $legacybass)
-         (sel_script {toggle_var legacybass})
-      )
-      (os_kickbounce
-         (type uOnOFF)
-         (bool $kickbounce)
-         (sel_script {toggle_var kickbounce})
-      )
-      (os_prodrums
-         (type uOnOFF)
-         (bool $prodrums)
-         (sel_script {toggle_var prodrums})
-      )
-      (os_fcring
-         (type uOnOFF)
-         (bool $fcring)
-         (block_ingame TRUE)
-         (sel_script {toggle_var fcring})
-      )
-      (os_goldprogress
-         (type uOnOFF)
-         (bool $goldprogress)
-         (block_ingame TRUE)
-         (sel_script {toggle_var goldprogress})
-      )
-      (os_countdown
-         (type uOnOFF)
-         (bool $countdown)
-         (sel_script {toggle_var countdown})
-      )
-      (os_songtimer
-         (type uFakeSld)
-         (fmt_type uTimer)
-         (var songtimer)
-         (array (0 1 2 3 4 5))
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_visual_screen
-   (back overshell_main_screen)
-   (panels overshell_visual_panel practice_lower3rd_panel helpbar)
-   (focus overshell_visual_panel)
-}
-{new UIPanel
-   overshell_graphics_panel
-   OVERSHELL_LIST_FILE
-   (title os_gfx)
-   (data (
-      (os_fps_fmt
-         (type uFakeSld)
-         (fmt_type uNormal)
-         (var emulatefps)
-         (array
-            #ifdef HX_NG
-            (1 6 12 15 24 30 60)
-            #else
-            (15 30)
-            #endif
-         )
-      )
-      (os_vsync_fmt
-         (type uFakeSld)
-         (fmt_type uSync)
-         (var vsyncrate)
-         (array (0 1 2 4))
-      )
-      (os_blackbg
-         (type uOnOFF)
-         (bool $blackbg)
-         (sel_script {toggle_var blackbg})
-      )
-      (os_fxdof
-         (type uOnOFF)
-         (bool $fxdof)
-         (sel_script {toggle_var fxdof})
-      )
-      (os_scrnoise
-         (type uOnOFF)
-         (bool $scrnoise)
-         (sel_script {toggle_var scrnoise})
-      )
-      (os_scrbloom
-         (type uOnOFF)
-         (bool $scrbloom)
-         (sel_script {toggle_var scrbloom})
-      )
-      (os_camerashake
-         (type uOnOFF)
-         (bool $camerashake)
-         (sel_script {toggle_var camerashake})
-      )
-      (os_crowd
-         (type uOnOFF)
-         (bool $crowd)
-         (sel_script {toggle_var crowd})
-      )
-      #ifdef HX_PS3
-      (os_force_per_pixel
-         (type uOnOFF)
-         (bool $force_per_pixel)
-         (sel_script {toggle_var force_per_pixel})
-      )
-      #endif
-      (os_aspect_fmt
-         (type uFakeSld)
-         (fmt_type uAspect)
-         (get {rnd aspect})
-         (set {rnd set_aspect $r})
-         (array (kSquareAspect kRegularAspect kWidescreenAspect))
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_graphics_screen
-   (back overshell_main_screen)
-   (panels overshell_graphics_panel practice_lower3rd_panel helpbar)
-   (focus overshell_graphics_panel)
-}
-{new UIPanel
-   overshell_cnt_panel
-   OVERSHELL_LIST_FILE
-   (title os_cnt)
-   (data (
-      (os_remap_cnt
-         (type uNormal)
-         (sel_script
-            {set $pad_map 0}
-            {pop_and_goto_screen overshell_remap_cnt_screen}
-         )
-      )
-      (os_cnt_map_fmt
-         (type uFakeSld)
-         (fmt_type uMapping)
-         (var pad_map)
-         (array (0 1 2 3 4))
-      )
-      (os_padinst_fmt
-         (type uFakeSld)
-         (fmt_type uInst)
-         (var pad_inst)
-         (array
-            (
-               kControllerVocals
-               kControllerGuitar
-               kControllerDrum
+      {if {== {$this eval_all button_down} kDataUnhandled}
+         {switch $button
+            (kPad_X
+               {synth play button_select}
+               {$this component_select OS_LIST $player_num}
             )
-         )
-      )
-   ))
-   (enter {os_setup_common})
-   (exit {set_pad_map $pad_map})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_cnt_screen
-   (back overshell_main_screen)
-   (panels overshell_cnt_panel practice_lower3rd_panel helpbar)
-   (focus overshell_cnt_panel)
-}
-{new UIPanel
-   overshell_speed_panel
-   OVERSHELL_LIST_FILE
-   (title os_spd)
-   (data (
-      (os_trackspeed
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_trackspeed_screen})
-      )
-      (hwlength_msg
-         (type uSld)
-         (fmt_type uSpeed)
-         (var hwlength)
-         (step 0.05)
-         (range 0.50 2.50)
-      )
-      (speed_msg
-         (type uSld)
-         (fmt_type uSpeed)
-         (var speedmod)
-         (block_ingame TRUE)
-         (step 0.05)
-         (range 1.00 2.50)
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_speed_screen
-   (back overshell_main_screen)
-   (panels overshell_speed_panel practice_lower3rd_panel helpbar)
-   (focus overshell_speed_panel)
-}
-{new UIPanel
-   overshell_trackspeed_panel
-   OVERSHELL_LIST_FILE
-   (title os_trackspeed)
-   (data (
-      (os_indvtrkspeeds
-         (type uOnOFF)
-         (bool $indvtrkspeeds)
-         (sel_script {toggle_var indvtrkspeeds})
-      )
-      (os_syncdifspeeds
-         (type uOnOFF)
-         (bool $syncdifspeeds)
-         (sel_script {toggle_var syncdifspeeds})
-      )
-      (gtr_trackspeed_msg
-         (type uSld)
-         (fmt_type uSpeed)
-         (var guitar_trackspeed)
-         (step 0.05)
-         (range 0.50 2.50)
-      )
-      (bass_trackspeed_msg
-         (type uSld)
-         (fmt_type uSpeed)
-         (var bass_trackspeed)
-         (step 0.05)
-         (range 0.50 2.50)
-      )
-      (drum_trackspeed_msg
-         (type uSld)
-         (fmt_type uSpeed)
-         (var drum_trackspeed)
-         (step 0.05)
-         (range 0.50 2.50)
-      )
-      (track0_trackspeed_msg
-         (type uSld)
-         (fmt_type uSpeed)
-         (var track0_trackspeed)
-         (step 0.05)
-         (range 0.50 2.50)
-      )
-      (track1_trackspeed_msg
-         (type uSld)
-         (fmt_type uSpeed)
-         (var track1_trackspeed)
-         (step 0.05)
-         (range 0.50 2.50)
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_trackspeed_screen
-   (back overshell_speed_screen)
-   (panels overshell_trackspeed_panel practice_lower3rd_panel helpbar)
-   (focus overshell_trackspeed_panel)
-}
-{new UIPanel
-   overshell_trk_panel
-   OVERSHELL_LIST_FILE
-   (title os_trk)
-   (data (
-      (os_reset
-         (type uNormal)
-         (block_ingame TRUE)
-         (sel_script {run ulti/ulti_init_apperance.dta})
-      )
-      (os_gems
-         (type uFakeSld)
-         (fmt_type uLocalize)
-         (hide_on_sel TRUE)
-         (var gems)
-         (array
-            {if_else $notergb
-               {asset_mgr all_gems_rgb}
-               {asset_mgr all_gems}
-            }
-         )
-      )
-      (os_smashers
-         (type uFakeSld)
-         (fmt_type uLocalize)
-         (hide_on_sel TRUE)
-         (var smashers)
-         (array
-            {if_else $notergb
-               {asset_mgr all_smashers_rgb}
-               {asset_mgr all_smashers}
-            }
-         )
-      )
-      (os_colors
-         (type uNormal)
-         (sel_script
-            {if_else $notergb
-               {pop_and_goto_screen overshell_rgb_colors_screen}
-               {pop_and_goto_screen overshell_colors_screen}
-            }
-         )
-      )
-      (os_notergb
-         (type uOnOFF)
-         (bool $notergb)
-         (block_ingame TRUE)
-         (sel_script
-            {toggle_var notergb}
-            {asset_mgr ensure_stuff}
-         )
-      )
-      (os_track_config
-         (type uFakeSld)
-         (fmt_type uLocalize)
-         (hide_on_sel TRUE)
-         (var track_config)
-         (array {asset_mgr track_configs})
-      )
-   ))
-   (enter
-      {asset_mgr ensure_stuff}
-      {os_setup_common}
-   )
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_trk_screen
-   (exit
-      {if {&& $notergb {exists beatmatch}}
-         {asset_mgr apply_all_rgb}
+            (kPad_DUp
+               {OS_LIST scroll -1}
+               {OS_LIST poll}
+               {$this component_scroll OS_LIST $player_num}
+            )
+            (kPad_DDown
+               {OS_LIST scroll 1}
+               {OS_LIST poll}
+               {$this component_scroll OS_LIST $player_num}
+            )
+         }
       }
    )
-   (back overshell_main_screen)
-   (panels overshell_trk_panel practice_lower3rd_panel helpbar)
-   (focus overshell_trk_panel)
-}
-{new UIPanel
-   overshell_colors_panel
-   OVERSHELL_LIST_FILE
-   (title os_colors)
-   (data (
-      (os_gtr_gems_color
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_gtr_gem_color_screen})
-      )
-      (os_gtr_smasher_color
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_gtr_smasher_color_screen})
-      )
-      (os_gtr_sus_color
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_gtr_sus_color_screen})
-      )
-      (os_drm_gems_color
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_drm_gem_color_screen})
-      )
-      (os_drm_smasher_color
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_drm_smasher_color_screen})
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_colors_screen
-   (back overshell_trk_screen)
-   (panels overshell_colors_panel practice_lower3rd_panel helpbar)
-   (focus overshell_colors_panel)
-}
-{new UIPanel
-   overshell_gtr_gem_color_panel
-   OVERSHELL_LIST_FILE
-   (title os_gtr_gems_color)
-   (data (
-      (os_reset
-         (type uNormal)
-         (sel_script
-            {set $gtrgem1 1}
-            {set $gtrgem2 4}
-            {set $gtrgem3 2}
-            {set $gtrgem4 0}
-            {set $gtrgem5 3}
-         )
-      )
-      (os_slot_1_fmt
-         COLOR_DATA_COMMON
-         (var gtrgem1)
-      )
-      (os_slot_2_fmt
-         COLOR_DATA_COMMON
-         (var gtrgem2)
-      )
-      (os_slot_3_fmt
-         COLOR_DATA_COMMON
-         (var gtrgem3)
-      )
-      (os_slot_4_fmt
-         COLOR_DATA_COMMON
-         (var gtrgem4)
-      )
-      (os_slot_5_fmt
-         COLOR_DATA_COMMON
-         (var gtrgem5)
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_gtr_gem_color_screen
-   (back overshell_colors_screen)
-   (panels overshell_gtr_gem_color_panel practice_lower3rd_panel helpbar)
-   (focus overshell_gtr_gem_color_panel)
-}
-{new UIPanel
-   overshell_drm_gem_color_panel
-   OVERSHELL_LIST_FILE
-   (title os_drm_gems_color)
-   (data (
-      (os_reset
-         (type uNormal)
-         (sel_script
-            {set $drmgem1 0}
-            {set $drmgem2 1}
-            {set $drmgem3 2}
-            {set $drmgem4 3}
-            {set $drmgem5 4}
-         )
-      )
-      (os_slot_1_fmt
-         DCOLOR_DATA_COMMON
-         (var drmgem2)
-      )
-      (os_slot_2_fmt
-         DCOLOR_DATA_COMMON
-         (var drmgem3)
-      )
-      (os_slot_3_fmt
-         DCOLOR_DATA_COMMON
-         (var drmgem4)
-      )
-      (os_slot_4_fmt
-         DCOLOR_DATA_COMMON
-         (var drmgem5)
-      )
-      (os_slot_kick_fmt
-         DCOLOR_DATA_COMMON
-         (var drmgem1)
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_drm_gem_color_screen
-   (back overshell_colors_screen)
-   (panels overshell_drm_gem_color_panel practice_lower3rd_panel helpbar)
-   (focus overshell_drm_gem_color_panel)
-}
-{new UIPanel
-   overshell_gtr_sus_color_panel
-   OVERSHELL_LIST_FILE
-   (title os_gtr_sus_color)
-   (data (
-      (os_reset
-         (type uNormal)
-         (sel_script
-            {set $gtrsus1 1}
-            {set $gtrsus2 4}
-            {set $gtrsus3 2}
-            {set $gtrsus4 0}
-            {set $gtrsus5 3}
-         )
-      )
-      (os_slot_1_fmt
-         COLOR_DATA_COMMON
-         (var gtrsus1)
-      )
-      (os_slot_2_fmt
-         COLOR_DATA_COMMON
-         (var gtrsus2)
-      )
-      (os_slot_3_fmt
-         COLOR_DATA_COMMON
-         (var gtrsus3)
-      )
-      (os_slot_4_fmt
-         COLOR_DATA_COMMON
-         (var gtrsus4)
-      )
-      (os_slot_5_fmt
-         COLOR_DATA_COMMON
-         (var gtrsus5)
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_gtr_sus_color_screen
-   (back overshell_colors_screen)
-   (panels overshell_gtr_sus_color_panel practice_lower3rd_panel helpbar)
-   (focus overshell_gtr_sus_color_panel)
-}
-{new UIPanel
-   overshell_gtr_smasher_color_panel
-   OVERSHELL_LIST_FILE
-   (title os_gtr_smasher_color)
-   (data (
-      (os_reset
-         (type uNormal)
-         (sel_script
-            {set $gtrsm1 1}
-            {set $gtrsm2 4}
-            {set $gtrsm3 2}
-            {set $gtrsm4 0}
-            {set $gtrsm5 3}
-         )
-      )
-      (os_slot_1_fmt
-         COLOR_DATA_COMMON
-         (var gtrsm1)
-      )
-      (os_slot_2_fmt
-         COLOR_DATA_COMMON
-         (var gtrsm2)
-      )
-      (os_slot_3_fmt
-         COLOR_DATA_COMMON
-         (var gtrsm3)
-      )
-      (os_slot_4_fmt
-         COLOR_DATA_COMMON
-         (var gtrsm4)
-      )
-      (os_slot_5_fmt
-         COLOR_DATA_COMMON
-         (var gtrsm5)
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_gtr_smasher_color_screen
-   (back overshell_colors_screen)
-   (panels overshell_gtr_smasher_color_panel practice_lower3rd_panel helpbar)
-   (focus overshell_gtr_smasher_color_panel)
-}
-{new UIPanel
-   overshell_drm_smasher_color_panel
-   OVERSHELL_LIST_FILE
-   (title os_drm_smasher_color)
-   (data (
-      (os_reset
-         (type uNormal)
-         (sel_script
-            {set $drms1 1}
-            {set $drms2 2}
-            {set $drms3 3}
-            {set $drms4 0}
-         )
-      )
-      (os_slot_1_fmt
-         COLOR_DATA_COMMON
-         (var drms1)
-      )
-      (os_slot_2_fmt
-         COLOR_DATA_COMMON
-         (var drms2)
-      )
-      (os_slot_3_fmt
-         COLOR_DATA_COMMON
-         (var drms3)
-      )
-      (os_slot_4_fmt
-         COLOR_DATA_COMMON
-         (var drms4)
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_drm_smasher_color_screen
-   (back overshell_colors_screen)
-   (panels overshell_drm_smasher_color_panel practice_lower3rd_panel helpbar)
-   (focus overshell_drm_smasher_color_panel)
-}
-{new UIPanel
-   overshell_rgb_colors_panel
-   OVERSHELL_LIST_FILE
-   (title os_colors)
-   (data (
-      (os_gtr_rgb_color
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_gtr_rgb_color_screen})
-      )
-      (os_drm_rgb_color
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_drm_rgb_color_screen})
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_rgb_colors_screen
-   (back overshell_trk_screen)
-   (panels overshell_rgb_colors_panel practice_lower3rd_panel helpbar)
-   (focus overshell_rgb_colors_panel)
-}
-{new UIPanel
-   overshell_gtr_rgb_color_panel
-   OVERSHELL_LIST_FILE
-   (title os_gtr_rgb_color)
-   (data (
-      (os_reset
-         (type uNormal)
-         (sel_script kDataUnhandled)
-      )
-      (os_slot_1
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var gtr_rgb_1)
-      )
-      (os_slot_2
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var gtr_rgb_2)
-      )
-      (os_slot_3
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var gtr_rgb_3)
-      )
-      (os_slot_4
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var gtr_rgb_4)
-      )
-      (os_slot_5
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var gtr_rgb_5)
-      )
-      (os_slot_6
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var gtr_rgb_o)
-      )
-      (miss
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var gtr_rgb_m)
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_gtr_rgb_color_screen
-   (back overshell_rgb_colors_screen)
-   (panels overshell_gtr_rgb_color_panel practice_lower3rd_panel helpbar)
-   (focus overshell_gtr_rgb_color_panel)
-}
-{new UIPanel
-   overshell_drm_rgb_color_panel
-   OVERSHELL_LIST_FILE
-   (title os_drm_rgb_color)
-   (data (
-      (os_reset
-         (type uNormal)
-         (sel_script kDataUnhandled)
-      )
-      (os_slot_1
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var drum_rgb_1)
-      )
-      (os_slot_2
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var drum_rgb_2)
-      )
-      (os_slot_3
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var drum_rgb_3)
-      )
-      (os_slot_4
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var drum_rgb_4)
-      )
-      (os_slot_6
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var drum_rgb_o)
-      )
-      (kick
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var drum_rgb_k)
-      )
-      (miss
-         (type uColorSld)
-         (fmt_type uColorRGB)
-         (var drum_rgb_m)
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_drm_rgb_color_screen
-   (back overshell_rgb_colors_screen)
-   (panels overshell_drm_rgb_color_panel practice_lower3rd_panel helpbar)
-   (focus overshell_drm_rgb_color_panel)
-}
-{new UIPanel
-   overshell_remap_cnt_panel
-   OVERSHELL_LIST_FILE
-   (title os_remap_cnt)
-   (data (
-      (os_reset
-         (type uNormal)
-         (sel_script
-            #ifdef HX_NG
-            {set $cnt_slot1 kPad_L2}
-            {set $cnt_slot2 kPad_L1}
-            {set $cnt_slot3 kPad_R1}
-            {set $cnt_slot4 kPad_R2}
-            {set $cnt_slot5 kPad_X}
-            {set $cnt_star kPad_Select}
-            #else
-            {set $cnt_slot1 kPad_Circle}
-            {set $cnt_slot2 kPad_DRight}
-            {set $cnt_slot3 kPad_X}
-            {set $cnt_slot4 kPad_Square}
-            {set $cnt_slot5 kPad_Tri}
-            {set $cnt_star kPad_DLeft}
-            #endif
-         )
-      )
-      (os_slot_1_fmt
-         PAD_DATA_COMMON
-         (var cnt_slot1)
-      )
-      (os_slot_2_fmt
-         PAD_DATA_COMMON
-         (var cnt_slot2)
-      )
-      (os_slot_3_fmt
-         PAD_DATA_COMMON
-         (var cnt_slot3)
-      )
-      (os_slot_4_fmt
-         PAD_DATA_COMMON
-         (var cnt_slot4)
-      )
-      (os_slot_5_fmt
-         PAD_DATA_COMMON
-         (var cnt_slot5)
-      )
-      (os_slot_od_fmt
-         PAD_DATA_COMMON
-         (var cnt_star)
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_remap_cnt_screen
-   (back overshell_cnt_screen)
-   (panels overshell_remap_cnt_panel practice_lower3rd_panel helpbar)
-   (focus overshell_remap_cnt_panel)
-}
-{new UIPanel
-   overshell_other_panel
-   OVERSHELL_LIST_FILE
-   (title os_other)
-   (data (
-      (os_cheats
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_cheats_screen})
-      )
-      (os_av
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_av_screen})
-      )
-      (os_ven
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_ven_screen})
-      )
-      (os_skipintro
-         (type uOnOFF)
-         (bool $skipintro)
-         (sel_script {toggle_var skipintro})
-      )
-      (os_reset_all
-         (type uNormal)
-         (block_ingame TRUE)
-         (sel_script
-            {run ulti/ulti_init.dta}
-            {run ulti/ulti_init_apperance.dta}
-         )
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_other_screen
-   (back overshell_main_screen)
-   (panels overshell_other_panel practice_lower3rd_panel helpbar)
-   (focus overshell_other_panel)
-}
-{new UIPanel
-   overshell_cheats_panel
-   OVERSHELL_LIST_FILE
-   (title os_cheats)
-   (data (
-      (os_freecam
-         (type uNormal)
-         (sel_script {cycle_free_camera})
-      )
-      (os_colorshuffle
-         (type uOnOFF)
-         (bool $colorshuffle)
-         (sel_script {toggle_var colorshuffle})
-      )
-      (os_smallworld
-         (type uOnOFF)
-         (bool $smallworld)
-         (sel_script {toggle_var smallworld})
-      )
-      (os_bigmode
-         (type uOnOFF)
-         (bool $bigmode)
-         (sel_script {toggle_var bigmode})
-      )
-      (os_scale_head
-         (type uOnOFF)
-         (bool $scale_head)
-         (sel_script {toggle_var scale_head})
-      )
-      (os_honestmode
-         (type uOnOFF)
-         (bool $honestmode)
-         (sel_script
-            {unless $honestmilo
-               {set $honestmilo {load_objects ulti/honestbob.milo}}
-               {$honestmilo delete_loader}
-            }
-            {toggle_var honestmode}
-         )
-      )
-      (os_hidechars
-         (type uOnOFF)
-         (bool $hidechars)
-         (sel_script {toggle_var hidechars})
-      )
-      (os_flashbang
-         (type uOnOFF)
-         (bool $flashbang)
-         (sel_script {toggle_var flashbang})
-      )
-      (os_cheats
-         (type uOnOFF)
-         (bool $mikan)
-         (sel_script {toggle_var mikan})
-      )
-      (os_fakecheat
-         (type uNormal)
-         (sel_script
-            {if {shop_char_panel is_up}
-               {{{game get_player_config {shop_char_panel get char_player_num}} get_char} set_money 999999999}
-            }
-         )
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_cheats_screen
-   (back overshell_other_screen)
-   (panels overshell_cheats_panel practice_lower3rd_panel helpbar)
-   (focus overshell_cheats_panel)
-}
-{new UIPanel
-   overshell_av_panel
-   OVERSHELL_LIST_FILE
-   (title os_av)
-   (data (
-      (bass_boost
-         (type uOnOFF)
-         (bool {profile_mgr get_bass_boost})
-         (sel_script {profile_mgr set_bass_boost {! {profile_mgr get_bass_boost}}})
-      )
-      (os_dolby
-         (type uOnOFF)
-         (bool {profile_mgr get_dolby})
-         (sel_script {profile_mgr set_dolby {! {profile_mgr get_dolby}}})
-      )
-      #ifdef HX_PS3
-      (mono
-         (type uOnOFF)
-         (bool {profile_mgr get_mono})
-         (sel_script {profile_mgr set_mono {! {profile_mgr get_mono}}})
-      )
-      #endif
-      (os_overscan
-         (type uOnOFF)
-         (bool {profile_mgr get_overscan})
-         (sel_script {profile_mgr set_overscan {! {profile_mgr get_overscan}}})
-      )
-      (os_ivol_fmt VOL_SLD
-         (get {profile_mgr get_foreground_volume})
-         (set {profile_mgr set_foreground_volume $r})
-      )
-      (os_bvol_fmt VOL_SLD
-         (get {profile_mgr get_background_volume})
-         (set {profile_mgr set_background_volume $r})
-      )
-      (os_cvol_fmt VOL_SLD
-         (get {profile_mgr get_crowd_volume})
-         (set {profile_mgr set_crowd_volume $r})
-      )
-      (os_svol_fmt VOL_SLD
-         (get {profile_mgr get_fx_volume})
-         (set {profile_mgr set_fx_volume $r})
-      )
-      (os_avs_fmt CALI_SLD
-         (get {int {profile_mgr get_song_to_taskmgr_ms_ui}})
-         (set {profile_mgr set_song_to_taskmgr_ms_ui $r})
-      )
-      (os_lo_fmt CALI_SLD
-         (get {int {profile_mgr get_sync_offset_ui}})
-         (set {profile_mgr set_sync_offset_ui $r})
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_av_screen
-   (back overshell_other_screen)
-   (panels overshell_av_panel practice_lower3rd_panel helpbar)
-   (focus overshell_av_panel)
-}
-{new UIPanel
-   overshell_ven_panel
-   OVERSHELL_LIST_FILE
-   (title os_ven)
-   (data (
-      (os_selectvenue
-         (type uOnOFF)
-         (bool $selectvenue)
-         (sel_script {toggle_var selectvenue})
-      )
-      (os_normal_venues
-         (type uOnOFF)
-         (bool $normal_venues)
-         (sel_script {toggle_var normal_venues})
-      )
-      (os_rb2_venues
-         (type uOnOFF)
-         (bool $rb2_venues)
-         (sel_script {toggle_var rb2_venues})
-      )
-      (os_custom_venues
-         (type uOnOFF)
-         (bool $custom_venues)
-         (sel_script {toggle_var custom_venues})
-      )
-      (os_chars
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_chars_screen})
-      )
-      (os_del_prefab
-         (type uNormal)
-         (sel_script {pop_and_goto_screen overshell_del_prefab_screen})
-      )
-      (os_force_vg
-         (type uFakeSld)
-         (fmt_type uLocalize)
-         (hide_on_sel TRUE)
-         (var force_vg)
-         (array (off male female))
-      )
-      (os_force_venue
-         (type uFakeSld)
-         (fmt_type uLocalize)
-         (hide_on_sel TRUE)
-         (var force_venue)
-         (array (off random VENUES RB2_VENUES ULTI_VENUES))
-      )
-   ))
-   (enter {os_setup_common})
-   (exit
-      {unless {|| $normal_venues $rb2_venues $custom_venues}
-         {set $normal_venues TRUE}
+   (SELECT_MSG
+      {$this eval_all component_select}
+   )
+   (SCROLL_MSG
+      {$this update_helpbar}
+      {$this state_set pos
+         {eval_array ({OS_LIST selected_pos} {OS_LIST first_showing})}
       }
    )
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_ven_screen
-   (back overshell_other_screen)
-   (panels overshell_ven_panel practice_lower3rd_panel helpbar)
-   (focus overshell_ven_panel)
-}
-{new UIPanel
-   overshell_chars_panel
-   OVERSHELL_LIST_FILE
-   (title os_chars)
-   (data (
-      (os_reset
-         (type uNormal)
-         (sel_script {set $char_list {array 0}})
-      )
-      (os_guitar_chars
-         (type uNormal)
-         (sel_script
-            {overshell_char_list_panel set filter guitar}
-            {overshell_char_list_panel set title os_guitar_chars}
-            {pop_and_goto_screen overshell_char_list_screen}
-         )
-      )
-      (os_drum_chars
-         (type uNormal)
-         (sel_script
-            {overshell_char_list_panel set filter drum}
-            {overshell_char_list_panel set title os_drum_chars}
-            {pop_and_goto_screen overshell_char_list_screen}
-         )
-      )
-      (os_vocals_chars
-         (type uNormal)
-         (sel_script
-            {overshell_char_list_panel set filter vocals}
-            {overshell_char_list_panel set title os_vocals_chars}
-            {pop_and_goto_screen overshell_char_list_screen}
-         )
-      )
-   ))
-   (enter {os_setup_common})
-   (BUTTON_DOWN_MSG {os_down_common})
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_chars_screen
-   (back overshell_ven_screen)
-   (panels overshell_chars_panel practice_lower3rd_panel helpbar)
-   (focus overshell_chars_panel)
-}
-{new UIPanel
-   overshell_char_list_panel
-   OVERSHELL_LIST_FILE
-   (title os_guitar_chars)
-   (filter guitar)
-   (data    ())
-   (prefabs ())
-   (normal  ())
-   (custom  ())
-   (enter
-      {do
-         ($a
-            {` 
-               (
-                  (os_reset
-                     (type uNormal)
-                     (sel_script {$this reset})
-                  )
-                  (os_clear_normal
-                     (type uNormal)
-                     (sel_script {$this clear [normal]})
-                  )
-                  (os_clear_custom
-                     (type uNormal)
-                     (sel_script {$this clear [custom]})
-                  )
-               )
-            }
-         )
-         {foreach $prefab {find $syscfg characters prefab}
-            {if {== {type $prefab} kDataArray} {do
-               ($data {elem {find $prefab instrument} 1})
-               {if {&& $data {== {type $data} kDataCommand}} {do
-                  ($custom {eval {elem $data 1}})
-                  ($inst   {eval {elem $data 2}})
-                  ($name   {eval {elem $data 3}})
-                  {if {== $inst [filter]}
-                     {push_back [prefabs] $name}
-                     {if_else $custom
-                        {push_back [custom] $name}
-                        {push_back [normal] $name}
+   (set_up
+      ($b)
+      {set [up] $b}
+      {{$this loaded_dir} set_showing [up]}
+      {{helpbar_overshell loaded_dir} set_showing [up]}
+      {{overshell_lower3rd_panel loaded_dir} set_showing [up]}
+      {helpbar set_showing {! [up]}}
+      {if [up]
+         {$this enter}
+         {helpbar_overshell enter}
+         {overshell_lower3rd_panel enter}
+      }
+   )
+   (state_find
+      ($s)
+      {find_exists [states] [state] $s}
+   )
+   (state_get
+      ($s) {do
+      ($a {$this state_find $s})
+      {if_else $a
+         {elem $a 1}
+         kDataUnhandled
+      }
+   })
+   (state_set
+      ($s $n) {do
+      ($a {$this state_find $s})
+      {if_else $a
+         {set_elem $a 1 $n}
+         {push_back {find [states] [state]}
+            {` ({, $s} {, $n})}
+         }
+      }
+      ;{print {sprint "state set " $s}}
+      ;{print {find_exists [states] [state] $s}}
+   })
+   (state_has
+      ($s) {do
+      ($a {$this state_find $s})
+      {if_else $a TRUE FALSE}
+   })
+   (state_remove
+      ($s) {do
+      ($a {$this state_find $s})
+      {if $a
+         {remove_elem {find [states] [state]} $a}
+      }
+   })
+   (state_handle
+      ($s $ar) {do
+      ($r kDataUnhandled)
+      ($a {$this state_find $s})
+      {if $a
+         {if_else {== {type {elem $a 1}} kDataArray}
+            {do ; this is very hacky! i am proud of it though.
+               ($cmd {` {do}})
+               {foreach_int $i 0 {size {elem $a 1}} 
+                  {push_back $cmd
+                     {`
+                        (
+                           {, {elem {elem $a 1} $i}} 
+                           {, {elem $ar $i}} 
+                        )
                      }
-                     {push_back $a
-                        {`
-                           ({, $name}
-                              (type uOnOFF)
-                              (bool {$this in_list {, $name}})
-                              (sel_script {$this change_state {, $name}})
+                  }
+               }
+               {push_back $cmd {` {$this eval_all $s}}}
+               {set $r {eval $cmd}}
+            }
+            {set $r {$this eval_all $s}}
+         }
+      }
+      $r
+   })
+   (eval_all
+      ($s) {do
+      ($r kDataUnhandled)
+      ($a {$this state_find $s})
+      {if {&& $a {> {size $a} 1}}
+         {foreach $c $a
+            ;{print $c}
+            {set $r {eval $c}}
+         }
+      }
+      $r
+   })
+   (update_state
+      ($s)
+      {$this eval_all exit}
+      {$this state_remove color}
+
+      {set [state] $s}
+
+      {unless {find_exists [states] [state]}
+         {fail {sprint [state] " is not a valid state!"}}
+      }
+
+      {unless {$this state_has pos}
+         {$this state_set pos {array 2}}
+      }
+
+      {$this eval_all enter}
+   )
+   (lst_reset {do
+      ($array {array 0})
+      {foreach $entry {$this state_get data}
+         {if_else {== {type $entry} kDataArray} ; just return whatever was passed if not array
+            {switch {elem {find $entry type} 1}
+               (uNormal
+                  {push_back $array {eval {elem $entry 0}}}
+               )
+               (uOnOFF
+                  {push_back $array
+                     {sprintf
+                        {localize os_onoff_fmt}
+                        {localize_token {elem $entry 0}}
+                        {localize {if_else {eval {elem {find $entry bool} 1}} on off}}
+                     }
+                  }
+               )
+               ((uSld uFakeSld uColorSld)
+                  {push_back $array
+                     {do
+                        ($type {elem {find $entry type} 1})
+                        ($selected {== {- {size $array} 1} {OS_LIST selected_pos}})
+                        ($fmt_type {elem {find $entry fmt_type} 1})
+                        ($hide_on_sel
+                           {if_else {find_exists $entry hide_on_sel}
+                              {elem {find $entry hide_on_sel} 1}
+                              FALSE
+                           }
+                        )
+                        ($data
+                           {cond
+                              ({find_exists $entry var}
+                                 {eval_var {elem {find $entry var} 1}}
+                              )
+                              ({find_exists $entry get}
+                                 {eval {elem {find $entry get} 1}}
+                              )
+                              (TRUE {fail "unable to find data for sld"})
+                           }
+                        )
+                        ($fmt
+                           {switch $fmt_type
+                              (uNormal $data)
+                              (uColor
+                                 {localize
+                                    {switch $data
+                                       (0 color_green)
+                                       (1 color_red)
+                                       (2 color_yellow)
+                                       (3 color_blue)
+                                       (4 color_orange)
+                                       invalid
+                                    }
+                                 }
+                              )
+                              (uDrumColor
+                                 {localize
+                                    {switch $data
+                                       (0 kick)
+                                       (1 color_red)
+                                       (2 color_yellow)
+                                       (3 color_blue)
+                                       (4 color_green)
+                                       invalid
+                                    }
+                                 }
+                              )
+                              (uCunt
+                                 {localize
+                                    {switch $data
+                                       (kPad_L2 os_pad_l2)
+                                       (kPad_L1 os_pad_l1)
+                                       (kPad_R1 os_pad_r1)
+                                       (kPad_R2 os_pad_r2)
+                                       (kPad_X os_pad_x)
+                                       (kPad_Circle os_pad_circle)
+                                       (kPad_Square os_pad_square)
+                                       (kPad_Tri os_pad_tri)
+                                       (kPad_DUp os_pad_dup)
+                                       (kPad_DDown os_pad_ddown)
+                                       (kPad_DLeft os_pad_dleft)
+                                       (kPad_DRight os_pad_dright)
+                                       (kPad_L3 os_pad_l3)
+                                       (kPad_R3 os_pad_r3)
+                                       (kPad_Select os_pad_select)
+                                       invalid
+                                    }
+                                 }
+                              )
+                              (uSync
+                                 {localize
+                                    {switch $data
+                                       (0 infinite)
+                                       (1 full)
+                                       (2 half)
+                                       (4 quarter)
+                                       invalid
+                                    }
+                                 }
+                              )
+                              (uInst
+                                 {localize
+                                    {switch $data
+                                       (kControllerGuitar guitar_sym)
+                                       (kControllerDrum drum_sym)
+                                       (kControllerVocals vocals_sym)
+                                       invalid
+                                    }
+                                 }
+                              )
+                              (uMapping
+                                 {localize
+                                    {switch $data
+                                       (0 custom)
+                                       (1 guitar_sym)
+                                       (2 gh_guitar)
+                                       (3 ps2_guitar)
+                                       (4 drum_sym)
+                                       invalid
+                                    }
+                                 }
+                              )
+                              (uSpeed {int {+ {* $data 100} 0.5}})
+                              (uTimer
+                                 {localize
+                                    {switch $data
+                                       (0 off)
+                                       (1 time_total)
+                                       (2 remaining_total)
+                                       (3 remaining)
+                                       (4 time)
+                                       (5 total)
+                                       invalid
+                                    }
+                                 }
+                              )
+                              (uLocalize {localize $data})
+                              (uColorRGB
+                                 {do
+                                    ($r) ($g) ($b)
+                                    ($i
+                                       {if_else {OS_LIST has (color_index)}
+                                          {OS_LIST get color_index}
+                                          0
+                                       }
+                                    )
+                                    {if $selected
+                                       {color.mat set color $data}
+                                    }
+                                    {unpack_color $data $r $g $b}
+                                    {sprintf {localize_token {sprintf "os_color_fmt_%d" $i}} $r $g $b}
+                                 }
+                              )
+                              (uAspect
+                                 {localize
+                                    {switch $data
+                                       (kSquareAspect aspect_square)
+                                       (kRegularAspect apsect_regular)
+                                       (kWidescreenAspect aspect_widescreen)
+                                       invalid
+                                    }
+                                 }
+                              )
+                           }
+                        )
+                        {cond
+                           ({&& {== $type uColorSld} $selected {$this has (focused)} [focused]} $fmt)
+                           ({== $type uColorSld} {localize {elem $entry 0}})
+                           ({&& $hide_on_sel $selected {$this has (focused)} [focused]}
+                              {sprint {localize os_l} $fmt {localize os_r}}
                            )
+                           ($hide_on_sel {localize {elem $entry 0}})
+                           (TRUE {sprintf {localize {elem $entry 0}} $fmt})
                         }
                      }
                   }
-               }}
-            }}
-         }
-         {set [data] $a}
-      }
-      {os_setup_common}
-   )
-   (exit
-      {set [data] {array 0}}
-      {set [prefabs] {array 0}}
-      {set [normal] {array 0}}
-      {set [custom] {array 0}}
-   )
-   (reset
-      {foreach $prefab [prefabs]
-         {if {find_elem $char_list $prefab}
-            {remove_elem $char_list $prefab}
+               )
+               {fail {sprint {elem {find $entry type} 1} " is an unknown type"}}
+            }
+            {push_back $array {eval $entry}}
          }
       }
-   )
-   (clear
-      ($a)
-      {foreach $prefab $a
-         {unless {find_elem $char_list $prefab}
-            {push_back $char_list $prefab}
-         }
-      }
-   )
-   (in_list
-      ($name)
-      {! {find_elem $char_list $name}}
-   )
-   (change_state
-      ($name)
-      {if_else {find_elem $char_list $name}
-         {remove_elem $char_list $name}
-         {push_back $char_list $name}
-      }
-   )
-   (warn
-      ($msg $can_leave)
-      {overshell_warn_screen set msg $msg}
-      {overshell_warn_screen set can_leave $can_leave}
-      {ui push_screen overshell_warn_screen}
-   )
-   (BUTTON_DOWN_MSG
-      {if_else {!= $button kPad_Tri}
-         {os_down_common}
-         {if_else {== {os_down_common} kDataUnhandled}
-            {do
-               ($active 0)
-               ($any_male FALSE)
-               ($any_female FALSE)
-               {foreach $prefab [prefabs]
-                  {unless {find_elem $char_list $prefab}
-                     {++ $active}
-                     {switch {elem {find $syscfg characters prefab $prefab gender} 1}
-                        (male {set $any_male TRUE})
-                        (female {set $any_female TRUE})
-                     }
-                  }
-               }
-               {cond
-                  ({== $active 0} {$this warn os_no_active TRUE})
-                  ({== [filter] vocals}
-                     {cond
-                        ({&& $any_male {! $any_female}}
-                           {$this warn os_no_female_vocals TRUE}
-                        )
-                        ({&& $any_female {! $any_male}}
-                           {$this warn os_no_male_vocals TRUE}
-                        )
-                        (TRUE kDataUnhandled)
-                     }
-                  )
-                  ({== $active 1}
-                     {$this warn os_crash_potential FALSE}
-                  )
-                  (TRUE kDataUnhandled)
+      {OS_LIST set_data $array}
+      {if {$this state_has pos}
+         {OS_LIST set_selected {elem {$this state_get pos} 0} {elem {$this state_get pos} 1}}
+         {if {&& {$this has (focused)} [focused]}
+            {foreach $entry $array
+               {if {!= $entry {elem $array {elem {$this state_get pos} 0}}}
+                  {OS_LIST disable_data {symbol $entry}}
                }
             }
-            FALSE
          }
       }
+      {OS_LIST poll}
+      {$this update_helpbar}
+   })
+   (setup_common
+      {title.lbl set text_token {$this state_get title}}
+      {$this lst_reset}
    )
-   (SELECT_MSG {os_sel_common})
-}
-{new UIScreen
-   overshell_char_list_screen
-   (back overshell_chars_screen)
-   (panels overshell_char_list_panel practice_lower3rd_panel helpbar)
-   (focus overshell_char_list_panel)
-}
-{new UIScreen
-   overshell_warn_screen
-   (panels dialog_panel)
-   (focus dialog_panel)
-   (destination '')
-   (msg meow)
-   (can_leave TRUE)
-   (enter
-      {if_else [can_leave]
-         {dialog_panel set_ok {localize_token [msg]}}
-         {dialog_panel set_yesno
-            {localize_token [msg]}
-            no.btn
+   (sel_common {do
+      ($entry {elem {$this state_get data} {OS_LIST selected_pos}})
+      {if_else
+         {&&
+            {== {type $entry} kDataArray}
+            {!
+               {do
+                  ($block {find_exists $entry block_ingame})
+                  ($bool)
+                  {if {&& $block {exists beatmatch}}
+                     {set $bool {elem $block 1}}
+                  }
+                  $bool
+               }
+            }
          }
-      }
-   )
-   (SELECT_START_MSG
-      {ui pop_screen}
-      {if {== $component yes.btn}
-         {thread_task kTaskUISeconds
-            (delay 0.01)
-            (script {pop_and_goto_screen overshell_chars_screen})
+         {do
+            {switch {elem {find $entry type} 1}
+               ((uNormal uOnOFF)
+                  {foreach $cmd {find $entry sel_script}
+                     {eval $cmd}
+                  }
+               )
+               ((uSld uFakeSld uColorSld)
+                  {$this set focused TRUE}
+                  {OS_LIST set store
+                     {cond
+                        ({find_exists $entry var}
+                           {eval_var {elem {find $entry var} 1}}
+                        )
+                        ({find_exists $entry get}
+                           {eval {elem {find $entry get} 1}}
+                        )
+                        (TRUE {fail "unable to find data for sld"})
+                     }
+                  }
+                  {if {== {elem {find $entry type} 1} uColorSld}
+                     {OS_LIST set color_index 0}
+                     {color.mesh set_showing TRUE}
+                     {color.tnm set_frame
+                        {- {OS_LIST selected_pos} {OS_LIST first_showing}}
+                     }
+                  }
+               )
+            }
          }
-      }
-      kDataUnhandled
+         {synth play button_error}
+      }}
+      {$this lst_reset}
    )
-}
-{new UIPanel
-   overshell_del_prefab_panel
-   OVERSHELL_LIST_FILE
-   (title os_del_prefab)
-   (data)
-   (update_data
-      {do
-         ($a
-            {` 
-               (
-                  (os_clear_all
-                     (type uNormal)
-                     (sel_script
-                        {resize $user_prefabs 0}
-                        {$this update_data}
+   (down_common {do
+      ($entry {elem {$this state_get data} {OS_LIST selected_pos}})
+      {if_else {== {type $entry} kDataArray}
+         {switch {elem {find $entry type} 1}
+            ((uSld uFakeSld uColorSld)
+               {if_else {&& {$this has (focused)} [focused]}
+                  {switch $button
+                     (kPad_X
+                        {synth play button_select}
+                        {$this set focused FALSE}
+                        {OS_LIST set store 0}
+                        {color.mesh set_showing FALSE}
+                        {$this update_helpbar}
+                        {$this lst_reset}
                      )
+                     (kPad_Tri
+                        {synth play button_back}
+                        {$this set focused FALSE}
+                        {cond
+                           ({find_exists $entry var}
+                              {set_var {elem {find $entry var} 1} {OS_LIST get store}}
+                           )
+                           ({find_exists $entry get} {do
+                              ($r {OS_LIST get store})
+                              {eval {elem {find $entry set} 1}}
+                           })
+                           (TRUE {fail "unable to find data for sld"})
+                        }
+                        {OS_LIST set store 0}
+                        {color.mesh set_showing FALSE}
+                        {$this lst_reset}
+                     )
+                     (kPad_R1
+                        {if {== {elem {find $entry type} 1} uColorSld}
+                           {synth play button_back}
+                           {OS_LIST set color_index
+                              {switch {OS_LIST get color_index}
+                                 (0 1)
+                                 (1 2)
+                                 (2 0)
+                              }
+                           }
+                           {$this lst_reset}
+                        }
+                     )
+                     ((kPad_DUp kPad_DLeft) {do
+                        ($data '')
+                        ($type '')
+                        ($r)
+                        {synth play button_toggle}
+                        {cond
+                           ({find_exists $entry var}
+                              {set $data {eval_var {elem {find $entry var} 1}}}
+                              {set $type var}
+                           )
+                           ({find_exists $entry get}
+                              {set $data {eval {elem {find $entry get} 1}}}
+                              {set $type get}
+                           )
+                           (TRUE {fail "unable to find data for sld"})
+                        }
+                        {set $r
+                           {switch {elem {find $entry type} 1}
+                              (uSld
+                                 {clamp
+                                    {- $data {elem {find $entry step} 1}}
+                                    {elem {find $entry range} 1}
+                                    {elem {find $entry range} 2}
+                                 }
+                              )
+                              (uFakeSld
+                                 {prev_elem
+                                    {eval {elem {find $entry array} 1}}
+                                    $data
+                                 }
+                              )
+                              (uColorSld
+                                 {do
+                                    ($r) ($g) ($b)
+                                    {unpack_color $data $r $g $b}
+                                    {set_var {elem (r g b) {OS_LIST get color_index}}
+                                       {clamp {- {eval_var {elem (r g b) {OS_LIST get color_index}}} 0.01} 0.00 1.00}
+                                    }
+                                    {pack_color $r $g $b}
+                                 }
+                              )
+                           }
+                        }
+                        {switch $type
+                           (var {set_var {elem {find $entry var} 1} $r})
+                           (get {eval {elem {find $entry set} 1}})
+                        }
+                        {$this lst_reset}
+                     })
+                     ((kPad_DDown kPad_DRight) {do
+                        ($data '')
+                        ($type '')
+                        ($r)
+                        {synth play button_toggle}
+                        {cond
+                           ({find_exists $entry var}
+                              {set $data {eval_var {elem {find $entry var} 1}}}
+                              {set $type var}
+                           )
+                           ({find_exists $entry get}
+                              {set $data {eval {elem {find $entry get} 1}}}
+                              {set $type get}
+                           )
+                           (TRUE {fail "unable to find data for sld"})
+                        }
+                        {set $r
+                           {switch {elem {find $entry type} 1}
+                              (uSld
+                                 {clamp
+                                    {+ $data {elem {find $entry step} 1}}
+                                    {elem {find $entry range} 1}
+                                    {elem {find $entry range} 2}
+                                 }
+                              )
+                              (uFakeSld
+                                 {next_elem
+                                    {eval {elem {find $entry array} 1}}
+                                    $data
+                                 }
+                              )
+                              (uColorSld
+                                 {do
+                                    ($r) ($g) ($b)
+                                    {unpack_color $data $r $g $b}
+                                    {set_var {elem (r g b) {OS_LIST get color_index}}
+                                       {clamp {+ {eval_var {elem (r g b) {OS_LIST get color_index}}} 0.01} 0.00 1.00}
+                                    }
+                                    {pack_color $r $g $b}
+                                 }
+                              )
+                           }
+                        }
+                        {switch $type
+                           (var {set_var {elem {find $entry var} 1} $r})
+                           (get {eval {elem {find $entry set} 1}})
+                        }
+                        {$this lst_reset}
+                     })
+                  }
+                  {switch {elem {find $entry type} 1}
+                     (uColorSld
+                        {switch $button
+                           (kPad_R1
+                              {if_else {$this state_has color}
+                                 {do
+                                    {cond
+                                       ({find_exists $entry var}
+                                          {set_var {elem {find $entry var} 1} {$this state_get color}}
+                                       )
+                                       ({find_exists $entry get} {do
+                                          ($r {$this state_get color})
+                                          {eval {elem {find $entry set} 1}}
+                                       })
+                                       (TRUE {fail "unable to find data for color"})
+                                    }
+                                    {$this state_remove color}
+                                 }
+                                 {do
+                                    ($data
+                                       {cond
+                                          ({find_exists $entry var}
+                                             {eval_var {elem {find $entry var} 1}}
+                                          )
+                                          ({find_exists $entry get}
+                                             {eval {elem {find $entry get} 1}}
+                                          )
+                                          (TRUE {fail "unable to find data for color"})
+                                       }
+                                    )
+                                    {$this state_set color $data}
+                                 }
+                              }
+                              {$this update_helpbar}
+                           )
+                           {$this unhandled_down}
+                        }
+                     )
+                     {$this unhandled_down}
+                  }
+               }
+            )
+            {$this unhandled_down}
+         }
+         {$this unhandled_down}
+      }}
+   )
+   (unhandled_down
+      {if_else {== $button kPad_Tri}
+         {do
+            ($s {$this state_get back})
+            {if $s
+               {synth play button_back}
+               {$this state_remove pos}
+               {$this update_state $s}
+            }
+         }
+         kDataUnhandled
+      }
+   )
+   (update_helpbar {do
+      ($entry {elem {$this state_get data} {OS_LIST selected_pos}})
+      ($type
+         {if_else {== {type $entry} kDataArray}
+            {elem {find $entry type} 1}
+            kDataUnhandled
+         }
+      )
+      {helpbar_overshell set_config
+         {if_else {== {type $entry} kDataArray}
+            {cond
+               ({&& {== $type uColorSld} {$this has (focused)} [focused]}
+                  (
+                     helpbar_cancel
+                     helpbar_confirmsetting
+                     os_nextcolor
+                  )
+               )
+               ({&& {== $type uColorSld} {$this state_has color}}
+                  (
+                     helpbar_back
+                     os_changecolor
+                     os_paste
+                  )
+               )
+               ({== $type uColorSld}
+                  (
+                     helpbar_back
+                     os_changecolor
+                     os_copy
+                  )
+               )
+               ({&& {$this has (focused)} [focused]}
+                  (
+                     helpbar_cancel
+                     helpbar_confirmsetting
+                  )
+               )
+               ({find_elem (uOnOFF uSld uFakeSld) $type}
+                  (
+                     helpbar_back
+                     helpbar_changesetting
+                  )
+               )
+               (TRUE
+                  (
+                     helpbar_back
+                     helpbar_select
                   )
                )
             }
-         )
-         {foreach $prefab $user_prefabs
-            {push_back $a {elem $prefab 0}}
+            (
+               helpbar_back
+               helpbar_select
+            )
          }
-         {set [data] $a}
       }
-   )
-   (enter
-      {$this update_data}
-      {os_setup_common}
-      {overshell_ok_msg show p_reboot_warning}
-   )
-   (exit
-      {mod_settings_rw save_prefabs}
-      {set [data] {array 0}}
-   )
-   (SELECT_MSG
-      {if_else {OS_LIST selected_pos}
-         {if {find_exists $user_prefabs {OS_LIST selected_sym}}
-            {foreach_int $i 0 {size $user_prefabs}
-               {if {== {elem {elem $user_prefabs $i} 0} {OS_LIST selected_sym}}
-                  {remove_elem $user_prefabs {elem $user_prefabs $i}}
-               }
-            }
-            {$this update_data}
-            {set [pos] (0 0)}
-            {lst_reset}
-         }
-         {os_sel_common}
-      }
-   )
+   })
 }
-{new UIScreen
-   overshell_del_prefab_screen
-   (back overshell_ven_screen)
-   (panels overshell_del_prefab_panel practice_lower3rd_panel helpbar)
-   (focus overshell_del_prefab_panel)
-}
+{new UIPanel helpbar_overshell HELPBAR_HANDLERS (limit_to_session TRUE)}
+{new UIPanel overshell_lower3rd_panel (file "../../ui/practice_lower3rd.milo")}
+{overshell load TRUE}
+{helpbar_overshell load TRUE}
+{overshell_lower3rd_panel load TRUE}
+{overshell set_up FALSE}

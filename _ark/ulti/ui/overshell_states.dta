@@ -1,0 +1,1219 @@
+(main
+   (title os_ultisettings)
+   (data (
+      (os_mod
+         (type uNormal)
+         (sel_script {$this update_state modifier})
+      )
+      (os_spd
+         (type uNormal)
+         (sel_script {$this update_state speed})
+      )
+      (os_vis
+         (type uNormal)
+         (sel_script {$this update_state visual})
+      )
+      (os_trk
+         (type uNormal)
+         (sel_script {$this update_state trk})
+      )
+      (os_gfx
+         (type uNormal)
+         (sel_script {$this update_state gfx})
+      )
+      (os_cnt
+         (type uNormal)
+         (sel_script {$this update_state cnt})
+      )
+      (os_other
+         (type uNormal)
+         (sel_script {$this update_state other})
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down
+      {if {== $button kPad_Tri}
+         {synth play button_back}
+         {mod_settings_rw save_settings}
+         {$this state_remove pos}
+         {$this set_up FALSE}
+      }
+      kDataUnhandled
+   )
+)
+(modifier
+   (title os_mod)
+   (data (
+      (os_nofail
+         (type uOnOFF)
+         (bool $nofail)
+         (sel_script {toggle_var nofail})
+      )
+      (os_autokick
+         (type uOnOFF)
+         (bool $autokick)
+         (sel_script {toggle_var autokick})
+      )
+      (os_tiltsensor
+         (type uOnOFF)
+         (bool $tiltsensor)
+         (sel_script {toggle_var tiltsensor})
+      )
+      (os_whammypb
+         (type uOnOFF)
+         (bool $whammypb)
+         (sel_script {toggle_var whammypb})
+      )
+      (os_trkmuting
+         (type uOnOFF)
+         (bool $trkmuting)
+         (sel_script {toggle_var trkmuting})
+      )
+      (os_misssounds
+         (type uOnOFF)
+         (bool $misssounds)
+         (sel_script {toggle_var misssounds})
+      )
+      (os_micdeploy
+         (type uOnOFF)
+         (bool $micdeploy)
+         (sel_script {toggle_var micdeploy})
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back main)
+)
+(visual
+   (title os_vis)
+   (data (
+      (os_nohud
+         (type uOnOFF)
+         (bool $nohud)
+         (sel_script {toggle_var nohud})
+      )
+      (os_songtitle
+         (type uOnOFF)
+         (bool $songtitle)
+         (sel_script {toggle_var songtitle})
+      )
+      (os_legacybass
+         (type uOnOFF)
+         (bool $legacybass)
+         (sel_script {toggle_var legacybass})
+      )
+      (os_kickbounce
+         (type uOnOFF)
+         (bool $kickbounce)
+         (sel_script {toggle_var kickbounce})
+      )
+      (os_prodrums
+         (type uOnOFF)
+         (bool $prodrums)
+         (sel_script {toggle_var prodrums})
+      )
+      (os_fcring
+         (type uOnOFF)
+         (bool $fcring)
+         (block_ingame TRUE)
+         (sel_script {toggle_var fcring})
+      )
+      (os_goldprogress
+         (type uOnOFF)
+         (bool $goldprogress)
+         (block_ingame TRUE)
+         (sel_script {toggle_var goldprogress})
+      )
+      (os_countdown
+         (type uOnOFF)
+         (bool $countdown)
+         (sel_script {toggle_var countdown})
+      )
+      (os_songtimer
+         (type uFakeSld)
+         (fmt_type uTimer)
+         (var songtimer)
+         (array (0 1 2 3 4 5))
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back main)
+)
+(gfx
+   (title os_gfx)
+   (data (
+      (os_fps_fmt
+         (type uFakeSld)
+         (fmt_type uNormal)
+         (var emulatefps)
+         (array
+            #ifdef HX_NG
+            (1 6 12 15 24 30 60)
+            #else
+            (15 30)
+            #endif
+         )
+      )
+      (os_vsync_fmt
+         (type uFakeSld)
+         (fmt_type uSync)
+         (var vsyncrate)
+         (array (0 1 2 4))
+      )
+      (os_blackbg
+         (type uOnOFF)
+         (bool $blackbg)
+         (sel_script {toggle_var blackbg})
+      )
+      (os_fxdof
+         (type uOnOFF)
+         (bool $fxdof)
+         (sel_script {toggle_var fxdof})
+      )
+      (os_scrnoise
+         (type uOnOFF)
+         (bool $scrnoise)
+         (sel_script {toggle_var scrnoise})
+      )
+      (os_scrbloom
+         (type uOnOFF)
+         (bool $scrbloom)
+         (sel_script {toggle_var scrbloom})
+      )
+      (os_camerashake
+         (type uOnOFF)
+         (bool $camerashake)
+         (sel_script {toggle_var camerashake})
+      )
+      (os_crowd
+         (type uOnOFF)
+         (bool $crowd)
+         (sel_script {toggle_var crowd})
+      )
+      #ifdef HX_PS3
+      (os_force_per_pixel
+         (type uOnOFF)
+         (bool $force_per_pixel)
+         (sel_script {toggle_var force_per_pixel})
+      )
+      #endif
+      (os_aspect_fmt
+         (type uFakeSld)
+         (fmt_type uAspect)
+         (get {rnd aspect})
+         (set {rnd set_aspect $r})
+         (array (kSquareAspect kRegularAspect kWidescreenAspect))
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back main)
+)
+(cnt
+   (title os_cnt)
+   (data (
+      (os_remap_cnt
+         (type uNormal)
+         (sel_script
+            {set $pad_map 0}
+            {$this update_state remap_cnt}
+         )
+      )
+      (os_cnt_map_fmt
+         (type uFakeSld)
+         (fmt_type uMapping)
+         (var pad_map)
+         (array (0 1 2 3 4))
+      )
+      (os_padinst_fmt
+         (type uFakeSld)
+         (fmt_type uInst)
+         (var pad_inst)
+         (array
+            (
+               kControllerVocals
+               kControllerGuitar
+               kControllerDrum
+            )
+         )
+      )
+   ))
+   (enter {$this setup_common})
+   (exit {set_pad_map $pad_map})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back main)
+)
+(speed
+   (title os_spd)
+   (data (
+      (os_trackspeed
+         (type uNormal)
+         (sel_script {$this update_state trackspeed})
+      )
+      (hwlength_msg
+         (type uSld)
+         (fmt_type uSpeed)
+         (var hwlength)
+         (step 0.05)
+         (range 0.50 2.50)
+      )
+      (speed_msg
+         (type uSld)
+         (fmt_type uSpeed)
+         (var speedmod)
+         (block_ingame TRUE)
+         (step 0.05)
+         (range 1.00 2.50)
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back main)
+)
+(trackspeed
+   (title os_trackspeed)
+   (data (
+      (os_indvtrkspeeds
+         (type uOnOFF)
+         (bool $indvtrkspeeds)
+         (sel_script {toggle_var indvtrkspeeds})
+      )
+      (os_syncdifspeeds
+         (type uOnOFF)
+         (bool $syncdifspeeds)
+         (sel_script {toggle_var syncdifspeeds})
+      )
+      (gtr_trackspeed_msg
+         (type uSld)
+         (fmt_type uSpeed)
+         (var guitar_trackspeed)
+         (step 0.05)
+         (range 0.50 2.50)
+      )
+      (bass_trackspeed_msg
+         (type uSld)
+         (fmt_type uSpeed)
+         (var bass_trackspeed)
+         (step 0.05)
+         (range 0.50 2.50)
+      )
+      (drum_trackspeed_msg
+         (type uSld)
+         (fmt_type uSpeed)
+         (var drum_trackspeed)
+         (step 0.05)
+         (range 0.50 2.50)
+      )
+      (track0_trackspeed_msg
+         (type uSld)
+         (fmt_type uSpeed)
+         (var track0_trackspeed)
+         (step 0.05)
+         (range 0.50 2.50)
+      )
+      (track1_trackspeed_msg
+         (type uSld)
+         (fmt_type uSpeed)
+         (var track1_trackspeed)
+         (step 0.05)
+         (range 0.50 2.50)
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back speed)
+)
+(trk
+   (title os_trk)
+   (data (
+      (os_reset
+         (type uNormal)
+         (block_ingame TRUE)
+         (sel_script {run ulti/ulti_init_apperance.dta})
+      )
+      (os_gems
+         (type uFakeSld)
+         (fmt_type uLocalize)
+         (hide_on_sel TRUE)
+         (var gems)
+         (array
+            {if_else $notergb
+               {asset_mgr all_gems_rgb}
+               {asset_mgr all_gems}
+            }
+         )
+      )
+      (os_smashers
+         (type uFakeSld)
+         (fmt_type uLocalize)
+         (hide_on_sel TRUE)
+         (var smashers)
+         (array
+            {if_else $notergb
+               {asset_mgr all_smashers_rgb}
+               {asset_mgr all_smashers}
+            }
+         )
+      )
+      (os_colors
+         (type uNormal)
+         (sel_script
+            {if_else $notergb
+               {$this update_state rgb_colors}
+               {$this update_state colors}
+            }
+         )
+      )
+      (os_notergb
+         (type uOnOFF)
+         (bool $notergb)
+         (block_ingame TRUE)
+         (sel_script
+            {toggle_var notergb}
+            {asset_mgr ensure_stuff}
+         )
+      )
+      (os_track_config
+         (type uFakeSld)
+         (fmt_type uLocalize)
+         (hide_on_sel TRUE)
+         (var track_config)
+         (array {asset_mgr track_configs})
+      )
+   ))
+   (enter
+      {asset_mgr ensure_stuff}
+      {$this setup_common}
+   )
+   (exit
+      {if {&& $notergb {exists beatmatch}}
+         {asset_mgr apply_all_rgb}
+      }
+   )
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back main)
+)
+(colors
+   (title os_colors)
+   (data (
+      (os_gtr_gems_color
+         (type uNormal)
+         (sel_script {$this update_state gtr_gem_color})
+      )
+      (os_gtr_smasher_color
+         (type uNormal)
+         (sel_script {$this update_state gtr_smasher_color})
+      )
+      (os_gtr_sus_color
+         (type uNormal)
+         (sel_script {$this update_state gtr_sus_color})
+      )
+      (os_drm_gems_color
+         (type uNormal)
+         (sel_script {$this update_state drm_gem_color})
+      )
+      (os_drm_smasher_color
+         (type uNormal)
+         (sel_script {$this update_state drm_smasher_color})
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back trk)
+)
+(gtr_gem_color
+   (title os_gtr_gems_color)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script
+            {set $gtrgem1 1}
+            {set $gtrgem2 4}
+            {set $gtrgem3 2}
+            {set $gtrgem4 0}
+            {set $gtrgem5 3}
+         )
+      )
+      (os_slot_1_fmt
+         COLOR_DATA_COMMON
+         (var gtrgem1)
+      )
+      (os_slot_2_fmt
+         COLOR_DATA_COMMON
+         (var gtrgem2)
+      )
+      (os_slot_3_fmt
+         COLOR_DATA_COMMON
+         (var gtrgem3)
+      )
+      (os_slot_4_fmt
+         COLOR_DATA_COMMON
+         (var gtrgem4)
+      )
+      (os_slot_5_fmt
+         COLOR_DATA_COMMON
+         (var gtrgem5)
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back colors)
+)
+(drm_gem_color
+   (title os_drm_gems_color)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script
+            {set $drmgem1 0}
+            {set $drmgem2 1}
+            {set $drmgem3 2}
+            {set $drmgem4 3}
+            {set $drmgem5 4}
+         )
+      )
+      (os_slot_1_fmt
+         DCOLOR_DATA_COMMON
+         (var drmgem2)
+      )
+      (os_slot_2_fmt
+         DCOLOR_DATA_COMMON
+         (var drmgem3)
+      )
+      (os_slot_3_fmt
+         DCOLOR_DATA_COMMON
+         (var drmgem4)
+      )
+      (os_slot_4_fmt
+         DCOLOR_DATA_COMMON
+         (var drmgem5)
+      )
+      (os_slot_kick_fmt
+         DCOLOR_DATA_COMMON
+         (var drmgem1)
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back colors)
+)
+(gtr_sus_color
+   (title os_gtr_sus_color)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script
+            {set $gtrsus1 1}
+            {set $gtrsus2 4}
+            {set $gtrsus3 2}
+            {set $gtrsus4 0}
+            {set $gtrsus5 3}
+         )
+      )
+      (os_slot_1_fmt
+         COLOR_DATA_COMMON
+         (var gtrsus1)
+      )
+      (os_slot_2_fmt
+         COLOR_DATA_COMMON
+         (var gtrsus2)
+      )
+      (os_slot_3_fmt
+         COLOR_DATA_COMMON
+         (var gtrsus3)
+      )
+      (os_slot_4_fmt
+         COLOR_DATA_COMMON
+         (var gtrsus4)
+      )
+      (os_slot_5_fmt
+         COLOR_DATA_COMMON
+         (var gtrsus5)
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back colors)
+)
+(gtr_smasher_color
+   (title os_gtr_smasher_color)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script
+            {set $gtrsm1 1}
+            {set $gtrsm2 4}
+            {set $gtrsm3 2}
+            {set $gtrsm4 0}
+            {set $gtrsm5 3}
+         )
+      )
+      (os_slot_1_fmt
+         COLOR_DATA_COMMON
+         (var gtrsm1)
+      )
+      (os_slot_2_fmt
+         COLOR_DATA_COMMON
+         (var gtrsm2)
+      )
+      (os_slot_3_fmt
+         COLOR_DATA_COMMON
+         (var gtrsm3)
+      )
+      (os_slot_4_fmt
+         COLOR_DATA_COMMON
+         (var gtrsm4)
+      )
+      (os_slot_5_fmt
+         COLOR_DATA_COMMON
+         (var gtrsm5)
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back colors)
+)
+(drm_smasher_color
+   (title os_drm_smasher_color)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script
+            {set $drms1 1}
+            {set $drms2 2}
+            {set $drms3 3}
+            {set $drms4 0}
+         )
+      )
+      (os_slot_1_fmt
+         COLOR_DATA_COMMON
+         (var drms1)
+      )
+      (os_slot_2_fmt
+         COLOR_DATA_COMMON
+         (var drms2)
+      )
+      (os_slot_3_fmt
+         COLOR_DATA_COMMON
+         (var drms3)
+      )
+      (os_slot_4_fmt
+         COLOR_DATA_COMMON
+         (var drms4)
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back colors)
+)
+(rgb_colors
+   (title os_colors)
+   (data (
+      (os_gtr_rgb_color
+         (type uNormal)
+         (sel_script {$this update_state gtr_rgb_color})
+      )
+      (os_drm_rgb_color
+         (type uNormal)
+         (sel_script {$this update_state drm_rgb_color})
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back trk)
+)
+(gtr_rgb_color
+   (title os_gtr_rgb_color)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script kDataUnhandled)
+      )
+      (os_slot_1
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_1)
+      )
+      (os_slot_2
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_2)
+      )
+      (os_slot_3
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_3)
+      )
+      (os_slot_4
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_4)
+      )
+      (os_slot_5
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_5)
+      )
+      (os_slot_6
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_o)
+      )
+      (miss
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var gtr_rgb_m)
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back rgb_colors)
+)
+(drm_rgb_color
+   (title os_drm_rgb_color)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script kDataUnhandled)
+      )
+      (os_slot_1
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_1)
+      )
+      (os_slot_2
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_2)
+      )
+      (os_slot_3
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_3)
+      )
+      (os_slot_4
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_4)
+      )
+      (os_slot_6
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_o)
+      )
+      (kick
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_k)
+      )
+      (miss
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (var drum_rgb_m)
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back rgb_colors)
+)
+(remap_cnt
+   (title os_remap_cnt)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script
+            #ifdef HX_NG
+            {set $cnt_slot1 kPad_L2}
+            {set $cnt_slot2 kPad_L1}
+            {set $cnt_slot3 kPad_R1}
+            {set $cnt_slot4 kPad_R2}
+            {set $cnt_slot5 kPad_X}
+            {set $cnt_star kPad_Select}
+            #else
+            {set $cnt_slot1 kPad_Circle}
+            {set $cnt_slot2 kPad_DRight}
+            {set $cnt_slot3 kPad_X}
+            {set $cnt_slot4 kPad_Square}
+            {set $cnt_slot5 kPad_Tri}
+            {set $cnt_star kPad_DLeft}
+            #endif
+         )
+      )
+      (os_slot_1_fmt
+         PAD_DATA_COMMON
+         (var cnt_slot1)
+      )
+      (os_slot_2_fmt
+         PAD_DATA_COMMON
+         (var cnt_slot2)
+      )
+      (os_slot_3_fmt
+         PAD_DATA_COMMON
+         (var cnt_slot3)
+      )
+      (os_slot_4_fmt
+         PAD_DATA_COMMON
+         (var cnt_slot4)
+      )
+      (os_slot_5_fmt
+         PAD_DATA_COMMON
+         (var cnt_slot5)
+      )
+      (os_slot_od_fmt
+         PAD_DATA_COMMON
+         (var cnt_star)
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back cnt)
+)
+(other
+   (title os_other)
+   (data (
+      (os_cheats
+         (type uNormal)
+         (sel_script {$this update_state cheats})
+      )
+      (os_av
+         (type uNormal)
+         (sel_script {$this update_state av})
+      )
+      (os_ven
+         (type uNormal)
+         (sel_script {$this update_state ven})
+      )
+      (os_skipintro
+         (type uOnOFF)
+         (bool $skipintro)
+         (sel_script {toggle_var skipintro})
+      )
+      (os_reset_all
+         (type uNormal)
+         (block_ingame TRUE)
+         (sel_script
+            {run ulti/ulti_init.dta}
+            {run ulti/ulti_init_apperance.dta}
+         )
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back main)
+)
+(cheats
+   (title os_cheats)
+   (data (
+      (os_colorshuffle
+         (type uOnOFF)
+         (bool $colorshuffle)
+         (sel_script {toggle_var colorshuffle})
+      )
+      (os_smallworld
+         (type uOnOFF)
+         (bool $smallworld)
+         (sel_script {toggle_var smallworld})
+      )
+      (os_bigmode
+         (type uOnOFF)
+         (bool $bigmode)
+         (sel_script {toggle_var bigmode})
+      )
+      (os_scale_head
+         (type uOnOFF)
+         (bool $scale_head)
+         (sel_script {toggle_var scale_head})
+      )
+      (os_honestmode
+         (type uOnOFF)
+         (bool $honestmode)
+         (sel_script
+            {unless $honestmilo
+               {set $honestmilo {load_objects ulti/honestbob.milo}}
+               {$honestmilo delete_loader}
+            }
+            {toggle_var honestmode}
+         )
+      )
+      (os_hidechars
+         (type uOnOFF)
+         (bool $hidechars)
+         (sel_script {toggle_var hidechars})
+      )
+      (os_flashbang
+         (type uOnOFF)
+         (bool $flashbang)
+         (sel_script {toggle_var flashbang})
+      )
+      (os_cheats
+         (type uOnOFF)
+         (bool $mikan)
+         (sel_script {toggle_var mikan})
+      )
+      (os_fakecheat
+         (type uNormal)
+         (sel_script
+            {passive_messages_panel queue_message "meow meow meow"}
+            {if {shop_char_panel is_up}
+               {{{game get_player_config {shop_char_panel get char_player_num}} get_char} set_money 999999999}
+            }
+         )
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back other)
+)
+(av
+   (title os_av)
+   (data (
+      (bass_boost
+         (type uOnOFF)
+         (bool {profile_mgr get_bass_boost})
+         (sel_script {profile_mgr set_bass_boost {! {profile_mgr get_bass_boost}}})
+      )
+      (os_dolby
+         (type uOnOFF)
+         (bool {profile_mgr get_dolby})
+         (sel_script {profile_mgr set_dolby {! {profile_mgr get_dolby}}})
+      )
+      #ifdef HX_PS3
+      (mono
+         (type uOnOFF)
+         (bool {profile_mgr get_mono})
+         (sel_script {profile_mgr set_mono {! {profile_mgr get_mono}}})
+      )
+      #endif
+      (os_overscan
+         (type uOnOFF)
+         (bool {profile_mgr get_overscan})
+         (sel_script {profile_mgr set_overscan {! {profile_mgr get_overscan}}})
+      )
+      (os_ivol_fmt VOL_SLD
+         (get {profile_mgr get_foreground_volume})
+         (set {profile_mgr set_foreground_volume $r})
+      )
+      (os_bvol_fmt VOL_SLD
+         (get {profile_mgr get_background_volume})
+         (set {profile_mgr set_background_volume $r})
+      )
+      (os_cvol_fmt VOL_SLD
+         (get {profile_mgr get_crowd_volume})
+         (set {profile_mgr set_crowd_volume $r})
+      )
+      (os_svol_fmt VOL_SLD
+         (get {profile_mgr get_fx_volume})
+         (set {profile_mgr set_fx_volume $r})
+      )
+      (os_avs_fmt CALI_SLD
+         (get {int {profile_mgr get_song_to_taskmgr_ms_ui}})
+         (set {profile_mgr set_song_to_taskmgr_ms_ui $r})
+      )
+      (os_lo_fmt CALI_SLD
+         (get {int {profile_mgr get_sync_offset_ui}})
+         (set {profile_mgr set_sync_offset_ui $r})
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back other)
+)
+(ven
+   (title os_ven)
+   (data (
+      (os_selectvenue
+         (type uOnOFF)
+         (bool $selectvenue)
+         (sel_script {toggle_var selectvenue})
+      )
+      (os_normal_venues
+         (type uOnOFF)
+         (bool $normal_venues)
+         (sel_script {toggle_var normal_venues})
+      )
+      (os_rb2_venues
+         (type uOnOFF)
+         (bool $rb2_venues)
+         (sel_script {toggle_var rb2_venues})
+      )
+      (os_custom_venues
+         (type uOnOFF)
+         (bool $custom_venues)
+         (sel_script {toggle_var custom_venues})
+      )
+      (os_chars
+         (type uNormal)
+         (sel_script {$this update_state chars})
+      )
+      (os_del_prefab
+         (type uNormal)
+         (sel_script {$this update_state del_prefab})
+      )
+      (os_force_vg
+         (type uFakeSld)
+         (fmt_type uLocalize)
+         (hide_on_sel TRUE)
+         (var force_vg)
+         (array (off male female))
+      )
+      (os_force_venue
+         (type uFakeSld)
+         (fmt_type uLocalize)
+         (hide_on_sel TRUE)
+         (var force_venue)
+         (array (off random VENUES RB2_VENUES ULTI_VENUES))
+      )
+   ))
+   (enter {$this setup_common})
+   (exit
+      {unless {|| $normal_venues $rb2_venues $custom_venues}
+         {set $normal_venues TRUE}
+      }
+   )
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back other)
+)
+(chars
+   (title os_chars)
+   (data (
+      (os_reset
+         (type uNormal)
+         (sel_script {set $char_list {array 0}})
+      )
+      (os_guitar_chars
+         (type uNormal)
+         (sel_script
+            {set [state] char_list}
+            {$this state_set filter guitar}
+            {$this state_set title os_guitar_chars}
+            {$this update_state char_list}
+         )
+      )
+      (os_drum_chars
+         (type uNormal)
+         (sel_script
+            {set [state] char_list}
+            {$this state_set filter drum}
+            {$this state_set title os_drum_chars}
+            {$this update_state char_list}
+         )
+      )
+      (os_vocals_chars
+         (type uNormal)
+         (sel_script
+            {set [state] char_list}
+            {$this state_set filter vocals}
+            {$this state_set title os_vocals_chars}
+            {$this update_state char_list}
+         )
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back ven)
+)
+(char_list
+   (title os_guitar_chars)
+   (filter guitar)
+   (data    ())
+   (prefabs ())
+   (normal  ())
+   (custom  ())
+   (enter
+      {do
+         ($a
+            {` 
+               (
+                  (os_reset
+                     (type uNormal)
+                     (sel_script {$this state_handle reset ()})
+                  )
+                  (os_clear_normal
+                     (type uNormal)
+                     (sel_script {$this state_handle clear ({$this state_get normal})})
+                  )
+                  (os_clear_custom
+                     (type uNormal)
+                     (sel_script {$this state_handle clear ({$this state_get custom})})
+                  )
+               )
+            }
+         )
+         {foreach $prefab {find $syscfg characters prefab}
+            {if {== {type $prefab} kDataArray} {do
+               ($data {elem {find $prefab instrument} 1})
+               {if {&& $data {== {type $data} kDataCommand}} {do
+                  ($custom {eval {elem $data 1}})
+                  ($inst   {eval {elem $data 2}})
+                  ($name   {eval {elem $data 3}})
+                  {if {== $inst {$this state_get filter}}
+                     {push_back {$this state_get prefabs} $name}
+                     {if_else $custom
+                        {push_back {$this state_get custom} $name}
+                        {push_back {$this state_get normal} $name}
+                     }
+                     {push_back $a
+                        {`
+                           ({, $name}
+                              (type uOnOFF)
+                              (bool {$this state_handle in_list ({, $name})})
+                              (sel_script {$this state_handle change_state ({, $name})})
+                           )
+                        }
+                     }
+                  }
+               }}
+            }}
+         }
+         {$this state_set data $a}
+      }
+      {$this setup_common}
+   )
+   (exit
+      {resize {$this state_get data} 0}
+      {resize {$this state_get prefabs} 0}
+      {resize {$this state_get normal} 0}
+      {resize {$this state_get custom} 0}
+   )
+   (reset
+      {foreach $prefab {$this state_get prefabs}
+         {if {find_elem $char_list $prefab}
+            {remove_elem $char_list $prefab}
+         }
+      }
+   )
+   (clear
+      ($prefabs)
+      {foreach $prefab $prefabs
+         {unless {find_elem $char_list $prefab}
+            {push_back $char_list $prefab}
+         }
+      }
+   )
+   (in_list
+      ($name)
+      {! {find_elem $char_list $name}}
+   )
+   (change_state
+      ($name)
+      {if_else {find_elem $char_list $name}
+         {remove_elem $char_list $name}
+         {push_back $char_list $name}
+      }
+   )
+   (button_down
+      {if_else {!= $button kPad_Tri}
+         {$this down_common}
+         {do
+            ($active 0)
+            ($any_male FALSE)
+            ($any_female FALSE)
+            {foreach $prefab {$this state_get prefabs}
+               {unless {find_elem $char_list $prefab}
+                  {++ $active}
+                  {switch {elem {find $syscfg characters prefab $prefab gender} 1}
+                     (male {set $any_male TRUE})
+                     (female {set $any_female TRUE})
+                  }
+               }
+            }
+            {cond
+               ({== $active 0}
+                  {passive_messages_panel queue_message {localize os_no_active}}
+               )
+               ({== {$this state_get filter} vocals}
+                  {cond
+                     ({&& $any_male {! $any_female}}
+                        {passive_messages_panel queue_message {localize os_no_female_vocals}}
+                     )
+                     ({&& $any_female {! $any_male}}
+                        {passive_messages_panel queue_message {localize os_no_male_vocals}}
+                     )
+                     (TRUE {$this unhandled_down})
+                  }
+               )
+               ({== $active 1}
+                  {passive_messages_panel queue_message {localize os_crash_potential}}
+                  {$this unhandled_down}
+               )
+               (TRUE {$this unhandled_down})
+            }
+         }
+      }
+   )
+   (component_select {$this sel_common})
+   (back chars)
+)
+(del_prefab
+   (title os_del_prefab)
+   (data ())
+   (update_data
+      {do
+         ($a
+            {` 
+               (
+                  (os_clear_all
+                     (type uNormal)
+                     (sel_script
+                        {resize $user_prefabs 0}
+                        {$this state_handle update_data ()}
+                     )
+                  )
+               )
+            }
+         )
+         {foreach $prefab $user_prefabs
+            {push_back $a {elem $prefab 0}}
+         }
+         {$this state_set data $a}
+      }
+   )
+   (enter
+      {$this state_handle update_data ()}
+      {$this setup_common}
+      {passive_messages_panel queue_message {localize p_reboot_warning}}
+   )
+   (exit
+      {mod_settings_rw save_prefabs}
+      {resize {$this state_get data} 0}
+   )
+   (component_select
+      {if_else {OS_LIST selected_pos}
+         {if {find_exists $user_prefabs {OS_LIST selected_sym}}
+            {remove_elem $user_prefabs
+               {find $user_prefabs {OS_LIST selected_sym}}
+            }
+            {$this state_handle update_data ()}
+            {$this state_set pos {array 2}}
+            {$this lst_reset}
+         }
+         {$this sel_common}
+      }
+   )
+   (button_down {$this down_common})
+   (back ven)
+)

@@ -42,11 +42,8 @@
                ({! {$draw is_a Draw}}
                   {fail {sprint $draw " isn't a draw. can't overlay"}}
                )
-               ({&& {$draw is_a UIPanel} {! {$draw is_loaded}}}
-                  {fail {sprint $draw " isn't loaded. can't overlay"}}
-               )
                (TRUE
-                  {[group] add_object $draw}
+                  {[group] insert (objects 0) $draw}
                   {{[group] dir} sync_objects}
                )
             }

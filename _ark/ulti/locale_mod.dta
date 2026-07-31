@@ -166,12 +166,7 @@
 (os_no_active "You can't leave with no characters active!")
 (os_no_female_vocals "You can't leave with no female vocalist active.")
 (os_no_male_vocals "You can't leave with no male vocalist active.")
-(os_crash_potential "
-   With one character active you will crash in many cases!
-   \nIf you don't know what you're doing you should enable another character.
-   \n
-   \nDo you want to leave?
-")
+(os_crash_potential "With one character active you can crash! If you're inexperienced enable another character.")
 (os_del_prefab "Delete User Prefabs")
 (p_reboot_warning "Changes will only take effect after rebooting the game")
 (p_already_exists "A prefab with this name already exists. Please enter another name.")

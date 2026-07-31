@@ -20,7 +20,7 @@
    (kPad_Select kPad_Select)
    {if_else
       {'||'
-         {startswith {{ui current_screen} name} "overshell"}
+         {overshell up}
          {ui in_transition}
          {find_elem
             (
@@ -34,13 +34,13 @@
             )
             {ui current_screen}
          }
-         {&& ; if screens are synced and online
-            {band_ui_sink net_sync}
-            {!= {session mode} kNetLocal}
-         }
+         ;{&& ; if screens are synced and online
+         ;   {band_ui_sink net_sync}
+         ;   {!= {session mode} kNetLocal}
+         ;}
       }
       {print "overshell blocked from opening"}
-      {ui push_screen overshell_main_screen}
+      {overshell set_up TRUE}
    }
 )
 (

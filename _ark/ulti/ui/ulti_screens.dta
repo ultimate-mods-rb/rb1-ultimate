@@ -52,7 +52,11 @@
    (focus audio.btn)
    (SELECT_START_MSG
       {switch $component
-         (audio.btn {ui push_screen overshell_main_screen})
+         (audio.btn
+            {unless {overshell up}
+               {overshell set_up TRUE}
+            }
+         )
          (gameplay.btn
             {gamemode set_mode jukebox $player_num}
             {ui goto_screen {gamemode get matchmaking_screen}}
@@ -617,3 +621,6 @@
 {{new Object mod_overlay} set_type mod_overlay}
 {mod_overlay init}
 {mod_overlay add {passive_messages_panel loaded_dir}}
+{mod_overlay add {helpbar_overshell loaded_dir}}
+{mod_overlay add {overshell_lower3rd_panel loaded_dir}}
+{mod_overlay add {overshell loaded_dir}}
