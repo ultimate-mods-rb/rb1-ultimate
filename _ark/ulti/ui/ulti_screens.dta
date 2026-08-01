@@ -589,6 +589,11 @@
       {push_back [msgs] $msg}
       {$this update}
    )
+   (queue_message_icon
+      ($msg $icon)
+      {push_back [msgs] {` ({, $msg} {, $icon})}}
+      {$this update}
+   )
    (update
       {if_else {size [msgs]}
          {unless [waiting]
@@ -599,7 +604,16 @@
                   {message_pos.tnm set_frame
                      {== {ui current_screen} {gamemode get game_screen}}
                   }
-                  {message.lbl set_localized {elem [msgs] 0}}
+                  {if_else {== {type {elem [msgs] 0}} kDataArray}
+                     {do
+                        {message.lbl set_localized {elem {elem [msgs] 0} 0}}
+                        {icon.lbl set_localized {elem {elem [msgs] 0} 1}}
+                     }
+                     {do
+                        {message.lbl set_localized {elem [msgs] 0}}
+                        {icon.lbl set_localized "!"}
+                     }
+                  }
                   {remove_elem [msgs] {elem [msgs] 0}}
                   {$task sleep [msg_duration]}
                   {set [waiting] FALSE}

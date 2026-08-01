@@ -766,5 +766,5 @@
 }
 {func rpm
    ($str)
-   {passive_messages_panel queue_message $str}
+   {passive_messages_panel queue_message_icon $str "e"}
 }

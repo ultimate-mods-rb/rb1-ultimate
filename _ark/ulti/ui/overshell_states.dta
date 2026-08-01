@@ -802,6 +802,15 @@
          (type uNormal)
          (sel_script {$this update_state ven})
       )
+      (os_online
+         (type uNormal)
+         (sel_script
+            {if_else {== {session mode} kNetLocal}
+               {passive_messages_panel queue_message {localize os_online_only}}
+               {$this update_state online}
+            }
+         )
+      )
       (os_skipintro
          (type uOnOFF)
          (bool $skipintro)
@@ -1216,4 +1225,119 @@
    )
    (button_down {$this down_common})
    (back ven)
+)
+(online
+   (title os_online)
+   (player_num 0)
+   (data (
+      (os_kick
+         (type uNormal)
+         (sel_script
+            {if_else {is_leader_local}
+               {$this update_state online_kick}
+               {passive_messages_panel queue_message {localize os_host_kick}}
+            }
+         )
+      )
+      #ifdef HX_XBOX
+      (os_gamercard
+         (type uNormal)
+         (sel_script {$this update_state online_gamercard})
+      )
+      #endif
+      (os_send_msg
+         (type uNormal)
+         (sel_script
+            {$this state_set player_num $player_num}
+            {platform_mgr show_keyboard
+               $player_num
+               64
+               {localize os_send_msg_info}
+               ""
+               ""
+               overshell
+            }
+         )
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (virtual_keyboard_result_msg
+      {if {&& $ok $text}
+         {set $text
+            {sprint
+               {{game get_player_config {$this state_get player_num}} intro_name}
+               ": "
+               $text
+            }
+         }
+         {rpm $text}
+         {session send_to_all
+            {`
+               (if {exists rpm}
+                  {rpm {, $text}}
+               )
+            }
+            kNetReliable
+         }
+      }
+   )
+   (back other)
+)
+(online_kick
+   (title os_kick)
+   (data ())
+   (players ())
+   (enter
+      {game foreach_player_config $pcfg
+         {if {&& {$pcfg is_participating} {! {$pcfg is_local_player}}}
+            {push_back {$this state_get data} {$pcfg get player_name}}
+            {push_back {$this state_get players} {$pcfg get player_num}}
+         }
+      }
+      {if_else {size {$this state_get data}}
+         {$this setup_common}
+         {do
+            {passive_messages_panel queue_message {localize os_no_players}}
+            {$this update_state online}
+         }
+      }
+   )
+   (exit
+      {resize {$this state_get data} 0}
+      {resize {$this state_get players} 0}
+   )
+   (component_select
+      {session kick {elem {$this state_get players} {OS_LIST selected_pos}}}
+      {$this update_state online}
+   )
+   (button_down {$this down_common})
+   (back online)
+)
+(online_gamercard
+   (title os_gamercard)
+   (data ())
+   (players ())
+   (enter
+      {game foreach_player_config $pcfg
+         {push_back {$this state_get data} {$pcfg get player_name}}
+      }
+      {if_else {size {$this state_get data}}
+         {$this setup_common}
+         {do
+            {passive_messages_panel queue_message {localize os_no_players}}
+            {$this update_state online}
+         }
+      }
+   )
+   (exit {resize {$this state_get data} 0})
+   (component_select
+      {session_players_provider show_gamercard
+         {OS_LIST selected_pos}
+         $player_num
+      }
+   )
+   (button_down {$this down_common})
+   (back online)
 )

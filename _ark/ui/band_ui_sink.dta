@@ -2,7 +2,16 @@
    {if {&& {== $button kPad_Tri} {! {is_leader_local}} {ui current_screen}}
       {do
          ($exit {handle_ret ({ui current_screen} allow_remote_exit)})
-         {if {&& $exit {!= $exit kDataUnhandled}}
+         ($unsafe
+            {||
+               {overshell up}
+               {&&
+                  {{{ui current_screen} focus_panel} has (search_mode)}
+                  {{{ui current_screen} focus_panel} get search_mode}
+               }
+            }
+         )
+         {if {&& $exit {!= $exit kDataUnhandled} {! $unsafe}}
             {band_ui_sink trigger_event remote_exit}
          }
       }
@@ -17,6 +26,12 @@
          {synth play button_toggle}
       }
       kDataUnhandled
+   )
+   (BUTTON_DOWN_MSG ; event_dialog_panel hijacks all button_downs when up
+      {if_else {&& {exists overshell} {overshell up}}
+         {overshell button_down $button $player_num}
+         kDataUnhandled
+      }
    )
 )
 (events

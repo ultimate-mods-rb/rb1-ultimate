@@ -302,7 +302,6 @@
    kDataUnhandled
 )
 (BUTTON_DOWN_MSG
-   {print {sprint $button " " $player_num}}
    {if_else {&& {exists overshell} {overshell up}}
       {overshell button_down $button $player_num}
       {do

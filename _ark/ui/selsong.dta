@@ -629,8 +629,11 @@
                }
                {unless {size [players]}
                   ; fill players array
+                  {push_back [players] {gamecfg get leader_num}}
                   {gamecfg foreach_player_config $pcfg
-                     {push_back [players] {$pcfg get player_num}}
+                     {unless {find_elem [players] {$pcfg get player_num}}
+                        {push_back [players] {$pcfg get player_num}}
+                     }
                   }
                }
             }
