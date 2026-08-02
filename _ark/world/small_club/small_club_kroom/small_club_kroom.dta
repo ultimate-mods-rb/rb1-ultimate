@@ -1,0 +1,17 @@
+{foreach $d
+   (
+      room_back.grp 
+      room_geom_opaque.grp
+      room_geom_opaque_rafters.grp
+      props_boxes.grp
+      hanging_lightbulb.mesh
+      master_can.mesh
+   )
+   {$d set_showing FALSE}
+}
+{$this iterate Spotlight $spot
+   {$spot set_showing FALSE}
+}
+{$this iterate BandCamShot $bcs
+   {$bcs set crowd_density 0}
+}
