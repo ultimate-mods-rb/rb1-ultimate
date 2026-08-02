@@ -824,6 +824,12 @@
             {run ulti/ulti_init_apperance.dta}
          )
       )
+      #ifdef _DEBUG
+      ('debug'
+         (type uNormal)
+         (sel_script {$this update_state debug})
+      )
+      #endif
    ))
    (enter {$this setup_common})
    (component_select {$this sel_common})
@@ -1318,7 +1324,6 @@
 (online_gamercard
    (title os_gamercard)
    (data ())
-   (players ())
    (enter
       {game foreach_player_config $pcfg
          {push_back {$this state_get data} {$pcfg get player_name}}
@@ -1341,3 +1346,41 @@
    (button_down {$this down_common})
    (back online)
 )
+#ifdef _DEBUG
+(debug
+   (title 'debug')
+   (data (
+      (os_freecam
+         (type uNormal)
+         (sel_script {cycle_free_camera})
+      )
+      ('enable autoplay'
+         (type uNormal)
+         (sel_script
+            {if {exists beatmatch}
+               {beatmatch foreach_active_player $player
+                  {$player set_auto_play TRUE}
+               }
+            }
+         )
+      )
+      ('fake win (5 stars)'
+         (type uNormal)
+         (sel_script {fake_win 5})
+      )
+      (camera_debug
+         (type uNormal)
+         (sel_script
+            {if {main_panel is_up}
+               {gamemode set_mode camera_debug}
+               {ui goto_screen {gamemode get matchmaking_screen}}
+            }
+         )
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back other)
+)
+#endif

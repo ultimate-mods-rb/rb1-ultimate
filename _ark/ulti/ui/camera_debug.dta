@@ -1,0 +1,72 @@
+{new UIScreen
+   camera_debug_game_screen
+   (panels game world_panel coop_track_panel mtv_overlay)
+   GAME_SCREEN_HANDLERS
+   (shot 1)
+   (shots ())
+   (my_enter
+      {set $camera.disable_picking 1}
+      {set [shot] 1}
+      {$world iterate BandCamShot $bcs
+         {push_back [shots] {$bcs name}}
+      }
+      {$this update_shot}
+      {beatmatch foreach_active_player $p
+         {$p set_auto_play TRUE}
+      }
+   )
+   (exit {resize [shots] 0})
+   (BUTTON_DOWN_MSG
+      {switch $button
+         (kPad_X
+            {'++' [shot]}
+            {if {== [shot] {size [shots]}}
+               {set [shot] 1}
+            }
+            {$this update_shot}
+         )
+         (kPad_Tri
+            {-- [shot]}
+            {if {== [shot] 0}
+               {set [shot] {- {size [shots]} 1}}
+            }
+            {$this update_shot}
+         )
+         (kPad_Circle
+            {set [shot] {'+' [shot] 10}}
+            {if {>= [shot] {size [shots]}}
+               {set [shot] 1}
+            }
+            {$this update_shot}
+         )
+         (kPad_Square
+            {set [shot] {- [shot] 10}}
+            {if {<= [shot] 0}
+               {set [shot] {- {size [shots]} 1}}
+            }
+            {$this update_shot}
+         )
+         kDataUnhandled
+      }
+   )
+   (update_shot
+      {do
+         ($i {elem [shots] [shot]})
+         {if_else {$world exists $i}
+            {do
+               ($world_shot {$world find $i})
+               {do
+                  {$world force_shot $world_shot}
+                  {unless {$world_shot platform_ok}
+                     {cheat_display show {sprint "wrong platform: " $i}}
+                  }
+                  {cheat_display show
+                     {sprint [shot] ": " $i}
+                  }
+               }
+            }
+            {cheat_display show {sprint "couldn't find: " $i}}
+         }
+      }
+   )
+}

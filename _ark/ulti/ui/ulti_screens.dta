@@ -1,5 +1,6 @@
 #include overshell.dta
 #include autoplay.dta
+#include camera_debug.dta
 {new UIPanel
    main_bandtour_panel
    (file "../../ui/main_bandcoop.milo")

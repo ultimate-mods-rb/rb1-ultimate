@@ -597,3 +597,10 @@
    (is_autoplay TRUE)
    COOP_MODE_PROPERTIES
 )
+(camera_debug
+   COOP_MODE_PROPERTIES
+   (show_hud FALSE)
+   (show_track FALSE)
+   (show_mtv_overlay FALSE)
+   (game_screen camera_debug_game_screen)
+)
