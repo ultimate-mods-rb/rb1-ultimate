@@ -283,4 +283,11 @@
    remote_member_available_panel
    (file remote_member_available.milo)
 }
-{new UIPanel content_loading_panel (file content_loading.milo)}
+{new UIPanel content_loading_panel
+   (file content_loading.milo)
+   (enter
+      {if {song_mgr has (songs)}
+         {resize {song_mgr get songs} 0}
+      }
+   )
+}

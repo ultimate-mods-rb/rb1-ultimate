@@ -46,6 +46,7 @@
    (is_loaded {content_mgr refresh_done})
    (enter
       {$this update_search_mode FALSE}
+      {set [fast] {&& $fast_selsong {!= [song_mode] leaderboards}}}
       {band_ui_sink set_controller_level kControllerLevelSession}
       {if {|| {== [song_mode] leaderboards} {== {session mode} kNetLocal}}
          {song_mgr reset_shared_songs TRUE}
@@ -68,7 +69,20 @@
          (leaderboards {{selsong_lower3rd_panel find event.lbl} set text_token ''})
          {fail "Unknown song_mode\n"}
       }
-      {ss_song.lst set_provider song_provider}
+      {if_else [fast]
+         {do
+            {$this update_fast_list}
+            {$this set_focus song_fast.lst}
+            {song_fast.lst set_showing TRUE}
+            {ss_song.lst set_showing FALSE}
+         }
+         {do
+            {ss_song.lst set_showing TRUE}
+            {song_fast.lst set_showing FALSE}
+            {ss_song.lst set_provider song_provider}
+            {$this set_focus ss_song.lst}
+         }
+      }
       {meta music_stop}
       {platform_mgr disable_xmp}
       {if {is_leader_local}
@@ -89,32 +103,47 @@
             }
          }
          {if {&& game {!= {game get_song} ''}}
-            {if
-               {!
-                  {ss_song.lst set_selected {game get_song} FALSE}
+            {if_else [fast]
+               {if {find_elem [data] {game get_song}}
+                  {song_fast.lst set_selected {get_elem [data] {game get_song}}}
                }
-               {ss_song.lst set_selected random_song}
+               {if {! {ss_song.lst set_selected {game get_song} FALSE}}
+                  {ss_song.lst set_selected random_song}
+               }
             }
          }
       }
       {$this play_preview}
-      {$this set old_list_pos {ss_song.lst selected_pos}}
-      {$this update_setlist_progress}
-      {set $highlit_song
-         {if_else {song_provider is_random {ss_song.lst selected_pos}}
-            random_song
-            {song_provider get_song_to_set {ss_song.lst selected_pos}}
+      {$this set old_list_pos
+         {if_else [fast]
+            {song_fast.lst selected_pos}
+            {ss_song.lst selected_pos}
          }
       }
-      {if {!= [song_mode] leaderboards}
-         {session send_to_all
-            {'`'
-               ({',' $this}
-                  set_highlit_song
-                  {',' $highlit_song}
-               )
+      {$this update_setlist_progress}
+      {do
+         ($highlit_song
+            {if_else [fast]
+               {if_else {song_fast.lst selected_pos}
+                  {elem [data] {song_fast.lst selected_pos}}
+                  random_song
+               }
+               {if_else {song_provider is_random {ss_song.lst selected_pos}}
+                  random_song
+                  {song_provider get_song_to_set {ss_song.lst selected_pos}}
+               }
             }
-            kNetReliable
+         )
+         {if {!= [song_mode] leaderboards}
+            {session send_to_all
+               {'`'
+                  ({',' $this}
+                     set_highlit_song
+                     {',' $highlit_song}
+                  )
+               }
+               kNetReliable
+            }
          }
       }
       {$this update_filter {song_provider get_display}}
@@ -122,13 +151,15 @@
    )
    (exit
       {set [search_mode] FALSE}
-      {set [results] {array 0}}
       {set [sel_leader] -1}
       {set [hb] FALSE}
       {set [hbw] FALSE}
       {if {size [players]}
          {remove_elem [players] {get_elem [players] 0}}
       }
+      {resize [results] 0}
+      {resize [data] 0}
+      {resize [titles] 0}
       {platform_mgr enable_xmp}
       {platform_mgr remove_sink $this storage_changed}
       {session remove_sink $this change_game_msg}
@@ -157,8 +188,19 @@
    (BUTTON_DOWN_MSG
       {cond
          ({$this is_updown $button}
-            {if {!= {$this get old_list_pos} {ss_song.lst selected_pos}}
-               {$this set old_list_pos {ss_song.lst selected_pos}}
+            {if
+               {!= {$this get old_list_pos}
+                  {if_else [fast]
+                     {song_fast.lst selected_pos}
+                     {ss_song.lst selected_pos}
+                  }
+               }
+               {$this set old_list_pos
+                  {if_else [fast]
+                     {song_fast.lst selected_pos}
+                     {ss_song.lst selected_pos}
+                  }
+               }
                {song_preview ''}
             }
             kDataUnhandled
@@ -217,24 +259,45 @@
          ({== $button kPad_R1}
             {unless [search_mode]
                {synth play button_toggle}
-               {do
-                  ($ix {ss_song.lst selected_pos})
-                  {while
-                     {||
-                        {song_provider is_active $ix}
-                        {song_provider get_song_to_set $ix}
+               {if_else [fast]
+                  {do
+                     ($ix {song_fast.lst selected_pos})
+                     ($b TRUE)
+                     {while {&& {< $ix {size [data]}} $b}
+                        {if {find_elem [titles] {elem [data] $ix}}
+                           {set $b FALSE}
+                        }
+                        {++ $ix}
                      }
-                     {++ $ix}
-                  }
-                  {if {! {song_provider is_active $ix}}
-                     {ss_song.lst set_selected {+ $ix 1} $ix}
-                     {if {!= {ss_song.lst selected_pos} {+ $ix 1}}
-                        {ss_song.lst set_selected 2 1}
+                     {if $b
+                        {set $ix 2}
                      }
+                     {song_fast.lst set_selected $ix {- $ix 1}}
                      {$this component_scroll 0 0}
                      {$this play_preview}
                      {if {!= [song_mode] leaderboards}
                         {session send_to_all {'`' ({',' $this} play_preview)} kNetReliable}
+                     }
+                  }
+                  {do
+                     ($ix {ss_song.lst selected_pos})
+                     {while
+                        {||
+                           {song_provider is_active $ix}
+                           {song_provider get_song_to_set $ix}
+                        }
+                        {++ $ix}
+                     }
+                     {if {! {song_provider is_active $ix}}
+                        {ss_song.lst set_selected {+ $ix 1} $ix}
+                        {if {!= {ss_song.lst selected_pos} {+ $ix 1}}
+                           {ss_song.lst set_selected 2 1}
+                        }
+                        {$this component_scroll 0 0}
+                        {$this play_preview}
+                        {if {!= [song_mode] leaderboards}
+                           {session send_to_all {'`' ({',' $this} play_preview)} kNetReliable}
+                        }
                      }
                   }
                }
@@ -279,15 +342,26 @@
    )
    (SCROLL_MSG
       {if [search_mode]
-         {ss_song.lst set_selected
-            {elem [results] {song_search.lst selected_pos}}
+         {if_else [fast]
+            {song_fast.lst set_selected
+               {get_elem [data] {elem [results] {song_search.lst selected_pos}}}
+            }
+            {ss_song.lst set_selected
+               {elem [results] {song_search.lst selected_pos}}
+            }
          }
       }
       {do
          ($highlit_song
-            {if_else {song_provider is_random {ss_song.lst selected_pos}}
-               random_song
-               {song_provider get_song_to_set {ss_song.lst selected_pos}}
+            {if_else [fast]
+               {if_else {song_fast.lst selected_pos}
+                  {elem [data] {song_fast.lst selected_pos}}
+                  random_song
+               }
+               {if_else {song_provider is_random {ss_song.lst selected_pos}}
+                  random_song
+                  {song_provider get_song_to_set {ss_song.lst selected_pos}}
+               }
             }
          )
          {if {!= [song_mode] leaderboards}
@@ -306,7 +380,10 @@
    (set_highlit_song
       ($song_symbol)
       {if {'||' {has_song $song_symbol} {== $song_symbol random_song}}
-         {ss_song.lst set_selected $song_symbol}
+         {if_else [fast]
+            {song_fast.lst set_selected {get_elem [data] $song_symbol}}
+            {ss_song.lst set_selected $song_symbol}
+         }
       }
    )
    (select_song
@@ -343,13 +420,24 @@
       }
    )
    (invalid_selection
-      {song_provider is_invalid_song {ss_song.lst selected_pos}}
+      {if_else [fast]
+         {== {song_fast.lst selected_pos} 0}
+         {song_provider is_invalid_song {ss_song.lst selected_pos}}
+      }
    )
    (play_preview
       {if_else {$this invalid_selection}
          {song_preview ''}
          {do
-            ($song_to_set {song_provider get_song_to_set {ss_song.lst selected_pos}})
+            ($song_to_set
+               {if_else [fast]
+                  {if_else {song_fast.lst selected_pos}
+                     {elem [data] {song_fast.lst selected_pos}}
+                     ''
+                  }
+                  {song_provider get_song_to_set {ss_song.lst selected_pos}}
+               }
+            )
             {if {&& {!= $song_to_set ""} {song_mgr is_song_shared $song_to_set}}
                {song_preview $song_to_set}
             }
@@ -358,7 +446,10 @@
    )
    (switch_grouping
       {song_provider cycle_display}
-      {ss_song.lst set_provider song_provider}
+      {if_else [fast]
+         {$this update_fast_list}
+         {ss_song.lst set_provider song_provider}
+      }
       {$this select_first_selectable}
       {$this play_preview}
       {$this sync_grouping_method}
@@ -368,7 +459,10 @@
       ($ix)
       {unless {== $ix {song_provider get_display}}
          {song_provider set_display $ix}
-         {ss_song.lst set_provider song_provider}
+         {if_else [fast]
+            {$this update_fast_list}
+            {ss_song.lst set_provider song_provider}
+         }
          {$this select_first_selectable}
          {$this play_preview}
          {$this update_filter {song_provider get_display}}
@@ -392,7 +486,21 @@
    )
    (save_song
       {do
-         ($song {song_provider get_song_to_set {ss_song.lst selected_pos}})
+         ($song
+            {if_else [fast]
+               {if_else {song_fast.lst selected_pos}
+                  {elem [data] {song_fast.lst selected_pos}}
+                  {do ; the random_song func is really slow for some reason
+                     ($s {random_elem [data]})
+                     {while {! {has_song $s}}
+                        {set $s {random_elem [data]}}
+                     }
+                     $s
+                  }
+               }
+               {song_provider get_song_to_set {ss_song.lst selected_pos}}
+            }
+         )
          {if_else
             {'||'
                {== [song_mode] leaderboards}
@@ -473,13 +581,16 @@
       }
    )
    (select_first_selectable
-      {do
-         ($ix 0)
-         {while {! {song_provider is_active $ix}}
-            {'++' $ix}
-         }
-         {if {song_provider is_active $ix}
-            {ss_song.lst set_selected $ix}
+      {if_else [fast]
+         {song_fast.lst set_selected 0}
+         {do
+            ($ix 0)
+            {while {! {song_provider is_active $ix}}
+               {'++' $ix}
+            }
+            {if {song_provider is_active $ix}
+               {ss_song.lst set_selected $ix}
+            }
          }
       }
    )
@@ -523,6 +634,13 @@
       {song_search.lst set_type song_search}
       {song_search.lst set spacing 58}
       {song_search.lst set_showing FALSE}
+
+      {new UIList song_fast.lst}
+      {song_fast.lst copy ss_song.lst 1}
+      {song_fast.lst set_type song_search}
+      {song_fast.lst set spacing 58}
+      {song_fast.lst set_showing FALSE}
+
       {$this sync_objects}
    )
    (VIRTUAL_KEYBOARD_RESULT_MSG
@@ -532,30 +650,43 @@
    )
    (search_for
       ($string)
-      {set [results] {array 0}}
+      {resize [results] 0}
       {do
          ($i 0)
          ($f 0)
          ($songs {array 0})
          ($data {array 0})
-         {while {<= $f 3}
-            {++ $i}
-            {if_else
-               {||
-                  {song_provider is_invalid_song $i}
-                  {! {has_song {song_provider get_song_to_set $i}}}
-               }
-               {++ $f}
-               {do
-                  ($s {song_provider get_song_to_set $i})
-                  {set $f 0}
-                  ; array was crashing for some reason
+         {if_else [fast]
+            {foreach $s {song_mgr get songs}
+               {if {has_song $s}
                   {push_back $songs
                      {`(
                         {, {song_mgr song_name $s}}
                         {, {song_mgr by_line $s}}
                         {, $s}
                      )}
+                  }
+               }
+            }
+            {while {<= $f 3}
+               {++ $i}
+               {if_else
+                  {||
+                     {song_provider is_invalid_song $i}
+                     {! {has_song {song_provider get_song_to_set $i}}}
+                  }
+                  {++ $f}
+                  {do
+                     ($s {song_provider get_song_to_set $i})
+                     {set $f 0}
+                     ; array was crashing for some reason
+                     {push_back $songs
+                        {`(
+                           {, {song_mgr song_name $s}}
+                           {, {song_mgr by_line $s}}
+                           {, $s}
+                        )}
+                     }
                   }
                }
             }
@@ -598,19 +729,22 @@
    (update_search_mode
       ($bool)
       {set [search_mode] $bool}
-      {if_else $bool
-         {do
-            {song_search.lst set_showing TRUE}
+      {{selsong_lower3rd_panel find filter_title.lbl} set_showing {! [search_mode]}}
+      {song_search.lst set_showing [search_mode]}
+      {cond
+         ([search_mode]
             {ss_song.lst set_showing FALSE}
+            {song_fast.lst set_showing FALSE}
             {$this set_focus song_search.lst}
-            {{selsong_lower3rd_panel find filter_title.lbl} set_showing FALSE}
-         }
-         {do
+         )
+         ([fast]
+            {song_fast.lst set_showing TRUE}
+            {$this set_focus song_fast.lst}
+         )
+         (TRUE
             {ss_song.lst set_showing TRUE}
-            {song_search.lst set_showing FALSE}
             {$this set_focus ss_song.lst}
-            {{selsong_lower3rd_panel find filter_title.lbl} set_showing TRUE}
-         }
+         )
       }
    )
    (sel_leader -1)
@@ -705,6 +839,220 @@
       {if {&& {== {$new_screen focus_panel} $this} [hb]}
          {helpbar set_config [hb]}
          {helpbar set_waiting [hbw]}
+      }
+   )
+   (fast FALSE)
+   (data ())
+   (titles ())
+   (update_fast_list
+      {unless {&& {song_mgr has (songs)} {size {song_mgr get songs}}}
+         ; this is kinda slow. thank u for not removing this handle hmx.
+         {song_mgr set songs {song_mgr get_local_unlocked_songs}}
+      }
+      {do
+         ($sort {array 0})
+         ($data {array 0})
+         ($titles {array 0})
+         ($i 0)
+         ($type {elem {elem {find $syscfg song_groupings} {'+' {song_provider get_display} 1}} 0})
+         {foreach $song {song_mgr get songs} {do
+            ($song_data {song_mgr get_data $song})
+            {if
+               {&&
+                  {song_mgr is_song_shared $song}
+                  {! {song_mgr has_missing_parts $song {gamemode get missing_part_type}}}
+               }
+               {push_back $sort
+                  {`
+                     (
+                        {,
+                           {switch $type
+                              (alpha_song
+                                 {song_mgr song_name $song}
+                              )
+                              (alpha_artist
+                                 {sprint
+                                    {song_mgr song_artist $song}
+                                    {song_mgr song_name $song}
+                                 }
+                              )
+                              (genre
+                                 {sprint
+                                    {elem {find $song_data genre} 1}
+                                    {song_mgr song_artist $song}
+                                    {song_mgr song_name $song}
+                                 }
+                              )
+                              (decade
+                                 {sprint
+                                    {switch {elem {find $song_data decade} 1}
+                                       (the50s 0)
+                                       (the60s 1)
+                                       (the70s 2)
+                                       (the80s 3)
+                                       (the90s 4)
+                                       (the00s 5)
+                                       (the10s 6)
+                                       (the20s 7)
+                                       (the30s 8)
+                                       9
+                                    }
+                                    {song_mgr song_artist $song}
+                                    {song_mgr song_name $song}
+                                 }
+                              )
+                              (game_origin
+                                 {sprint
+                                    {do
+                                       ($origin
+                                          {if_else {find_exists $song_data game_origin}
+                                             {elem {find $song_data game_origin} 1}
+                                             zzz
+                                          }
+                                       )
+                                       {if_else {== $origin rb11}
+                                          '0'
+                                          $origin
+                                       }
+                                    }
+                                    {song_mgr song_name $song}
+                                 }
+                              )
+                              (rank
+                                 {do
+                                    ($rank {elem {find $song_data rank {gamemode get unlock_song_instrument}} 1})
+                                    {if_else {< $rank 100}
+                                       {sprint 0 $rank}
+                                       {sprint $rank}
+                                    }
+                                 }
+                              )
+                           }
+                        }
+                        {, $song}
+                     )
+                  }
+               }
+            }
+         }}
+         {sort $sort}
+         {while {< $i {size $sort}}
+            {set_elem $sort $i {elem {elem $sort $i} 1}}
+            {do
+               ($song {elem $sort $i})
+               ($song_data {song_mgr get_data $song})
+               ($title
+                  {switch $type
+                     ((alpha_song alpha_artist)
+                        {switch
+                           {str_elem
+                              {tolower
+                                 {if_else {== $type alpha_song}
+                                    {song_mgr song_name $song}
+                                    {song_mgr song_artist $song}
+                                 }
+                              }
+                              0
+                           }
+                           (a a_title)
+                           (b b_title)
+                           (c c_title)
+                           (d d_title)
+                           (e e_title)
+                           (f f_title)
+                           (g g_title)
+                           (h h_title)
+                           (i i_title)
+                           (j j_title)
+                           (k k_title)
+                           (l l_title)
+                           (m m_title)
+                           (n n_title)
+                           (o o_title)
+                           (p p_title)
+                           (q q_title)
+                           (r r_title)
+                           (s s_title)
+                           (t t_title)
+                           (u u_title)
+                           (v v_title)
+                           (w w_title)
+                           (x x_title)
+                           (y y_title)
+                           (z z_title)
+                           symbol_sort
+                        }
+                     )
+                     ((genre game_origin decade)
+                        {do
+                           ($sym
+                              {switch $type
+                                 (genre genre)
+                                 (game_origin game_origin)
+                                 (decade decade)
+                              }
+                           )
+                           {if_else {find_exists $song_data $sym}
+                              {elem {find $song_data $sym} 1}
+                              none
+                           }
+                        }
+                     )
+                     (rank
+                        {do
+                           ($rank {elem {find $song_data rank {gamemode get unlock_song_instrument}} 1})
+                           {cond
+                              ({<= $rank 130} generic_tier1)
+                              ({<= $rank 170} generic_tier2)
+                              ({<= $rank 220} generic_tier3)
+                              ({<= $rank 250} generic_tier4)
+                              ({<= $rank 280} generic_tier5)
+                              ({<= $rank 315} generic_tier6)
+                              ({<= $rank 350} generic_tier7)
+                              ({<= $rank 380} generic_tier8)
+                              (TRUE generic_tier9)
+                           }
+                        }
+                     )
+                  }
+               )
+               {unless {&& $title {== {type $title} kDataSymbol}}
+                  {set $title {symbol $title}}
+               }
+               {if {&& $title {! {find_elem $titles $title}}}
+                  {insert_elem $sort $i $title}
+                  {push_back $titles $title}
+                  {++ $i}
+               }
+            }
+            {++ $i}
+         }
+         {foreach $song $sort
+            {push_back $data
+               {if_else {find_elem $titles $song}
+                  $song
+                  {sprint
+                     {song_mgr song_name $song}
+                     "\n"
+                     {song_mgr by_line $song}
+                  }
+               }
+            }
+         }
+         {insert_elem $sort 0 random_song}
+         {insert_elem $data 0
+            {sprint
+               {localize random_song}
+               "\n"
+               {localize random_song_by_line}
+            }
+         }
+         {song_fast.lst set_data $data}
+         {foreach $title $titles
+            {song_fast.lst disable_data $title}
+         }
+         {set [data] $sort}
+         {set [titles] $titles}
       }
    )
 )

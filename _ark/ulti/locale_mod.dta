@@ -207,6 +207,7 @@
 (os_svol_fmt "Ò Sound Effects Vol: %d Ó")
 (os_avs_fmt "Ò A/V Sync Offset: %d Ó")
 (os_lo_fmt "Ò Lag Offset: %d Ó")
+(os_fast_selsong "Fast Song Select")
 (os_online "Online Options")
 (os_send_msg "Send Message")
 (os_send_msg_info "Send a message to all players")
@@ -555,6 +556,32 @@
 {info_lives "LIVES: %d/%d"}
 {info_songs "SONGS: %d/%d"}
 {info_notes "STREAK: %d"}
+(a_title "A")
+(b_title "B")
+(c_title "C")
+(d_title "D")
+(e_title "E")
+(f_title "F")
+(g_title "G")
+(h_title "H")
+(i_title "I")
+(j_title "J")
+(k_title "K")
+(l_title "L")
+(m_title "M")
+(n_title "N")
+(o_title "O")
+(p_title "P")
+(q_title "Q")
+(r_title "R")
+(s_title "S")
+(t_title "T")
+(u_title "U")
+(v_title "V")
+(w_title "W")
+(x_title "X")
+(y_title "Y")
+(z_title "Z")
 ;;;
 ;;; DRUM TRAINER
 ;;;

@@ -1,7 +1,7 @@
 # IF YOU DO NOT KNOW WHAT THIS FILE IS IGNORE IT
 title_name = "Rock Band"
 title_id = "45410829"
-hash = "38E508EA02F63013" # default.xex
+hash = "42054E24EA901110" # default.xex
 
 [[patch]]
     name = "cymbals or whatever"
@@ -128,3 +128,12 @@ hash = "38E508EA02F63013" # default.xex
     [[patch.string]]
         address = 0x8207c528
         value   = "rb1uwucache"
+
+[[patch]]
+    name = "dont reset shared songs on get_local_unlocked_songs"
+    author = "Synchrony"
+    is_enabled = true
+
+    [[patch.be32]]
+        address = 0x8244dba0 # call to SongMgr::ResetSharedSongs in SongMgr::OnGetLocalUnlockedSongs
+        value   = 0x60000000 # nop

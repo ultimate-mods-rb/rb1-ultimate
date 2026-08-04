@@ -816,6 +816,11 @@
          (bool $skipintro)
          (sel_script {toggle_var skipintro})
       )
+      (os_fast_selsong
+         (type uOnOFF)
+         (bool $fast_selsong)
+         (sel_script {toggle_var fast_selsong})
+      )
       (os_reset_all
          (type uNormal)
          (block_ingame TRUE)

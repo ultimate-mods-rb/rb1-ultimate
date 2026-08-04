@@ -89,6 +89,8 @@
 
 {set $char_list {array 0}}
 
+{set $fast_selsong TRUE}
+
 {set $smallworld FALSE}
 
 {set $bigmode FALSE}

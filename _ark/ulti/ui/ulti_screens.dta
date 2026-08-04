@@ -312,12 +312,19 @@
             filter_difficulty
             filter_genre
             filter_decade
+            filter_game_origin
             filter_alphabetic_song
             filter_alphabetic_band
-            filter_game_origin
          )
       }
-      {players.lst set_selected {song_provider get_display}}
+      {players.lst set_selected
+         {switch {song_provider get_display}
+            (3 4)
+            (4 5)
+            (5 3)
+            {song_provider get_display}
+         }
+      }
       {players.lst set_local_pos_index 2 63.00}
    )
    (BUTTON_DOWN_MSG
@@ -328,9 +335,19 @@
    )
    (SELECT_MSG
       {ui pop_screen}
-      {unless {== {$component selected_pos} {song_provider get_display}}
-         {[target] set_grouping_method {$component selected_pos}}
-         {[target] sync_grouping_method}
+      {do
+         ($i
+            {switch {$component selected_pos}
+               (4 3)
+               (5 4)
+               (3 5)
+               {$component selected_pos}
+            }
+         )
+         {unless {== $i {song_provider get_display}}
+            {[target] set_grouping_method $i}
+            {[target] sync_grouping_method}
+         }
       }
    )
 }

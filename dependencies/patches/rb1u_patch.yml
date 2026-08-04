@@ -66,3 +66,13 @@ PPU-dad9f4b34e15d7cd98c8f65dc955694641c54397:
       - [ be32, 0x00052aec, 0x4BFF99FD ] # bl SongMgr:Data (0004c4e8)
       - [ be32, 0x00052af0, 0x3800000a ] # set datanode? type to kDataArray??? this is wrong yet it works?
       - [ be32, 0x00052af4, 0x60000000 ] # harmful math stuff
+  "dont reset shared songs on get_local_unlocked_songs":
+    Games:
+      "Rock Band":
+        BLUS30050: [ 01.07 ]
+    Author: "Synchrony"
+    Notes: "yawn"
+    Patch Version: 1.0
+    Patch:
+      # call to SongMgr::ResetSharedSongs in SongMgr::OnGetLocalUnlockedSongs
+      - [ be32, 0x00050120, 0x60000000 ] # nop
