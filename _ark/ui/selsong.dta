@@ -873,13 +873,16 @@
                               (alpha_artist
                                  {sprint
                                     {song_mgr song_artist $song}
+                                    " "
                                     {song_mgr song_name $song}
                                  }
                               )
                               (genre
                                  {sprint
                                     {elem {find $song_data genre} 1}
+                                    " "
                                     {song_mgr song_artist $song}
+                                    " "
                                     {song_mgr song_name $song}
                                  }
                               )
@@ -897,7 +900,9 @@
                                        (the30s 8)
                                        9
                                     }
+                                    " "
                                     {song_mgr song_artist $song}
+                                    " "
                                     {song_mgr song_name $song}
                                  }
                               )
@@ -915,6 +920,7 @@
                                           $origin
                                        }
                                     }
+                                    " "
                                     {song_mgr song_name $song}
                                  }
                               )

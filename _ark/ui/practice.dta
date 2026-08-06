@@ -46,11 +46,15 @@
    (content_name "")
    (corrupt FALSE)
    (enter
+      #ifdef HX_XBOX
+      {check_song_corrupt}
+      #endif
       {if_else [preload_ok]
          {ui goto_screen practice_pre_sel_section_screen}
          {band_ui_sink content_file_read_failed [content_name] [corrupt]}
       }
    )
+   (load {update_song_midi})
 }
 {new UIScreen
    practice_preloading_screen

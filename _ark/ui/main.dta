@@ -326,7 +326,6 @@
    (mode_focus solo.btn)
    (msg_last_frame 0)
    (finished_loading FALSE)
-   (updated FALSE)
    (load
       {if {fx is_up}
          {fx fade_out}
@@ -368,14 +367,6 @@
             {{ui current_screen} has_panel main_panel}
          }
          COMMON_FIRST_TIME_STUFF
-         #ifdef HX_XBOX
-            {update_metadata}
-         #else
-            {unless [updated]
-               {update_metadata}
-               {set [updated] TRUE}
-            }
-         #endif
          {set [finished_loading] FALSE}
       }
    )

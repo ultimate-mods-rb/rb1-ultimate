@@ -574,12 +574,8 @@
          (cores (-1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1))
          (drum_solo (seqs (kick.cue snare.cue tom1.cue tom2.cue crash.cue)))
          (drum_freestyle (seqs (kick.cue snare.cue hat.cue ride.cue crash.cue)))
-         (midi_file
-            {if_else $prodrums
-               songs/flirtinwithdisaster/flirtinwithdisaster_pro.mid
-               songs/flirtinwithdisaster/flirtinwithdisaster.mid
-            }
-         )
+         (midi_file songs/flirtinwithdisaster/flirtinwithdisaster.mid)
+         (pro_midi_file songs/flirtinwithdisaster/flirtinwithdisaster_pro.mid)
       )
       (song_scroll_speed 2300)
       (bank sfx/handclap_bank.milo)
@@ -1166,12 +1162,8 @@
       (cores (-1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 -1))
       (drum_solo (seqs (kick.cue snare.cue tom1.cue tom2.cue crash.cue)))
       (drum_freestyle (seqs (kick.cue snare.cue hat.cue ride.cue crash.cue)))
-      (midi_file
-         {if_else $prodrums
-            songs/orangecrush/orangecrush_pro.mid
-            songs/orangecrush/orangecrush.mid
-         }
-      )
+      (midi_file songs/orangecrush/orangecrush.mid)
+      (pro_midi_file songs/orangecrush/orangecrush_pro.mid)
    )
    (song_scroll_speed 2300)
    (bank sfx/tambourine_bank.milo)
@@ -1287,12 +1279,8 @@
       (cores (-1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 -1))
       (drum_solo (seqs (kick.cue snare.cue tom1.cue tom2.cue crash.cue)))
       (drum_freestyle (seqs (kick.cue snare.cue hat.cue ride.cue crash.cue)))
-      (midi_file
-         {if_else $prodrums
-            songs/runtothehills/runtothehills_pro.mid
-            songs/runtothehills/runtothehills.mid
-         }
-      )
+      (midi_file songs/runtothehills/runtothehills.mid)
+      (pro_midi_file songs/runtothehills/runtothehills_pro.mid)
    )
    (song_scroll_speed 2300)
    (bank sfx/tambourine_bank.milo)
@@ -1492,12 +1480,8 @@
       (cores (-1 -1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1))
       (drum_solo (seqs (kick.cue snare.cue tom1.cue tom2.cue crash.cue)))
       (drum_freestyle (seqs (kick.cue snare.cue hat.cue ride.cue crash.cue)))
-      (midi_file
-         {if_else $prodrums
-            songs/thehandthatfeeds/thehandthatfeeds_pro.mid
-            songs/thehandthatfeeds/thehandthatfeeds.mid
-         }
-      )
+      (midi_file songs/thehandthatfeeds/thehandthatfeeds.mid)
+      (pro_midi_file songs/thehandthatfeeds/thehandthatfeeds_pro.mid)
    )
    (song_scroll_speed 2300)
    (bank sfx/tambourine_bank.milo)
@@ -2073,12 +2057,8 @@
       (cores (-1 -1 -1 -1 -1 -1 1 1 -1 -1 -1))
       (drum_solo (seqs (kick.cue snare.cue tom1.cue tom2.cue crash.cue)))
       (drum_freestyle (seqs (kick.cue snare.cue hat.cue ride.cue crash.cue)))
-      (midi_file
-         {if_else $prodrums
-            songs/igetby/igetby_pro.mid
-            songs/igetby/igetby.mid
-         }
-      )
+      (midi_file songs/igetby/igetby.mid)
+      (pro_midi_file songs/igetby/igetby_pro.mid)
       (hopo_threshold 250)
    )
    (song_scroll_speed 2300)
@@ -2198,12 +2178,8 @@
       (cores (-1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1))
       (drum_solo (seqs (kick.cue snare.cue tom1.cue tom2.cue crash.cue)))
       (drum_freestyle (seqs (kick.cue snare.cue hat.cue ride.cue crash.cue)))
-      (midi_file
-         {if_else $prodrums
-            songs/outside/outside_pro.mid
-            songs/outside/outside.mid
-         }
-      )
+      (midi_file songs/outside/outside.mid)
+      (pro_midi_file songs/outside/outside_pro.mid)
    )
    (song_scroll_speed 2300)
    (bank sfx/tambourine_bank.milo)
@@ -2320,12 +2296,8 @@
       (cores (-1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1))
       (drum_solo (seqs (kick.cue snare.cue tom1.cue tom2.cue crash.cue)))
       (drum_freestyle (seqs (kick.cue snare.cue hat.cue ride.cue crash.cue)))
-      (midi_file
-         {if_else $prodrums
-            songs/timewehad/timewehad_pro.mid
-            songs/timewehad/timewehad.mid
-         }
-      )
+      (midi_file songs/timewehad/timewehad.mid)
+      (pro_midi_file songs/timewehad/timewehad_pro.mid)
    )
    (song_scroll_speed 2300)
    (bank sfx/tambourine_bank.milo)

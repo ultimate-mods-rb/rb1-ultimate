@@ -290,4 +290,5 @@
          {resize {song_mgr get songs} 0}
       }
    )
+   (exit {update_metadata})
 }

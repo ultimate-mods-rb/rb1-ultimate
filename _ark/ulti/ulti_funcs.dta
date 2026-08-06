@@ -719,9 +719,19 @@
             ($data {song_mgr get_data {elem $song 0}})
             {foreach $a $song
                {if {== {type $a} kDataArray}
-                  {if_else {find_exists $data {elem $a 0}}
-                     {set_elem {find $data {elem $a 0}} 1 {elem $a 1}}
-                     {push_back $data {eval $a}}
+                  {if_else {!= {elem $a 0} song}
+                     {if_else {find_exists $data {elem $a 0}}
+                        {set_elem {find $data {elem $a 0}} 1 {elem $a 1}}
+                        {push_back $data {eval $a}}
+                     }
+                     {foreach $as $a
+                        {if {&& {== {type $as} kDataArray} {! {has_substr {elem $as 0} midi_file}}}
+                           {if_else {find_exists $data song {elem $as 0}}
+                              {set_elem {find $data song {elem $as 0}} 1 {elem $as 1}}
+                              {push_back {find $data song} {eval $as}}
+                           }
+                        }
+                     }
                   }
                }
             }
@@ -729,6 +739,83 @@
       }
    }
 }
+{func update_song_midi
+   {do
+      ($song {game get_song})
+      ($data {song_mgr get_data $song})
+      ($midi {find_exists $syscfg missing_song_data $song song midi_file})
+      ($pro_midi {find_exists $syscfg missing_song_data $song song pro_midi_file})
+      ($pro_data {find_exists $data song pro_midi_file})
+      ($file
+         {cond
+            ({&& $pro_midi $prodrums}
+               {elem $pro_midi 1}
+            )
+            ({&& $pro_data $prodrums}
+               #ifdef HX_PS3
+                  {do
+                     ($s {song_mgr song_path $song})
+                     {search_replace
+                        $s
+                        {sprint "songs/" $song "/" $song}
+                        {elem $pro_data 1}
+                        $s
+                     }
+                     $s
+                  }
+               #else
+                  {sprint
+                     {if_else {find_exists $data song content_root}
+                        {elem {find $data song content_root} 1}
+                        "."
+                     }
+                     "/"
+                     {elem $pro_data 1}
+                  }
+               #endif
+            )
+            ($midi {elem $midi 1})
+            ({|| $pro_midi $pro_data}
+               {sprint {song_mgr song_path $song}
+                  #ifdef HX_PS3
+                  {if_else {startswith {song_mgr song_path $song} "."}
+                     ".mid"
+                     ".mid.edat"
+                  }
+                  #else
+                  ".mid"
+                  #endif
+               }
+            )
+            (TRUE kDataUnhandled)
+         }
+      )
+      {if $file
+         {print {sprint "using midi \q" $file "\q"}}
+         {set_elem {find $data song midi_file} 1 $file}
+      }
+   }
+}
+#ifdef HX_XBOX
+{func check_song_corrupt
+   {unless [preload_ok]
+      {do
+         ($data {song_mgr get_data {game get_song}})
+         ($midi {elem {find $data song midi_file} 1})
+         ($root {find_exists $data song content_root})
+         {if
+            {&&
+               $root
+               {has_substr $midi {elem $root 1}}
+               {has_substr $midi "./"}
+            }
+            {update_song_midi}
+            {set [preload_ok] TRUE}
+         }
+      }
+   }
+}
+#endif
 {func update_vocal_gender
    {if {&& $force_vg {!= $force_vg off}}
       {do
