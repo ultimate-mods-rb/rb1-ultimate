@@ -622,7 +622,12 @@
       (song_search
          (resource_file "resource/list_song_search.milo")
          (vertical TRUE)
-         (element ((text "list.lbl")))
+         (element
+            (
+               (text "list.lbl")
+               (text "icon.lbl")
+            )
+         )
          (back_arrow "back.mesh")
          (next_arrow "next.mesh")
          (highlight
@@ -655,9 +660,29 @@
                      (selecting 0.5 0.35 0)
                   )
                )
+               (
+                  (normal
+                     (normal 1.0 1.0 1.0)
+                     (focused 1.0 1.0 1.0)
+                     (disabled 1.0 1.0 1.0)
+                     (selecting 1.0 1.0 1.0)
+                  )
+                  (highlight
+                     (normal 1.0 1.0 1.0)
+                     (focused 1.0 1.0 1.0)
+                     (disabled 1.0 1.0 1.0)
+                     (selecting 1.0 1.0 1.0)
+                  )
+                  (disabled
+                     (normal 1.0 1.0 1.0)
+                     (focused 1.0 1.0 1.0)
+                     (disabled 1.0 1.0 1.0)
+                     (selecting 1.0 1.0 1.0)
+                  )
+               )
             )
          )
-         (provider ("I get by\nHonest Bob"))
+         (provider ("I get by\nHonest Bob" ""))
       )
    )
 )
@@ -681,6 +706,10 @@
       )
       (icons_tour
          (resource_file "resource/icons_tour.milo")
+         (texts (text "icons_tour.txt"))
+      )
+      (icons_origin
+         (resource_file "resource/icons_origin.milo")
          (texts (text "icons_tour.txt"))
       )
    )

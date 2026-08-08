@@ -629,18 +629,13 @@
    (results ())
    (search_mode FALSE)
    (finish_load
-      {new UIList song_search.lst}
-      {song_search.lst copy ss_song.lst 1}
-      {song_search.lst set_type song_search}
-      {song_search.lst set spacing 58}
-      {song_search.lst set_showing FALSE}
-
-      {new UIList song_fast.lst}
-      {song_fast.lst copy ss_song.lst 1}
-      {song_fast.lst set_type song_search}
-      {song_fast.lst set spacing 58}
-      {song_fast.lst set_showing FALSE}
-
+      {foreach $l (song_search.lst song_fast.lst)
+         {new UIList $l}
+         {$l copy ss_song.lst 1}
+         {$l set_type song_search}
+         {$l set spacing 62}
+         {$l set_showing FALSE}
+      }
       {$this sync_objects}
    )
    (VIRTUAL_KEYBOARD_RESULT_MSG
@@ -707,7 +702,7 @@
                      {! {song_mgr has_missing_parts $song {gamemode get missing_part_type}}}
                      {! {find_elem [results] $song}}
                   }
-                  {push_back $data {sprintf "%s\n%s" $title $artist}}
+                  {push_back $data {sprintf "%s%s\n%s" {$this get_icon $song} $title $artist}}
                   {push_back [results] $song}
                }
             }
@@ -1038,6 +1033,7 @@
                {if_else {find_elem $titles $song}
                   $song
                   {sprint
+                     {$this get_icon $song}
                      {song_mgr song_name $song}
                      "\n"
                      {song_mgr by_line $song}
@@ -1061,6 +1057,22 @@
          {set [titles] $titles}
       }
    )
+   (get_icon
+      ($sym) {do
+      ($a {find_exists {song_mgr get_data $sym} game_origin})
+      {if_else $a
+         {switch {elem $a 1}
+            (rb11 "")
+            (rb22 "")
+            (rb2 "")
+            (lego "")
+            (rb3 "")
+            (rb4 "")
+            ""
+         }
+         ""
+      }
+   })
 )
 {new UIScreen
    invalid_selection_screen
