@@ -148,6 +148,9 @@
       {unless {&& {gamemode get is_practice} {gamecfg get practice_speed}}
          {beatmatch set_music_speed {get_song_speed}}
       }
+      {if {&& {world_movie_panel is_active} {game paused}} ; MoviePanel::Poll doesn't call UIPanel::Poll :(
+         {game set_paused FALSE}
+      }
    )
    (do_stuff
       {if {gems_dir exists animate.trig}

@@ -113,7 +113,7 @@
 }
 {new UIScreen
    jukebox_game_screen
-   (panels game world_panel coop_track_panel mtv_overlay)
+   (panels game world_panel world_movie_panel coop_track_panel mtv_overlay)
    GAME_SCREEN_HANDLERS
    (BUTTON_DOWN_MSG
       {switch $button

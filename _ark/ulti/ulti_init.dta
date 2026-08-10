@@ -91,6 +91,8 @@
 
 {set $fast_selsong TRUE}
 
+{set $videobgs TRUE}
+
 {set $smallworld FALSE}
 
 {set $bigmode FALSE}

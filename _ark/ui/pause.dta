@@ -1,7 +1,7 @@
 #define PAUSE_SCREEN_HANDLERS (
    (pause_if_local
       {{$this find pause_title.lbl} set_showing FALSE}
-      {if {== {session mode} kNetLocal}
+      {if {&& {== {session mode} kNetLocal} {! {world_movie_panel is_active}}}
          {game set_paused TRUE}
          {{$this find pause_title.lbl} set_showing TRUE}
       }

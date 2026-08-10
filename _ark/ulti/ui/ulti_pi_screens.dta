@@ -80,3 +80,74 @@
       {{$this loaded_dir} sync_objects}
    )
 }
+{new MoviePanel
+   world_movie_panel
+   (preload FALSE)
+   (audio TRUE)
+   (loop FALSE)
+   (update_presence FALSE)
+   (videos song_video)
+   (active FALSE)
+   (delay 0)
+   (song '')
+   (load
+      ; TODO fix this only setting here if possible
+      {set [delay] 0}
+      {$this set_active FALSE}
+      {set_elem {find $syscfg videos song_video files} 1 ""}
+      {do
+         ($data {song_mgr get_data {game get_song}})
+         {if
+            {&&
+               $videobgs
+               {== $speedmod 1.00}
+               {find_exists $data has_video}
+               {elem {find $data has_video} 1}
+            }
+            {set [song] {game get_song}}
+            {if {find_exists $data video_delay}
+               {set [delay] {elem {find $data video_delay} 1}}
+            }
+            {set_elem {find $syscfg videos song_video files} 1
+               {sprint {song_mgr song_path {game get_song}} "_video.bik"}
+            }
+            {game add_sinks $this intro_start intro_end game_lost}
+         }
+      }
+   )
+   (unload
+      {$this set_active FALSE}
+      {game remove_sink $this}
+   )
+   (movie_done {$this set_active FALSE})
+   (game_lost {$this set_active FALSE})
+   (intro_start
+      {if {!= {game get_song} [song]}
+         {game remove_sink $this}
+      }
+      {$this set_active FALSE}
+   )
+   (intro_end
+      {thread_task kTaskSeconds
+         (delay [delay])
+         (script
+            {$this enter}
+            {$task sleep 0.05} ; to hide flashing
+            {$this set_active TRUE}
+         )
+      }
+   )
+   (set_active
+      ($b)
+      {set [active] $b}
+      {$this set_showing $b}
+      {world_panel set_showing
+         {if_else $b
+            TRUE
+            {! $blackbg}
+         }
+      }
+   )
+   (is_active [active])
+}
+

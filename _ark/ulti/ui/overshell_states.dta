@@ -131,6 +131,11 @@
          (bool $countdown)
          (sel_script {toggle_var countdown})
       )
+      (os_videobgs
+         (type uOnOFF)
+         (bool $videobgs)
+         (sel_script {toggle_var videobgs})
+      )
       (os_songtimer
          (type uFakeSld)
          (fmt_type uTimer)

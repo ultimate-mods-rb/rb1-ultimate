@@ -1,7 +1,7 @@
 # IF YOU DO NOT KNOW WHAT THIS FILE IS IGNORE IT
 Version: 1.2
 
-PPU-dad9f4b34e15d7cd98c8f65dc955694641c54397:
+PPU-76452f9a6b4d7560afcd729a758cb222443d49ac:
   "cymbals or whatever":
     Games:
       "Rock Band":
@@ -76,3 +76,12 @@ PPU-dad9f4b34e15d7cd98c8f65dc955694641c54397:
     Patch:
       # call to SongMgr::ResetSharedSongs in SongMgr::OnGetLocalUnlockedSongs
       - [ be32, 0x00050120, 0x60000000 ] # nop
+  "patch video path":
+    Games:
+      "Rock Band":
+        BLUS30050: [ 01.07 ]
+    Author: "Synchrony"
+    Notes: "yawn"
+    Patch Version: 1.0
+    Patch:
+      - [ be32, 0x00928a20, 0x25730000 ] # "%s"
