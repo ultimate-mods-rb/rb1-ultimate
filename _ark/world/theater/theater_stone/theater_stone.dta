@@ -1,0 +1,123 @@
+{$this iterate BandCamShot $bcs
+   {foreach_int $i 0 {$bcs size (targets)}
+      {if {== {$bcs get (targets $i target)} player_drum0}
+         {$bcs set (targets $i teleport) FALSE}
+         {$bcs set (targets $i return) FALSE}
+      }
+   }
+   {if {$bcs get crowd}
+      {$bcs set crowd WorldCrowd_front_row.crd}
+   }
+}
+{stone_geom_RndDir set_local_pos 0 -240 600}
+{amp_combo1.mesh set_trans_parent stone_geom_RndDir}
+{stone_lighting_RndDir set_trans_parent stone_geom_RndDir}
+{foreach $o
+   (
+      always_on_back.grp
+      always_on.grp
+      bonfire_stacks.grp
+      fire01.grp
+      fire10.grp
+      fire11.grp
+      fire12.grp
+      fire13.grp
+      fire14.grp
+      fire15.grp
+      fire16.grp
+      fire17.grp
+      fire2.grp
+      fire3.grp
+      fire4.grp
+      fire5.grp
+      fire6.grp
+      fire7.grp
+      fire8.grp
+      fire9.grp
+      flare_can.grp
+      lighting_front_stage_left.grp
+      lighting_front_stage_right.grp
+      lighting_low_lights.grp
+      lighting_opaque.grp
+      lightning.grp
+      'Master Cannon.grp'
+      monitors_stage.grp
+      'Stage Cannon.grp'
+      Stone_Lighting_dark.grp
+      Stone_Lighting.grp
+      stone_lighting_permanent.grp
+      Stone_Lighting_sky.grp
+      superlight.grp
+      ufo_animation.grp
+      ufo_beam01.grp
+      ufo_beam02.grp
+      ufo_beam_matanim.grp
+      ufo_effects.grp
+      ufo_energy01.grp
+      ufo_energy02.grp
+      ufo_energy_trans.grp
+      ufo_intro_envanims.grp
+      ufo_particles.grp
+      UFO_WIN.grp
+      win_beam.grp
+      win_beam_trans.grp
+      win_beam_xyz.grp
+      win_partanims.grp
+      win_particles.grp
+      win_trigger.grp
+   )
+   {$o set_trans_parent stone_lighting_RndDir}
+}
+{stone_geom_RndDir iterate_self Draw $d {$d zero_sphere}}
+{$this iterate Spotlight $l
+   {$l set_showing FALSE}
+}
+{master_top_can.mesh set_showing FALSE}
+{$this iterate Mesh $m
+   {if {startswith {$m name} "minicannon"}
+      {$m set_showing FALSE}
+   }
+}
+{foreach $g
+   (
+      stage.grp
+      stones_ctr.grp
+      stones_left.grp
+      stones_right.grp
+      amps_left_guitar.grp
+      amps_right_guitar.grp
+      front_stage_left.grp
+      front_stage_right.grp
+      bonfire_stacks.grp
+      scaffolding.grp
+   )
+   {$g set environ stage_top.env}
+}
+{stage_top.env remove (lights 3)}
+{stone_geom_RndDir iterate Mat $m
+   {if {&& {$m get use_environ} {$m get prelit}}
+      {$m set prelit FALSE}
+   }
+}
+{st_wood01.mat set intensify FALSE}
+{$this iterate EventTrigger $trig
+   {do
+      ($n
+         {switch {$trig get (trigger_events 0)}
+            ((hit_p0_fret1 hit_p0_fret2) snare_drum)
+            (hit_p0_fret3 crash_hit)
+            ((hit_p0_fret4 hit_p0_fret5) kick_drum)
+            (excitement_great excitement_peak)
+         }
+      )
+      {if $n
+         {$trig set (trigger_events 0) $n}
+      }
+   }
+}
+{{floor.mesh dir} iterate_self Draw $d
+   {$d set_showing FALSE}
+}
+{{catwalk_cable01.mesh dir} iterate_self Draw $d
+   {$d set_showing FALSE}
+}

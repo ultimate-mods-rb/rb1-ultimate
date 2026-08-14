@@ -1,5 +1,6 @@
 #define ULTI_VENUES (
    small_club_battle
+   theater_stone
    small_club_den
    small_club_rooftop
    small_club_kroom
