@@ -12,7 +12,11 @@
       drum_trackspeed
       track0_trackspeed
       track1_trackspeed
-      hwlength
+      guitar_hwlength
+      bass_hwlength
+      drum_hwlength
+      track0_hwlength
+      track1_hwlength
       scrbloom
       camerashake
       fxdof

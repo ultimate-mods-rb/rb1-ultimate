@@ -113,13 +113,27 @@
          (is_active {== {{$this dir} get configuration} $this})
          (update
             {if {$this is_active}
-               {foreach $obj {{$this dir} get gem_tracks}
+               {foreach $obj {{$this dir} get gem_tracks} {do
+                  ($l
+                     {eval_var
+                        {sprint
+                           {if_else {gamemode is_hth_arrangement}
+                              {switch $obj
+                                 (track_1 "track1")
+                                 "track0"
+                              }
+                              $obj
+                           }
+                           "_hwlength"
+                        }
+                     }
+                  )
                   {$obj set_pitch [pitch]}
                   {$obj set_fov [fov]}
                   {$obj set_cam_pos 0 [y_pos] [z_pos]}
                   {do
-                     ($fade_start {dist 0 [y_pos] [z_pos] 0 {* [fade_start] $hwlength} 0})
-                     ($fade_end {dist 0 [y_pos] [z_pos] 0 {'+' {* [fade_start] $hwlength} [fade_length]} 0})
+                     ($fade_start {dist 0 [y_pos] [z_pos] 0 {* [fade_start] $l} 0})
+                     ($fade_end {dist 0 [y_pos] [z_pos] 0 {'+' {* [fade_start] $l} [fade_length]} 0})
                      {$obj set_fade $fade_start {- $fade_end $fade_start}}
                   }
                   {if_else [own_perspective]
@@ -138,9 +152,9 @@
                         {$obj set_screen_rect_x 0}
                      }
                   }
-                  {$obj set top_y {'+' {'+' {* [fade_start] $hwlength} [fade_length]} 5}}
+                  {$obj set top_y {'+' {'+' {* [fade_start] $l} [fade_length]} 5}}
                   {$obj set y_per_second [track_speed]}
-               }
+               }}
                {do
                   ($index 0)
                   {foreach $obj [objects]
@@ -166,6 +180,41 @@
                      {'++' $index}
                   }
                }
+               {foreach $track {{$this dir} get gem_tracks} {do
+                  ($l
+                     {eval_var
+                        {sprint
+                           {if_else {gamemode is_hth_arrangement}
+                              {switch $track
+                                 (track_1 "track1")
+                                 "track0"
+                              }
+                              $track
+                           }
+                           "_hwlength"
+                        }
+                     }
+                  )
+                  ($m
+                     {switch {$track get num_tracks}
+                        (3 1.30)
+                        1.00
+                     }
+                  )
+                  {if {&& $l {!= $l 1.00}}
+                     {foreach $obj
+                        {`
+                           (
+                              {, {$track get player_feedback}}
+                              {, {$track get popup_object}}
+                           )
+                        }
+                        {$obj set_local_pos_index 2
+                           {clamp {* {$obj get_local_pos_index 2} {* $l $m}} 0 3.90}
+                        }
+                     }
+                  }
+               }}
             }
          )
          (save_objects

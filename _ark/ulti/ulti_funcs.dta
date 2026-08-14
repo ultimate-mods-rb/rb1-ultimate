@@ -164,16 +164,23 @@
             }
          }
       )
-      ($hwss
-         {if_else {== $hwlength 1.0}
-            1.0
-            {if_else {> $hwlength 2.0}
-               {/ $hwlength 1.4}
-               {if_else {> $hwlength 1.0}
-                  {/ $hwlength {+ {* 0.4 $hwlength} 0.6}}
-                  {* $hwlength {+ {* -1.5 $hwlength} 2.5}}
+      ($l
+         {eval_var
+            {sprint
+               {if_else {gamemode is_hth_arrangement}
+                  {$player track}
+                  {$player instrument}
                }
+               "_hwlength"
             }
+         }
+      )
+      ($hwss
+         {cond
+            ({== $l 1.00} 1.00)
+            ({> $l 2.00} {/ $l 1.4})
+            ({> $l 1.00} {/ $l {+ {* 0.4 $l} 0.6}})
+            (TRUE {* $l {+ {* -1.5 $l} 2.5}})
          }
       )
       ($view_time {* {* {/ $diff_view_time $ts} $hwss} {get_song_speed}})

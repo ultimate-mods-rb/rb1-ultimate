@@ -13,10 +13,18 @@
 {set $track1_trackspeed 1.00}
 
 ;sets default song speed 1.15 is 115%, 1.30 is 130% and so on.
-{set $speedmod 1.0}
+{set $speedmod 1.00}
 
 ;default highway length
-{set $hwlength 1.0}
+{set $guitar_hwlength 1.00}
+
+{set $bass_hwlength 1.00}
+
+{set $drum_hwlength 1.00}
+
+{set $track0_hwlength 1.00}
+
+{set $track1_hwlength 1.00}
 
 ;bloom
 {set $scrbloom TRUE}
