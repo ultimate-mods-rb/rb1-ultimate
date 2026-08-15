@@ -285,10 +285,8 @@
 }
 {new UIPanel content_loading_panel
    (file content_loading.milo)
-   (enter
-      {if {song_mgr has (songs)}
-         {resize {song_mgr get songs} 0}
-      }
+   (exit
+      {update_metadata}
+      {song_mgr set songs {song_mgr get_local_unlocked_songs}}
    )
-   (exit {update_metadata})
 }

@@ -840,8 +840,7 @@
    (data ())
    (titles ())
    (update_fast_list
-      {unless {&& {song_mgr has (songs)} {size {song_mgr get songs}}}
-         ; this is kinda slow. thank u for not removing this handle hmx.
+      {unless {song_mgr has (songs)}
          {song_mgr set songs {song_mgr get_local_unlocked_songs}}
       }
       {do
@@ -862,9 +861,7 @@
                      (
                         {,
                            {switch $type
-                              (alpha_song
-                                 {song_mgr song_name $song}
-                              )
+                              (alpha_song {song_mgr song_name $song})
                               (alpha_artist
                                  {sprint
                                     {song_mgr song_artist $song}
@@ -902,21 +899,22 @@
                                  }
                               )
                               (game_origin
-                                 {sprint
-                                    {do
-                                       ($origin
-                                          {if_else {find_exists $song_data game_origin}
-                                             {elem {find $song_data game_origin} 1}
-                                             zzz
-                                          }
-                                       )
-                                       {if_else {== $origin rb11}
-                                          '0'
-                                          $origin
+                                 {do
+                                    ($origin
+                                       {if_else {find_exists $song_data game_origin}
+                                          {elem {find $song_data game_origin} 1}
+                                          zzz
                                        }
+                                    )
+                                    {sprint
+                                       {if_else {startswith $origin "rb"}
+                                          '0'
+                                          ""
+                                       }
+                                       $origin
+                                       " "
+                                       {song_mgr song_name $song}
                                     }
-                                    " "
-                                    {song_mgr song_name $song}
                                  }
                               )
                               (rank

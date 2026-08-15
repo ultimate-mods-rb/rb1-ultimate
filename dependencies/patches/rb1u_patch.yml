@@ -1,7 +1,7 @@
 # IF YOU DO NOT KNOW WHAT THIS FILE IS IGNORE IT
 Version: 1.2
 
-PPU-76452f9a6b4d7560afcd729a758cb222443d49ac:
+PPU-e5979b63362d8b7feffb85c7607aba0ec810e04d:
   "cymbals or whatever":
     Games:
       "Rock Band":
@@ -66,7 +66,7 @@ PPU-76452f9a6b4d7560afcd729a758cb222443d49ac:
       - [ be32, 0x00052aec, 0x4BFF99FD ] # bl SongMgr:Data (0004c4e8)
       - [ be32, 0x00052af0, 0x3800000a ] # set datanode? type to kDataArray??? this is wrong yet it works?
       - [ be32, 0x00052af4, 0x60000000 ] # harmful math stuff
-  "dont reset shared songs on get_local_unlocked_songs":
+  "SongMgr::OnGetLocalUnlockedSongs patches":
     Games:
       "Rock Band":
         BLUS30050: [ 01.07 ]
@@ -74,8 +74,10 @@ PPU-76452f9a6b4d7560afcd729a758cb222443d49ac:
     Notes: "yawn"
     Patch Version: 1.0
     Patch:
-      # call to SongMgr::ResetSharedSongs in SongMgr::OnGetLocalUnlockedSongs
-      - [ be32, 0x00050120, 0x60000000 ] # nop
+      # call to GameConfig::GetPlayerConfig?
+      - [ be32, 0x00050424, 0x60000000 ] # nop
+      # call to SongMgr::ResetSharedSongs
+      - [ be32, 0x0005045c, 0x60000000 ] # nop
   "patch video path":
     Games:
       "Rock Band":
