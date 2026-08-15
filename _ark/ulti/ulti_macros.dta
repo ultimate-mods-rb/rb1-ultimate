@@ -4,9 +4,10 @@
    small_club_den
    small_club_rooftop
    small_club_kroom
+   big_club_tv
 )
 #define ULTI_H2H_VENUES (
-   small_club_rooftop ; here to prevent hang. remove.
+   big_club_tv
 )
 #define RB2_VENUES (
    small_club_13

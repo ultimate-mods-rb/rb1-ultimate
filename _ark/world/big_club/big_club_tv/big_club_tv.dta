@@ -1,0 +1,9 @@
+{$this iterate BandCamShot $bcs
+   {$bcs set crowd_density 0}
+}
+{{light_cans.grp dir} iterate_self Draw $d
+   {$d set_showing FALSE}
+}
+{{floor.mesh dir} iterate_self Draw $d
+   {$d set_showing FALSE}
+}
