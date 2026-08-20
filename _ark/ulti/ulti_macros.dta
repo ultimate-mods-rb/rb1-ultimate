@@ -121,7 +121,11 @@
    (BUTTON_DOWN_MSG
       {if_else
          {&&
+            #ifndef HX_WII
             {== $button kPad_Select}
+            #else
+            {== $button kPad_R1}
+            #endif
             {gamecfg is_player_participating $player_num}
             {== {{gamecfg get_player_config $player_num} get_track_sym} vocals}
          }
@@ -132,7 +136,11 @@
    (BUTTON_UP_MSG
       {if_else
          {&&
+            #ifndef HX_WII
             {== $button kPad_Select}
+            #else
+            {== $button kPad_R1}
+            #endif
             {gamecfg is_player_participating $player_num}
             {== {{gamecfg get_player_config $player_num} get_track_sym} vocals}
          }

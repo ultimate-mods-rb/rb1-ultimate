@@ -83,6 +83,10 @@
    (panels)
    (entered FALSE)
    (enter
+      #ifdef HX_WII
+      {hmb_allow TRUE}
+      {beatmatch wait_for_disc_read}
+      #endif
       {set [entered] TRUE}
       {beatmatch foreach_active_player $p
          {if {! {$p is_net}}
@@ -103,12 +107,14 @@
                   }
                }
                {if {&& $proceed {! {ui in_transition}}}
+                  #ifdef HX_NG
                   {beatmatch foreach_active_player $p
                      {send_player_stats $p}
                   }
                   {if {tour performer}
                      {tour set win_sequence {{tour performer} is_winning}}
                   }
+                  #endif
                   {do
                      ($screen {gamemode get endgame_screen})
                      {if {tour performer}
@@ -236,7 +242,6 @@
          }
       }
    )
-   #define SELECTED_AWARDS (())
    (set_results
       {$this update_font}
       {heading.lbl set_localized
@@ -253,10 +258,12 @@
          {stars.lbl set_localized {{beatmatch main_performer} star_rating}}
       }
       {if {gamemode is_hth_arrangement}
+         #ifdef HX_NG
          {rank0_text.lbl set_showing FALSE}
          {rank1_text.lbl set_showing FALSE}
          {rank0.lbl set_localized ""}
          {rank1.lbl set_localized ""}
+         #endif
          {do
             ($slot0 {hth_track_panel band_to_slot 0})
             ($slot1 {hth_track_panel band_to_slot 1})
@@ -292,8 +299,13 @@
             }
             {switch {beatmatch get_result TRUE}
                (kWonTie
+                  #ifdef HX_NG
                   {$lbl0 set text_token "TIE!"}
                   {$lbl1 set text_token "TIE!"}
+                  #else
+                  {$lbl0 set text_token tie_token}
+                  {$lbl1 set text_token tie_token}
+                  #endif
                   {$lbl0 set_showing TRUE}
                   {$lbl1 set_showing TRUE}
                   {$trg0 trigger}
@@ -315,7 +327,7 @@
          }
       }
       {do
-         {resize SELECTED_AWARDS 0}
+         ($selected_awards {array 0})
          {foreach_int $slot 0 {players.set size (objects)}
             {do
                ($pxy {players.set get (objects $slot)})
@@ -364,14 +376,29 @@
                      }
                      {if {$pxy exists noteshit.lbl}
                         {{$pxy find noteshit.lbl} set_localized
+                           #ifdef HX_NG
                            {sprint {int {'*' 100 {{$pcfg player} notes_hit_fraction}}} "%"}
+                           #else
+                           {sprintf
+                              {localize percent_format}
+                              {int {'*' 100 {{$pcfg player} notes_hit_fraction}}}
+                           }
+                           #endif
                         }
                      }
                      {if {$pxy exists streak.lbl}
                         {{$pxy find streak.lbl} set_localized
                            {if_else {== {{$pcfg player} instrument} vocals}
+                              #ifdef HX_NG
                               {sprintf "%d Phrase Streak" {{$pcfg player} longest_streak}}
                               {sprintf "%d Note Streak" {{$pcfg player} longest_streak}}
+                              #else
+                              {sprintf
+                                 {localize eg_phrase_streak_format}
+                                 {{$pcfg player} longest_streak}
+                              }
+                              {sprintf {localize eg_streak_format} {{$pcfg player} longest_streak}}
+                              #endif
                            }
                         }
                      }
@@ -382,8 +409,8 @@
                         {if_else {'||' {gamemode is_hth_arrangement} {gamemode is_solo}}
                            {{$pxy find award.lbl} set_showing FALSE}
                            {do
-                              ($some_award {choose_award $player SELECTED_AWARDS})
-                              {push_back SELECTED_AWARDS $some_award}
+                              ($some_award {choose_award $player $selected_awards})
+                              {push_back $selected_awards $some_award}
                               {$pcfg set previous_award $some_award}
                               {{$pxy find award.lbl} set_localized {localize_token $some_award}}
                               {{$pxy find award.lbl} set_showing TRUE}
@@ -410,11 +437,15 @@
    )
    (update_font {do
       ($s
+         #ifdef HX_NG
          {cond
             ({|| {!= $gems gh2} {!= $smashers gh2}} kabel_bold)
             ({== $this tour_nextsong_panel} dyingmarker)
             (TRUE blockletters)
          }
+         #else
+         kabel_bold
+         #endif
       )
       {foreach $lbl (heading.lbl score.lbl)
          {if {&& {exists $lbl} {!= {$lbl get_type} $s}}
@@ -423,9 +454,16 @@
       }
    })
 )
+#ifndef HX_NG
+{new UIPanel endgame_background_panel (file "endgame_background_og.milo")}
+#endif
 {new UIPanel
    qp_endgame_panel
+   #ifdef HX_NG
    (file "qp_endgame.milo")
+   #else
+   (file "qp_endgame_og.milo")
+   #endif
    (focus continue.btn)
    ENDGAME_PANEL_HANDLERS
    (enter
@@ -458,16 +496,22 @@
          {band_ui_sink set_block_mode kBlockRankedResults}
          {band_ui_sink set_net_sync FALSE}
       }
+      #ifndef HX_NG
+      {helpbar set_limit_to_player_num -1}
+      #endif
    )
    (update_true_skill
       ($skill0 $skill1)
+      #ifdef HX_NG
       {rank0.lbl set_localized $skill0}
       {rank1.lbl set_localized $skill1}
       {rank0_text.lbl set_showing TRUE}
       {rank1_text.lbl set_showing TRUE}
+      #endif
    )
    (exit {platform_mgr set_notify_ui_location kOSNotifyTopRight})
 )
+#ifdef HX_NG
 {new H2HEndGamePanel
    qp_hth_endgame_panel
    (file "qp_hth_endgame.milo")
@@ -478,6 +522,13 @@
    (file "qp_hth_tow_endgame.milo")
    H2H_END_GAME_PANEL_HANLDERS
 }
+#else
+{new UIPanel
+   qp_hth_endgame_panel
+   (file "qp_hth_endgame_og.milo")
+   H2H_END_GAME_PANEL_HANLDERS
+}
+#endif
 #define QP_ENDGAME_SCREEN_HANDLERS (
    #ifdef HX_XBOX
    (helpbar
@@ -523,19 +574,33 @@
       }
    )
    (SELECT_START_MSG
+      #ifdef HX_NG
       {if_else {gamemode get ranked}
          {ui goto_screen qp_complete_ranked_screen}
          {ui sync_screen qp_complete_screen 1}
       }
+      #else
+      {if_else {! {gamemode is_hth_arrangement}}
+         {ui goto_screen highscores_screen}
+         {ui goto_screen qp_complete_screen}
+      }
+      #endif
       kDataUnhandled
    )
 )
 {new UIScreen
    qp_endgame_screen
+   #ifdef HX_NG
    (panels qp_endgame_panel helpbar)
+   #else
+   (panels endgame_background_panel qp_endgame_panel helpbar)
+   #endif
    (focus qp_endgame_panel)
    QP_ENDGAME_SCREEN_HANDLERS
    (more_details_screen qp_coop_details_endgame_screen)
+   #ifndef HX_NG
+   (enter {helpbar set_limit_to_player_num -1})
+   #endif
 }
 {new UIScreen
    qp_hth_endgame_screen
@@ -543,7 +608,11 @@
    (focus qp_hth_endgame_panel)
    QP_ENDGAME_SCREEN_HANDLERS
    (more_details_screen qp_hth_details_endgame_screen)
+   #ifndef HX_NG
+   (enter {helpbar set_limit_to_player_num -1})
+   #endif
 }
+#ifdef HX_NG
 {new UIScreen
    qp_hth_tow_endgame_screen
    (panels qp_hth_tow_endgame_panel helpbar)
@@ -551,9 +620,19 @@
    QP_ENDGAME_SCREEN_HANDLERS
    (more_details_screen qp_hth_tow_details_endgame_screen)
 }
+#endif
 {new UIScreen
    qp_coop_details_endgame_screen
+   #ifdef HX_NG
    (panels qp_endgame_panel more_details_panel)
+   #else
+   (panels
+      endgame_background_panel
+      qp_endgame_panel
+      more_details_panel
+      helpbar
+   )
+   #endif
    (focus more_details_panel)
    (leave {ui goto_screen qp_endgame_screen})
    (exit
@@ -564,7 +643,11 @@
 }
 {new UIScreen
    qp_hth_details_endgame_screen
+   #ifdef HX_NG
    (panels qp_hth_endgame_panel more_details_panel)
+   #else
+   (panels qp_hth_endgame_panel more_details_panel helpbar)
+   #endif
    (focus more_details_panel)
    (leave {ui goto_screen qp_hth_endgame_screen})
    (exit
@@ -573,6 +656,7 @@
       }
    )
 }
+#ifdef HX_NG
 {new UIScreen
    qp_hth_tow_details_endgame_screen
    (panels qp_hth_tow_endgame_panel more_details_panel)
@@ -584,9 +668,14 @@
       }
    )
 }
+#endif
 {new UIPanel
    qp_complete_panel
+   #ifdef HX_NG
    (file complete.milo)
+   #else
+   (file complete_og.milo)
+   #endif
    LIMIT_TO_LEADER_SESSION
    (enter
       {platform_mgr set_notify_ui_location kOSNotifyBottomCenter}
@@ -630,11 +719,18 @@
          (helpbar_leave_session '')
       }
    )
+   #ifndef HX_NG
+   (enter {helpbar set_limit_to_player_num -1})
+   #endif
    HELPBAR_WAITING_FOR_LEADER
 }
 {new UIPanel
    complete_ranked_panel
+   #ifdef HX_NG
    (file complete_ranked.milo)
+   #else
+   (file complete_ranked_og.milo)
+   #endif
    (enter
       {platform_mgr set_notify_ui_location kOSNotifyBottomCenter}
       {$this set_focus comp_new_match.btn}
@@ -653,3 +749,20 @@
    (focus complete_ranked_panel)
    (helpbar ('' helpbar_select))
 }
+#ifndef HX_NG
+{new UIScreen
+   endgame_autosave_start_screen
+   (TRANSITION_COMPLETE_MSG
+      {do
+         ($ui_screen_name qp_complete_screen)
+         {if {tour performer}
+            {if_else {{tour performer} is_winning}
+               {set $ui_screen_name meta_loading_tour_win_screen}
+               {set $ui_screen_name meta_loading_continue_screen}
+            }
+         }
+         {ui goto_screen $ui_screen_name}
+      }
+   )
+}
+#endif

@@ -550,7 +550,6 @@
       }
    )
 }
-{print "permadeath_real_win_panel"}
 {new UIScreen
    permadeath_real_win_screen
    (panels permadeath_real_win_panel)

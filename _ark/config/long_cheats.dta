@@ -16,8 +16,7 @@
       }
    }
 )
-(
-   (kPad_Select kPad_Select)
+#define OVERSHELL_CHEAT (
    {if_else
       {'||'
          {overshell up}
@@ -47,6 +46,18 @@
       #endif
    }
 )
+(
+   (kPad_Select kPad_Select)
+   OVERSHELL_CHEAT
+)
+#ifdef HX_WII ; wtf pi why is - r1 and the wii remote a gc controller????
+(
+   (kPad_R1 kPad_R1)
+   {if {== {joypad_controller_type $cheat_controller} gamecube}
+      OVERSHELL_CHEAT
+   }
+)
+#endif
 (
    (kPad_L2 kPad_L1 kPad_DRight)
    #ifdef HX_PS3

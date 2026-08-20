@@ -14,3 +14,10 @@ _ark/*.py
 _temp*
 *.xcf
 /dependencies/__pycache__
+/.temp_ark*
+/_ext
+/_build/wii
+/_build/ps2/IOP
+/_build/ps2/GEN
+/_songs/songs_ps2
+/_songs/songs_wii

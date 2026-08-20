@@ -45,7 +45,7 @@
    #include matchmaking_band_og.dta
    #include matchmaking_hth_og.dta
    #include pause_og.dta
-   #include endgame_og.dta
+   #include endgame.dta
    #include lose.dta
    #include naming_screen.dta
    #include tour_og.dta

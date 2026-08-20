@@ -438,13 +438,6 @@
       (kPad_Square kPad_DDown)
       (kPad_L1 kPad_R1)
    )
-   (hx_drums_xbox
-      (2 kPad_R1)
-      (4 kPad_Tri)
-      (5 kPad_DUp)
-      (7 kPad_DDown)
-      (6 kPad_X)
-   )
    (wii_guitar
       (kPad_X kPad_X)
       (kPad_Circle kPad_Tri)
