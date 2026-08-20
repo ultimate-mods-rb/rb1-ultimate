@@ -1,7 +1,11 @@
 (disable FALSE)
 (deadzone 36)
 (threshold 0.75)
+#ifdef HX_WII
+(ignore 1 3 5 6 7)
+#else
 (ignore 1 2 3 4 5 6 7)
+#endif
 (hold_ms 500)
 (repeat_ms 50)
 (midi_joypad
@@ -18,16 +22,46 @@
 )
 #ifdef HX_EE
 (controllers
+   (hx_guitar_ps3
+      (detect (type kJoypadPs3HxGuitar))
+      (lefty_flip TRUE)
+      (translate_sticks FALSE)
+   )
+   (ro_guitar_ps3
+      (detect (type kJoypadPs3RoGuitar))
+      (lefty_flip TRUE)
+      (translate_sticks FALSE)
+   )
+   (hx_drums_ps3 (detect (type kJoypadPs3HxDrums)))
+   (ro_drums_ps3 (detect (type kJoypadPs3RoDrums)))
    (ro_guitar
       (detect
          (type kJoypadAnalog)
          (button kPad_DLeft)
       )
       (lefty_flip TRUE)
+      (translate_sticks FALSE)
    )
    (digital (detect (type kJoypadDigital)))
    (analog (detect (type kJoypadAnalog)))
    (dualshock (detect (type kJoypadDualShock)))
+)
+#endif
+#ifdef HX_WII
+(controllers
+   (gamecube
+      (detect (type kJoypadDualShock))
+      (bidirectional TRUE)
+   )
+   (hx_guitar_ps3
+      (detect (type kJoypadPs3HxGuitar))
+      (lefty_flip TRUE)
+      (translate_sticks FALSE)
+   )
+   (hx_drums_ps3 (detect (type kJoypadPs3HxDrums)))
+   (wii_guitar (detect (type kJoypadWiiGuitar)))
+   (wii_drums (detect (or (detect (type kJoypadWiiDrums)))))
+   (wii_rodrums (detect (type kJoypadWiiDrums)))
 )
 #endif
 #ifdef HX_PS3
@@ -99,6 +133,12 @@
       ('Controller (XBOX 360 For Windows)' xbox)
       ('Controller (Guitar Hero X-plorer  )' xbox)
       ('USB Joystick     ' smart_plus)
+      ('GameCube Joypad' gamecube)
+      ('Wii Remote' wii_core)
+      ('Wii Classic' wii_classic)
+      ('USB Instrument' usb_instrument)
+      ('Wii Guitar' wii_guitar)
+      ('Wii Drums' wii_drums)
    )
    (default
       (buttons
@@ -236,6 +276,111 @@
       )
       (sticks xbox)
    )
+   (gamecube
+      (buttons
+         (0 kPad_DLeft)
+         (1 kPad_DRight)
+         (2 kPad_DDown)
+         (3 kPad_DUp)
+         (4 kPad_R1)
+         (5 kPad_R2)
+         (6 kPad_L2)
+         (8 kPad_X)
+         (9 kPad_Tri)
+         (10 kPad_Circle)
+         (11 kPad_Square)
+         (12 kPad_Start)
+      )
+   )
+   (wii_core
+      (buttons
+         (0 kPad_DLeft)
+         (1 kPad_DRight)
+         (2 kPad_DDown)
+         (3 kPad_DUp)
+         (4 kPad_Start)
+         (8 kPad_Circle)
+         (9 kPad_Square)
+         (10 kPad_Tri)
+         (11 kPad_X)
+         (12 kPad_R1)
+         (15 kPad_R3)
+      )
+   )
+   (wii_classic
+      (buttons
+         (0 kPad_DUp)
+         (1 kPad_DLeft)
+         (2 kPad_R2)
+         (3 kPad_Circle)
+         (4 kPad_X)
+         (5 kPad_Square)
+         (6 kPad_Tri)
+         (7 kPad_L2)
+         (9 kPad_R1)
+         (10 kPad_Start)
+         (11 kPad_R3)
+         (12 kPad_Select)
+         (13 kPad_L1)
+         (14 kPad_DDown)
+         (15 kPad_DRight)
+      )
+   )
+   (usb_instrument
+      (buttons
+         (1 kPad_X)
+         (2 kPad_Circle)
+         (3 kPad_Tri)
+         (0 kPad_Square)
+         (4 kPad_L1)
+         (6 kPad_L2)
+         (16 kPad_DUp)
+         (17 kPad_DDown)
+         (18 kPad_DLeft)
+         (19 kPad_DRight)
+         (9 kPad_Start)
+         (8 kPad_Select)
+         (5 kPad_R1)
+      )
+   )
+   (wii_guitar
+      (buttons
+         (0 kPad_DUp)
+         (1 kPad_DLeft)
+         (2 kPad_R2)
+         (3 kPad_Tri)
+         (4 kPad_X)
+         (5 kPad_Square)
+         (6 kPad_Circle)
+         (7 kPad_L1)
+         (9 kPad_R1)
+         (10 kPad_Start)
+         (11 kPad_R3)
+         (12 kPad_Select)
+         (13 kPad_L2)
+         (14 kPad_DDown)
+         (15 kPad_DRight)
+      )
+   )
+   (wii_drums
+      (buttons
+         (0 kPad_DUp)
+         (1 kPad_DLeft)
+         (2 kPad_L1)
+         (3 kPad_Square)
+         (4 kPad_X)
+         (5 kPad_Tri)
+         (6 kPad_Circle)
+         (7 kPad_R2)
+         (9 kPad_R1)
+         (10 kPad_Start)
+         (11 kPad_R3)
+         (12 kPad_Select)
+         (13 kPad_L2)
+         (14 kPad_DDown)
+         (15 kPad_DRight)
+      )
+   )
 )
 (button_filters
    #ifdef HX_PS3
@@ -251,6 +396,8 @@
    (ro_guitar
       (kPad_R2 kPad_X)
       (kPad_Circle kPad_Tri)
+      (kPad_Tri kPad_R1)
+      (kPad_X kPad_Square)
    )
    (ro_guitar_xbox
       (6 kPad_X)
@@ -284,5 +431,35 @@
       (5 kPad_DUp)
       (7 kPad_DDown)
       (6 kPad_X)
+   )
+   (ro_drums_ps3
+      (kPad_Circle kPad_Tri)
+      (kPad_Tri kPad_DUp)
+      (kPad_Square kPad_DDown)
+      (kPad_L1 kPad_R1)
+   )
+   (hx_drums_xbox
+      (2 kPad_R1)
+      (4 kPad_Tri)
+      (5 kPad_DUp)
+      (7 kPad_DDown)
+      (6 kPad_X)
+   )
+   (wii_guitar
+      (kPad_X kPad_X)
+      (kPad_Circle kPad_Tri)
+      (kPad_Tri kPad_R1)
+      (kPad_R1 kPad_L1)
+   )
+   (wii_drums
+      (kPad_Circle kPad_Tri)
+      (kPad_Tri kPad_DUp)
+      (kPad_Square kPad_DDown)
+      (kPad_R2 kPad_DDown)
+      (kPad_L1 kPad_R1)
+      (kPad_DUp kPad_DRight)
+      (kPad_DLeft kPad_DUp)
+      (kPad_DDown kPad_DLeft)
+      (kPad_DRight kPad_DDown)
    )
 )

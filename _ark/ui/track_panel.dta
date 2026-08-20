@@ -15,6 +15,7 @@
    (animate_track_in_fast)
    (finish_load {do
       ($pro_drums {new RndDir pro_drums})
+      #ifdef HX_NG
       {$pro_drums insert (subdirs 0) "ulti/track/pro_drums.milo"}
       {$this iterate TrackDir $dir
          {with $dir
@@ -74,7 +75,15 @@
       {if $notergb
          {asset_mgr apply_all_rgb}
       }
+      #else
+      {unless $kickbounce
+         {$this iterate TrackDir $dir
+            {clear_array {$dir find kick_drummer.trig} anims}
+         }
+      }
+      #endif
       {asset_mgr apply_config}
+      #ifdef HX_NG
       {cond
          ({exists vocals} ;coop
             {player_feedback_01 insert (subdirs 0) "ulti/track/countdown_0.milo"}
@@ -91,6 +100,7 @@
             {{track_1 get failed_feedback} insert (subdirs 0) "ulti/track/countdown_1.milo"}
          )
       }
+      #endif
       {if {exists scoreboard}
          {with scoreboard
             {new Text timer.txt}
@@ -135,7 +145,12 @@
          {synth play track_beg.cue}
       }
    )
-   (poll
+   (
+      #ifdef HX_NG
+      poll
+      #else
+      on_poll
+      #endif
       {if
          {||
             {&& $nofail {! {gamemode get is_tour}} {== {session mode} kNetLocal}}
@@ -148,17 +163,22 @@
       {unless {&& {gamemode get is_practice} {gamecfg get practice_speed}}
          {beatmatch set_music_speed {get_song_speed}}
       }
+      #ifdef HX_NG
       {if {&& {world_movie_panel is_active} {game paused}} ; MoviePanel::Poll doesn't call UIPanel::Poll :(
          {game set_paused FALSE}
       }
+      #endif
    )
    (do_stuff
+      #ifdef HX_NG
       {if {gems_dir exists animate.trig}
          {{gems_dir find animate.trig} trigger}
       }
       {if $notergb
          {asset_mgr apply_all_rgb}
       }
+      #endif
+      {beatmatch set_kick_autoplay $autokick}
       {beatmatch foreach_active_player $player ;handle adding the appropriate callbacks to each player
          {if_else {== {$player instrument} vocals}
             {if_else $micdeploy
@@ -186,6 +206,7 @@
                {$obj init $player}
             }
          }
+         #ifdef HX_NG
          {unless {|| {! $countdown} {gamemode get is_practice} {gamemode get is_drum_trainer}}
             {do
                ($obj {sprint {$player track} "_countdown"})
@@ -207,6 +228,7 @@
                {$obj init $player $dir}
             }
          }
+         #endif
          {if {gamemode get is_permadeath}
             {do
                ($obj "perma_callback")
@@ -221,16 +243,27 @@
 )
 {new TrackPanel
    coop_track_panel
+   #ifndef HX_EE
    (file ../track/trackpanel.milo)
+   #else
+   (file ../track/trackpanel_ps2.milo)
+   #endif
    TRACK_PANEL_HANDLERS
 }
 {new TrackPanel
    hth_track_panel
    (file
+      #ifndef HX_EE
       {if_else {== {{game get_participant_config 0} get_track_sym} vocals}
          ../track/trackpanel_hth_vocals.milo
          ../track/trackpanel_hth.milo
       }
+      #else
+      {if_else {== {{game get_participant_config 0} get_track_sym} vocals}
+         ../track/trackpanel_hth_vocals.milo
+         ../track/trackpanel_hth_ps2.milo
+      }
+      #endif
    )
    TRACK_PANEL_HANDLERS
 }

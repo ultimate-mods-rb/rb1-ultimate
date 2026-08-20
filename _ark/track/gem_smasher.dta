@@ -178,6 +178,21 @@
             {if {exists LOD.anim}
                {LOD.anim set_frame $track_LOD}
             }
+            #ifdef HX_WII
+            {if {exists square_smasher_plate.mat}
+               {if_else {exists finger_tap_anims.grp}
+                  {do
+                     {square_smasher_plate.mat set diffuse_tex smasher_wii.tex}
+                     {glow.mat set diffuse_tex smasher_color_wii.tex}
+                  }
+                  {do
+                     {square_smasher_plate.mat set diffuse_tex smasher_wii_drum.tex}
+                     {glow.mat set diffuse_tex smasher_color_wii_drum.tex}
+                  }
+               }
+               {radial_flare.ml set life 3.0}
+            }
+            #endif
          )
       )
    )

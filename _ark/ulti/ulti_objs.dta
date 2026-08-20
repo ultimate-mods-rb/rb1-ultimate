@@ -1,0 +1,13 @@
+#ifdef HX_NG
+{new CharProfilePanel char_data}
+{{new Object permadeath_mgr} set_type permadeath_mgr}
+{permadeath_mgr init}
+#endif
+
+{{new Object asset_mgr} set_type asset_mgr}
+{asset_mgr init}
+
+#ifdef HX_NG
+{{new Object mod_overlay} set_type mod_overlay}
+{mod_overlay init}
+#endif

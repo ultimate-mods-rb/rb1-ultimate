@@ -95,9 +95,11 @@
       }
       {$this send_track deploy}
       {$this popup_help deploy FALSE}
+      #ifdef HX_NG
       {if {== {$this instrument} drum}
          {$this enable_drum_solos FALSE}
       }
+      #endif
       kDataUnhandled
    )
    (stop_deploy

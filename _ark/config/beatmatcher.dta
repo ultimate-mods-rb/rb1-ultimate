@@ -3,6 +3,7 @@
 )
 (midi_parsers
    #include midi_parsers.dta
+   #ifdef HX_NG
    #include ../ulti/midi_parsers.dta
    {world_focus_parser delete_managed}
    {new MidiParser
@@ -150,6 +151,7 @@
          }
       )
    }
+   #endif
 )
 (callbacks
    (sixteenth_note
@@ -185,7 +187,11 @@
          }
       }
    )
-   (eighth_note {handle ($world halfbeat)})
+   (eighth_note
+      #ifdef HX_NG
+      {handle ($world halfbeat)}
+      #endif
+   )
    (beat
       {if {== {mod {int {taskmgr beat}} 4} 0}
          {foreach $inst (track0 track1 track2 track3)
@@ -207,7 +213,11 @@
          {handle (game downbeat)}
       }
    )
-   (reset {handle ($world start)})
+   (reset
+      #ifdef HX_NG
+      {handle ($world start)}
+      #endif
+   )
 )
 (watcher
    (can_switch_tracks FALSE)
@@ -247,6 +257,7 @@
    (background_attenuation 1.5)
    (cue_attenuation 0.0)
    (remote_attenuation 1.5)
+   #ifdef HX_NG
    (submixes
       (basic (0 1 2 3 4))
       (drums0
@@ -493,5 +504,163 @@
          )
       )
    )
+   #else
+   (submixes
+      (basic (0 1 2 3 4))
+      (drums0
+         (
+            (0 1)
+            (0 1)
+            (0 1)
+            (0 1)
+            (0 1)
+         )
+      )
+      (drums0d
+         (
+            (0 1)
+            (0 1)
+            (0 1)
+            (0 1)
+            (0 1)
+         )
+      )
+      (drums1
+         (
+            (0)
+            (1)
+            (2 3)
+            (2 3)
+            (2 3)
+         )
+      )
+      (drums1easy
+         (
+            (0)
+            (1 2 3)
+            (1 2 3)
+            (1 2 3)
+            (1 2 3)
+         )
+      )
+      (drums1easynokick
+         (
+            (0)
+            (1 2 3)
+            (0 1 2 3)
+            (0 1 2 3)
+            (0 1 2 3)
+         )
+      )
+      (drums1d
+         (
+            (0)
+            (2 3)
+            (1)
+            (2 3)
+            (2 3)
+         )
+      )
+      (drums2
+         (
+            (0)
+            (1)
+            (2 3)
+            (2 3)
+            (2 3)
+         )
+      )
+      (drums2easy
+         (
+            (0)
+            (1 2 3)
+            (1 2 3)
+            (1 2 3)
+            (1 2 3)
+         )
+      )
+      (drums2easynokick
+         (
+            (0)
+            (1)
+            (0 2 3)
+            (0 2 3)
+            (0 2 3)
+         )
+      )
+      (drums2easysnareonly
+         (
+            (0)
+            (0 1 2 3)
+            (0 1 2 3)
+            (0 1 2 3)
+            (0 1 2 3)
+         )
+      )
+      (drums2d
+         (
+            (0)
+            (2 3)
+            (1)
+            (2 3)
+            (2 3)
+         )
+      )
+      (drums3
+         (
+            (0)
+            (1)
+            (2 3)
+            (2 3)
+            (2 3)
+         )
+      )
+      (drums3d
+         (
+            (0)
+            (2 3)
+            (1)
+            (2 3)
+            (2 3)
+         )
+      )
+      (drums3easy
+         (
+            (0)
+            (1 2 3)
+            (1 2 3)
+            (1 2 3)
+            (1 2 3)
+         )
+      )
+      (drums3easynokick
+         (
+            (0)
+            (1 2 3)
+            (0 2 3)
+            (0 2 3)
+            (0 2 3)
+         )
+      )
+      (drums4
+         (
+            (0)
+            (1 2)
+            (1 2)
+            (1 2)
+            (1 2)
+         )
+      )
+      (drums4easynokick
+         (
+            (0)
+            (0 1 2)
+            (0 1 2)
+            (0 1 2)
+            (0 1 2)
+         )
+      )
+   )
+   #endif
 )
 #merge ../../../system/run/config/beatmatch.dta

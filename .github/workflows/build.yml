@@ -7,8 +7,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+      - uses: actions/setup-python@v7
       - name: Set env
         run: |
           chmod +x dependencies/linux/arkhelper
@@ -18,7 +20,7 @@ jobs:
           python _build_xbox.py
       
       - name: Upload result
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: RB1U-Xbox
           path: _build/xbox
@@ -27,8 +29,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+      - uses: actions/setup-python@v7
       - name: Build ARK
         run: |
           python _build_ps3.py
@@ -39,7 +43,7 @@ jobs:
           dependencies/ta_pkg_repacker_tools/make_package_npdrm_retail.exe --k-licensee 0x00000000000000000000000000000000 --drm-type Local --content-type GameData --content-id ($content + $sha_short) dependencies/ta_pkg_repacker_tools/package.conf _build/ps3
 
       - name: Upload result
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: RB1U-PS3-USA
           path: '*.pkg'

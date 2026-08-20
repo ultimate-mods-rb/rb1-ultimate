@@ -14,8 +14,10 @@
       {leaderboards create}
       {leaderboards set_page_size {leaderboard.lst num_display}}
       {$this update_warning ""}
+      #ifdef HX_NG
       {leaderboard.lst set_provider {leaderboards get_provider}}
       {leaderboards set_limits [limits_array]}
+      #endif
       {leaderboards enumerate}
    )
    (update_leaderboard
@@ -115,7 +117,11 @@
 }
 {new UIPanel
    leaderboards_lower3rd_panel
+   #ifdef HX_NG
    (file "leaderboards_lower3rd.milo")
+   #else
+   (file "leaderboards_lower3rd_og.milo")
+   #endif
    (enter
       {$this update_titles}
       {$this update_filter {leaderboards get_filter}}
@@ -163,6 +169,7 @@
 }
 {new UIScreen
    leaderboards_screen
+   #ifdef HX_NG
    (panels
       meta
       postsong_sfx_panel
@@ -172,6 +179,15 @@
       leaderboards_lower3rd_panel
       helpbar
    )
+   #else
+   (panels
+      meta
+      movie_panel
+      leaderboards_panel
+      leaderboards_lower3rd_panel
+      helpbar
+   )
+   #endif
    (focus leaderboards_panel)
    (helpbar
       {switch {leaderboards get_type}
@@ -226,6 +242,7 @@
       }
    )
 }
+#ifdef HX_NG
 {new UIPanel
    leaderboards_seltrack_panel
    (file "leaderboards_seltrack.milo")
@@ -279,14 +296,15 @@
    (focus leaderboard_selsong_panel)
    (helpbar (helpbar_back helpbar_choosesong helpbar_songfilter))
 }
+#endif
 {new SessionPanel
    community_panel
-   #ifdef HX_PS3
-   (file "community_ps3.milo")
-   (focus getcode.btn)
-   #else
+   #ifdef HX_XBOX
    (file "community.milo")
    (focus leaderboards.btn)
+   #else
+   (file "community_ps3.milo")
+   (focus getcode.btn)
    #endif
    (motd_done FALSE)
    (motd_message "")
@@ -300,9 +318,14 @@
       {set [banner_message] [motd_message]}
       {set [motd_done] TRUE}
       {if {$this is_up}
+         #ifdef HX_NG
          {$this update_motd}
+         #else
+         {$this display_motd}
+         #endif
       }
    )
+   #ifdef HX_NG
    (update_motd
       {cond
          ({!
@@ -325,6 +348,14 @@
          (TRUE {motd.lbl set_showing FALSE})
       }
    )
+   #else
+   (display_motd
+      {if [motd_done]
+         {motd.lbl set_localized [banner_message]}
+         {motd.lbl set_showing TRUE}
+      }
+   )
+   #endif
    (set_webcode
       ($message)
       #ifdef HX_PS3
@@ -335,6 +366,7 @@
       }
       #endif
    )
+   #ifdef HX_NG
    (enter
       {$this update_motd}
       {leaderboards clear_type}
@@ -348,6 +380,27 @@
       {server remove_sink $this server_status_changed}
       {set [banner_message] [motd_message]}
    )
+   #else
+   (enter
+      {$this display_motd}
+      #ifdef HX_XBOX
+      {$this disable managefriends.btn}
+      {$this disable checkinvites.btn}
+      {managefriends.btn set_showing FALSE}
+      {checkinvites.btn set_showing FALSE}
+      {leaderboards clear_type}
+      {server add_sink $this server_status_changed}
+      {platform_mgr add_sink $this connection_status_changed}
+      #else
+      {$this enable managefriends.btn}
+      {$this enable checkinvites.btn}
+      {managefriends.btn set_showing TRUE}
+      {checkinvites.btn set_showing TRUE}
+      #endif
+      {session clear}
+      {$this update_button_status}
+   )
+   #endif
    (connection_status_changed
       ($connected)
       {$this update_button_status}
@@ -399,6 +452,7 @@
          )
          #endif
          (leaderboards.btn
+            #ifdef HX_NG
             {if_else {! {platform_mgr is_player_signed_in $player_num}}
                {do
                   {main_leaderboard_signin_screen set player_num $player_num}
@@ -414,19 +468,30 @@
                   }
                }
             }
+            #else
+            {ui goto_screen highscore_seltrack_screen}
+            #endif
          )
       }
    )
+   #ifdef HX_NG
    (session_ready_complete_msg
       {gamecfg auto_assign_missing_slots}
       {goto_after_network_connect main_leaderboard_screen FALSE}
    )
+   #else
+   (session_ready
+      {gamecfg auto_assign_missing_slots}
+      {goto_after_network_connect main_leaderboard_screen FALSE}
+   )
+   #endif
 }
 {new UIScreen
    main_community_screen
    (panels meta movie_panel main_lower3rd_panel main_panel community_panel fx)
    (focus community_panel)
    (back main_screen)
+   #ifdef HX_NG
    (TRANSITION_COMPLETE_MSG
       {if {== main_leaderboard_screen $old_screen}
          {session clear}
@@ -435,6 +500,9 @@
       {main_panel attempt_to_autoload}
       kDataUnhandled
    )
+   #else
+   MAIN_SCREEN_TRANSITION_HANDLER
+   #endif
 }
 #define COMMON_LEADERBOARD_PANEL (
    (focus solo.btn)
@@ -483,12 +551,17 @@
    #ifdef HX_PS3
    (file "leaderboard_menu_ps3.milo")
    #else
+   #ifdef HX_NG
    (file "leaderboard_menu.milo")
+   #else
+   (file "leaderboard_menu_og.milo")
+   #endif
    #endif
    COMMON_LEADERBOARD_PANEL
 }
 {new UIScreen
    community_leaderboard_screen
+   #ifdef HX_NG
    (panels
       meta
       movie_panel
@@ -496,6 +569,9 @@
       leaderboards_netwatcher_panel
       helpbar
    )
+   #else
+   (panels meta movie_panel community_leaderboard_panel helpbar)
+   #endif
    (focus community_leaderboard_panel)
    (back main_community_screen)
    (helpbar (back select))
@@ -505,12 +581,17 @@
    #ifdef HX_PS3
    (file "main_leaderboard_ps3.milo")
    #else
+   #ifdef HX_NG
    (file "main_leaderboard.milo")
+   #else
+   (file "main_leaderboard_og.milo")
+   #endif
    #endif
    COMMON_LEADERBOARD_PANEL
 }
 {new UIScreen
    main_leaderboard_screen
+   #ifdef HX_NG
    (panels
       meta
       movie_panel
@@ -520,19 +601,32 @@
       leaderboards_netwatcher_panel
       fx
    )
+   #else
+   (panels meta movie_panel main_panel main_leaderboard_panel helpbar)
+   #endif
    (focus main_leaderboard_panel)
    (back main_community_screen)
+   #ifdef HX_NG
    MAIN_SCREEN_TRANSITION_HANDLER
+   #else
+   (helpbar (helpbar_back helpbar_select))
+   #endif
 }
 {new UIPanel
    community_specialfeatures_panel
+   #ifdef HX_NG
    (file "community_specialfeatures.milo")
    (focus featurette_0.btn)
+   #else
+   (file "eng/main_multimode_og.milo")
+   (focus bandqp.btn)
+   #endif
    (enter {leaderboards clear_type})
    (SELECT_MSG
       {meta music_stop}
       {platform_mgr disable_xmp}
       {switch $component
+         #ifdef HX_NG
          (credits.btn {ui goto_screen credits_movie_screen})
          (featurette_0.btn
             {featurette_panel set featurette_num 0}
@@ -550,8 +644,23 @@
             {featurette_panel set featurette_num 3}
             {ui goto_screen featurette_screen}
          )
+         #else
+         (bandqp.btn {ui goto_screen highscore_seltrack_screen})
+         (bandtour.btn {ui goto_screen featurette_goto_credits_screen})
+         (headtohead.btn {ui push_screen overshell_screen})
+         #endif
       }
    )
+   #ifndef HX_NG
+   (finish_load
+      {bandqp.btn set text_token 'high scores'}
+      {bandtour.btn set text_token credits}
+      {headtohead.btn set text_token os_ultisettings}
+      {$this disable headtohead_pro.btn}
+      {headtohead_pro.btn set_showing FALSE}
+      {submenu03.mesh set_showing FALSE}
+   )
+   #endif
 }
 {new UIScreen
    community_specialfeatures_screen
@@ -564,9 +673,14 @@
       fx
    )
    (focus community_specialfeatures_panel)
+   #ifdef HX_NG
    (back main_community_screen)
+   #else
+   (back main_screen)
+   #endif
    MAIN_SCREEN_TRANSITION_HANDLER
 }
+#ifdef HX_NG
 {new MoviePanel
    featurette_panel
    (featurette_num -1)
@@ -606,6 +720,127 @@
    (panels meta credits_movie_panel)
    (focus credits_movie_panel)
 }
+#else
+{new UIScreen
+   featurette_goto_credits_screen
+   (panels meta_loading)
+   (TRANSITION_COMPLETE_MSG {ui goto_screen pi_to_credits_screen})
+}
+{new UIScreen
+   goto_credits_screen
+   (panels)
+   (TRANSITION_COMPLETE_MSG {ui goto_screen credits_screen})
+}
+{new UIPanel
+   credits_movie_panel
+   (file "world/intro_video.milo")
+   (moviefinished FALSE)
+   (enter
+      #ifdef HX_EE
+      {16x9.mesh set_showing FALSE}
+      {4x3.mesh set_showing FALSE}
+      {16x9zoom.mesh set_showing FALSE}
+      {4x3std.mesh set_showing TRUE}
+      {intro_video.mov set movie_file {sprintf "videos/rb_endcredits.pss"}}
+      {intro_video.mov animate}
+      {set $moviefinished FALSE}
+      #endif
+      #ifdef HX_WII
+      {16x9.mesh set_showing FALSE}
+      {4x3.mesh set_showing FALSE}
+      {16x9zoom.mesh set_showing FALSE}
+      {4x3std.mesh set_showing TRUE}
+      {intro_video.mov set movie_file {sprintf "videos/hmx_endcredits.bik"}}
+      {intro_video.mov animate}
+      {set $moviefinished FALSE}
+      {disc_error_set_stop_movie TRUE}
+      #endif
+   )
+   (poll
+      {if {&& {! $moviefinished} {intro_video.mov is_movie_done}}
+         {do
+            {set $moviefinished TRUE}
+            {ui goto_screen credits_to_pi_movie_screen}
+         }
+      }
+   )
+   (BUTTON_DOWN_MSG
+      {if {&& {'||' {== $button kPad_Start} {== $button kPad_X}} {! $moviefinished}}
+         {do
+            {set $moviefinished TRUE}
+            {intro_video.mov set_movie_paused TRUE}
+            {ui goto_screen credits_to_pi_movie_screen}
+         }
+      }
+   )
+   #ifdef HX_WII
+   (exit {disc_error_set_stop_movie FALSE})
+   #endif
+}
+{new UIScreen
+   credits_movie_screen
+   (panels meta credits_movie_panel)
+   (focus credits_movie_panel)
+   (enter {{meta meta_music} stop})
+   (exit)
+}
+{new UIPanel
+   pi_credits_movie_panel
+   (file "world/intro_video.milo")
+   (moviefinished FALSE)
+   (enter
+      #ifdef HX_EE
+      {16x9.mesh set_showing FALSE}
+      {4x3.mesh set_showing FALSE}
+      {16x9zoom.mesh set_showing FALSE}
+      {4x3std.mesh set_showing TRUE}
+      {intro_video.mov set movie_file {sprintf "videos/pi_endcredits.bik"}}
+      {intro_video.mov animate}
+      {set $moviefinished FALSE}
+      #endif
+      #ifdef HX_WII
+      {16x9.mesh set_showing FALSE}
+      {4x3.mesh set_showing FALSE}
+      {16x9zoom.mesh set_showing FALSE}
+      {4x3std.mesh set_showing TRUE}
+      {intro_video.mov set movie_file {sprintf "videos/pi_endcredits.bik"}}
+      {intro_video.mov animate}
+      {set $moviefinished FALSE}
+      {disc_error_set_stop_movie TRUE}
+      #endif
+      {{meta meta_music} stop}
+   )
+   (poll
+      {if {&& {! $moviefinished} {intro_video.mov is_movie_done}}
+         {do
+            {set $moviefinished TRUE}
+            {intro_video.mov set_movie_paused TRUE}
+            {ui goto_screen pi_to_credits_screen}
+         }
+      }
+   )
+   (BUTTON_DOWN_MSG
+      {if {&& {'||' {== $button kPad_Start} {== $button kPad_X}} {! $moviefinished}}
+         {do
+            {set $moviefinished TRUE}
+            {ui goto_screen pi_to_credits_screen}
+         }
+      }
+   )
+   #ifdef HX_WII
+   (exit {disc_error_set_stop_movie FALSE})
+   #endif
+}
+{new UIScreen
+   pi_credits_movie_screen
+   (panels meta pi_credits_movie_panel)
+   (focus pi_credits_movie_panel)
+}
+{new UIScreen
+   credits_to_pi_movie_screen
+   (TRANSITION_COMPLETE_MSG {ui goto_screen pi_credits_movie_screen})
+}
+#endif
 {new UIScreen
    tour_hub_community_screen
    (panels
@@ -628,6 +863,7 @@
    (helpbar (back select))
    (enter {practice_space_panel select_cam "leaderboards"})
 }
+#ifdef HX_NG
 {new UIScreen
    main_leaderboard_signin_screen
    (panels dialog_panel)
@@ -685,3 +921,4 @@
    )
    (SELECT_MSG {ui pop_screen})
 }
+#endif

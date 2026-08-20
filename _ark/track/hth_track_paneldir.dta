@@ -202,6 +202,10 @@
          )
          (reset
             {reset_all.trig trigger}
+            #ifndef HX_NG
+            {track_0 reset}
+            {track_1 reset}
+            #endif
             {$this set_score_diff 0}
             {head2head_meter reset}
             {ending_bonus_p01 reset}
@@ -231,6 +235,9 @@
                {do
                   {$icon set_icon {get_player_icon {$track get player}}}
                   {$icon arrow_hide}
+                  #ifndef HX_NG
+                  {$icon stop_deploy}
+                  #endif
                   {player_name_01.lbl set
                      text_token
                      {get_player_name {{object track_0} get player}}
@@ -256,7 +263,13 @@
                {set_track_speeds}
             }
          )
-         (play_intro {intro.trig trigger})
+         (play_intro
+            #ifdef HX_NG
+            {intro.trig trigger}
+            #else
+            {script_task kTaskBeats (delay 1.0e-3) (script {intro.trig trigger})}
+            #endif
+         )
          (set_crowd_rating ($val))
          (set_accumulative_rate ($val))
          (set_multiplier ($val))
@@ -282,6 +295,11 @@
                {$activator set_showing {! {$activator showing}}}
                {set $activator {track_1 find activator.grp}}
                {$activator set_showing {! {$activator showing}}}
+            }
+         )
+         (toggle_track_fade
+            {foreach $obj [gem_tracks]
+               {$obj toggle_track_fade}
             }
          )
          (is_instrument_local
@@ -334,10 +352,12 @@
                   {[first_solo_player] solo_end [first_solo_points] [first_solo_result]}
                   {$player solo_end $points $result}
                   {set [first_solo_player] 0}
+                  #ifdef HX_NG
                   {if [vocal_game]
                      {track_0 set_tambourine FALSE}
                      {track_1 set_tambourine FALSE}
                   }
+                  #endif
                }
                {do
                   {set [first_solo_player] $player}

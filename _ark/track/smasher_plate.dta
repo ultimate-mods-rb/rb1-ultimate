@@ -14,14 +14,28 @@
          (lefty FALSE)
          (is_drum FALSE)
          (smasher_list ())
+         #ifndef HX_NG
+         (striped FALSE)
+         #endif
          (reset
             {foreach $smasher [smasher_list]
                {$smasher reset}
             }
             {$this update_colors}
+            #ifdef HX_NG
             {$this setup_draworder FALSE}
+            #else
+            {if {! [striped]}
+               {$this setup_draworder FALSE}
+               {set [striped] TRUE}
+            }
+            #endif
          )
-         (enter {$this reset})
+         (enter
+            #ifdef HX_NG
+            {$this reset}
+            #endif
+         )
          (set_lefty
             ($in_val)
             {set [lefty] $in_val}
@@ -110,10 +124,19 @@
                         {if_else {!= $cur_object ""}
                            {do
                               {$smasher iterate_self
+                                 #ifdef HX_NG
                                  (Object particle_launcher)
+                                 #else
+                                 BandMeshLauncher
+                                 #endif
                                  $launcher
                                  {if {== {$launcher get part} $obj}
                                     {$launcher set part $cur_object}
+                                    #ifndef HX_NG
+                                    {if {!= $cur_object $obj}
+                                       {$obj set_showing FALSE}
+                                    }
+                                    #endif
                                  }
                               }
                               {$cur_object set_trans_parent $this}

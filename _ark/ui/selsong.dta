@@ -1062,7 +1062,7 @@
          {switch {elem $a 1}
             (rb11 "")
             (rb22 "")
-            (rb2 "")
+            ((rb2 ugc1 ugc2 ugc_plus) "")
             (lego "")
             (rb3 "")
             (rb4 "")

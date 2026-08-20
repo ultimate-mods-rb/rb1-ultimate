@@ -1,10 +1,18 @@
 (heaps
    #ifdef HX_EE
-   (main (size 20300000))
-   (rnd
-      (size 5500000)
-      (handle TRUE)
-   )
+      #ifdef _DEBUG
+      (main (size 50000000))
+      (rnd
+         (size 5000000)
+         (handle TRUE)
+      )
+      #else
+      (main (size 25000000))
+      (rnd
+         (size 2450000)
+         (handle TRUE)
+      )
+      #endif
    #else
       #ifdef HX_PS3
       (main (size 166900000))
@@ -21,6 +29,21 @@
          (face_fx (size 1500000))
          (server_login (size 100000))
          #else
+         #ifdef HX_WII
+            #ifdef _DEBUG
+            (main (size 40000000))
+            #else
+            (main (size 27619953))
+            #endif
+            (rnd
+               (size 20000000)
+               (handle TRUE)
+            )
+            (song
+               (size 28770000)
+               (handle TRUE)
+            )
+         #else
          (main (size 130000000))
          (server_login (size 100000))
          (face_fx (size 1500000))
@@ -29,8 +52,14 @@
    #endif
 )
 (pool
+   #ifdef HX_NG
    (big_hunk 8000000)
    (small_hunk 50000)
+   #else
+   (big_hunk 2600000)
+   (small_hunk 50000)
+   #endif
 )
+(check_consistency FALSE)
 (enable_tracking FALSE)
 (track_stl FALSE)

@@ -1,7 +1,11 @@
 #define SELDIFF_PANEL_HANDLERS ((unload {session set_all_local_ready_status FALSE}))
 {new UIPanel
    seldiff_panel
+   #ifdef HX_NG
    (file "seldiff.milo")
+   #else
+   (file "seldiff_og.milo")
+   #endif
    SELDIFF_PANEL_HANDLERS
    LIMIT_TO_SESSION
    (enter
@@ -24,7 +28,11 @@
 }
 {new UIPanel
    seldiff_solo_panel
+   #ifdef HX_NG
    (file "seldiff_solo.milo")
+   #else
+   (file "seldiff_solo_og.milo")
+   #endif
    SELDIFF_PANEL_HANDLERS
    LIMIT_TO_SESSION
    (enter
@@ -85,7 +93,9 @@
          {if {$this showing}
             {do
                ($pcfg {$this player_config})
+               #ifdef HX_NG
                ($char {$pcfg get_char})
+               #endif
                ($ready {$pcfg is_ready})
                ($diff {$pcfg get_difficulty_sym})
                ($min_diff
@@ -94,6 +104,7 @@
                      kDifficultyEasy
                   }
                )
+               #ifdef HX_NG
                {instrument.lbl set_localized
                   {if_else {== {$pcfg get_track_type} kTrackNone}
                      {$char instrument_icon}
@@ -113,6 +124,14 @@
                      {! {gamecfg is_player_local [player_num]}}
                   }
                }
+               #else
+               {instrument.lbl set_localized
+                  {if_else {== {$pcfg get_track_type} kTrackNone}
+                     {cnv_instrumenttoicon [slot]}
+                     {{$pcfg get_char} track_icon {$pcfg get_track_sym}}
+                  }
+               }
+               #endif
                {player.lbl set_localized {$pcfg intro_name}}
                {if_else
                   {&&
@@ -169,6 +188,7 @@
                         {if {&& {!= {$this focus_name} guitar.btn} {!= {$this focus_name} bass.btn}}
                            {$this set_focus guitar.btn}
                         }
+                        #ifdef HX_NG
                         {foreach $part (guitar bass)
                            {do
                               ($button {sprint $part ".btn"})
@@ -194,6 +214,7 @@
                               }
                            }
                         }
+                        #endif
                      }
                   }
                }
@@ -257,12 +278,29 @@
       )
       (part_select_wait
          (BUTTON_DOWN_MSG
+            #ifdef HX_NG
             {if_else {== $button kPad_Tri}
                kDataUnhandled
                {if {== $button kPad_X}
                   {synth play button_error}
                }
             }
+            #else
+            {switch $button
+               (
+                  (kPad_Tri)
+                  {synth play button_back}
+                  {{$this player_config} set_track_type kTrackNone}
+                  {{ui current_screen} verify_player_change [player_num]}
+                  {{ui current_screen} export_all update}
+               )
+               (
+                  (kPad_X)
+                  {synth play button_back}
+               )
+            }
+            TRUE
+            #endif
          )
       )
       (diff_select
@@ -282,12 +320,30 @@
          )
          (SELECT_MSG
             {if_else {gamemode get is_practice}
+               #ifdef HX_NG
                {ui goto_screen practice_preloading_screen}
+               #else
+               {goto_practice_selection_screen}
+               #endif
                {{$this player_config} set_ready TRUE}
             }
             {{ui current_screen} update $this}
             kDataUnhandled
          )
+         #ifndef HX_NG
+         (BUTTON_DOWN_MSG
+            {if_else {&& {$this is_guitar_slot} {== $button kPad_Tri}}
+               {do
+                  {synth play button_back}
+                  {{$this player_config} set_track_type kTrackNone}
+                  {{ui current_screen} verify_player_change [player_num]}
+                  {{ui current_screen} export_all update}
+                  TRUE
+               }
+               kDataUnhandled
+            }
+         )
+         #endif
       )
       (diff_selected
          (BUTTON_DOWN_MSG
@@ -408,13 +464,19 @@
       }
    )
    (start_loading_msg
+      #ifdef HX_WII
+      {disc_error_check TRUE}
+      #endif
       {$this export_all update}
+      #ifndef HX_NG
+      {gamecfg set_active_roster TRUE}
+      #endif
       {ui goto_screen loading_screen}
    )
 }
 {new MultiFocusScreen
    qp_seldiff_solo_screen
-   (panels meta postsong_sfx_panel movie_panel seldiff_solo_panel helpbar fx)
+   (panels meta postsong_sfx_panel movie_panel seldiff_solo_panel helpbar #ifdef HX_NG fx #endif)
    (helpbar (helpbar_back helpbar_select))
    (player_panels (panel seldiff_solo_panel) SELDIFF_SCREEN_PANELS)
    SELDIFF_SCREEN_HANDLERS
@@ -427,7 +489,15 @@
          kDataUnhandled
       }
    )
-   (start_loading_msg {ui goto_screen loading_screen})
+   (start_loading_msg
+      #ifdef HX_WII
+      {disc_error_check TRUE}
+      #endif
+      #ifndef HX_NG
+      {gamecfg set_active_roster TRUE}
+      #endif
+      {ui goto_screen loading_screen}
+   )
    (enter
       {do
          ($player_num {gamecfg get leader_num})
@@ -440,10 +510,13 @@
       }
       kDataUnhandled
    )
+   #ifdef HX_NG
    (exit {fx fade_out})
+   #endif
 }
 {new MultiFocusScreen
    tour_band_seldiff_screen
+   #ifdef HX_NG
    (panels
       meta
       postsong_sfx_panel
@@ -452,6 +525,9 @@
       helpbar
       fx
    )
+   #else
+   (panels meta movie_panel seldiff_panel helpbar)
+   #endif
    (helpbar (helpbar_back helpbar_select))
    (player_panels (panel seldiff_panel) SELDIFF_SCREEN_PANELS)
    SELDIFF_SCREEN_HANDLERS
@@ -465,18 +541,30 @@
       }
    )
    (start_loading_msg
+      #ifdef HX_WII
+      {disc_error_check TRUE}
+      #endif
       {$this export_all update}
+      #ifdef HX_NG
       {ui goto_screen
          {if_else {{tour performer} has_next_moment}
             tour_active_moment_screen
             loading_screen
          }
       }
+      #else
+      {gamecfg set_active_roster TRUE}
+      {ui goto_screen loading_screen}
+      #endif
    )
 }
 {new UIPanel
    qp_hth_seldiff_panel
+   #ifdef HX_NG
    (file "qp_hth_seldiff.milo")
+   #else
+   (file "qp_hth_seldiff_og.milo")
+   #endif
    LIMIT_TO_LEADER_SESSION
    (enter
       {{$this find_self song.lbl} set_localized
@@ -514,6 +602,7 @@
             }
          }
       }
+      #ifdef HX_NG
       {foreach $part (guitar bass)
          {do
             ($button {sprint $part ".btn"})
@@ -530,6 +619,7 @@
             }
          }
       }
+      #endif
    )
    (BUTTON_DOWN_MSG
       {do
@@ -611,6 +701,9 @@
                      }
                   }
                }
+               #ifdef HX_WII
+               {disc_error_check TRUE}
+               #endif
                {ui goto_screen loading_screen}
             }
          }
@@ -633,12 +726,17 @@
 }
 {new UIPanel
    hth_split_seldiff_panel
+   #ifndef HX_NG
+   (file "seldiff_hth_og.milo")
+   (unload {session set_all_local_ready_status FALSE})
+   #else
    (file "seldiff_hth.milo")
+   LIMIT_TO_SESSION
+   #endif
    (enter
       {song.lbl set_localized {song_mgr song_name {game get_song}}}
       {by_line.lbl set_localized {song_mgr by_line {game get_song}}}
    )
-   (unload {session set_all_local_ready_status FALSE})
 }
 {new MultiFocusScreen
    hth_split_seldiff_screen
@@ -676,6 +774,7 @@
             {if {$this showing}
                {do
                   ($pcfg {$this player_config})
+                  #ifdef HX_NG
                   ($char {$pcfg get_char})
                   {instrument.lbl set_localized
                      {if_else {== {$pcfg get_track_type} kTrackNone}
@@ -687,6 +786,11 @@
                      {guitar.lbl set_localized {$char track_icon guitar}}
                      {bass.lbl set_localized {$char track_icon bass}}
                   }
+                  #else
+                  {instrument.lbl set_localized
+                     {{$pcfg get_char} track_icon {$pcfg get_track_sym}}
+                  }
+                  #endif
                   {{hth_split_seldiff_panel
                         find
                         {sprintf
@@ -731,6 +835,7 @@
       )
       (options
          (select
+            #ifdef HX_NG
             (BUTTON_DOWN_MSG
                {if_else {&& {== $button kPad_Tri} {! {is_leader_local}}}
                   {if {gamecfg is_player_participating $player_num}
@@ -739,6 +844,7 @@
                   kDataUnhandled
                }
             )
+            #endif
             (FOCUS_MSG
                {if {gamecfg is_player_local [player_num]}
                   {{$this player_config} set_difficulty
@@ -762,6 +868,9 @@
          (selected
             (BUTTON_DOWN_MSG
                {if {== $button kPad_Tri}
+                  #ifndef HX_NG
+                  {synth play button_back}
+                  #endif
                   {{game get_player_config [player_num]} set_ready FALSE}
                   {{ui current_screen} update $this}
                }
@@ -772,7 +881,13 @@
       )
    )
    (start_loading_msg
+      #ifdef HX_WII
+      {disc_error_check TRUE}
+      #endif
       {$this export_all update}
+      #ifndef HX_NG
+      {gamecfg set_active_roster TRUE}
+      #endif
       {ui goto_screen loading_screen}
    )
 }
@@ -802,6 +917,12 @@
    (exit {session remove_sink $this})
    (start_loading_msg
       {if {== {session num_players} 2}
+         #ifdef HX_WII
+         {disc_error_check TRUE}
+         #endif
+         #ifndef HX_NG
+         {gamecfg set_active_roster TRUE}
+         #endif
          {ui goto_screen loading_screen}
       }
    )

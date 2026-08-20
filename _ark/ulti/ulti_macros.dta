@@ -67,7 +67,7 @@
    (type uFakeSld)
    (fmt_type uCunt)
    (array
-      #ifdef HX_NG
+      #ifndef HX_WII
       (
          kPad_L2
          kPad_L1
@@ -88,9 +88,9 @@
       #else
       (
          kPad_X
-         kPad_Circle
-         kPad_Square
          kPad_Tri
+         kPad_Square
+         kPad_Circle
          kPad_DUp
          kPad_DDown
          kPad_DLeft

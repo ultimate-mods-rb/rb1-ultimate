@@ -7,8 +7,13 @@
 }
 {new SessionPanel
    training_menu_panel
+   #ifdef HX_NG
    (file "training.milo")
    (mode_focus tutorials.btn)
+   #else
+   (file "training_og.milo")
+   (focus tutorials.btn)
+   #endif
    (load
       {main_panel set mode_focus tutorial.btn}
       {content_mgr start_refresh}
@@ -17,7 +22,13 @@
    (enter
       {session clear}
       {$this update_available_inst}
+      #ifdef HX_NG
       {$this set_focus [mode_focus]}
+      #else
+      {game set leader_num -1}
+      {meta music_stop}
+      {meta music_start}
+      #endif
    )
    (SELECT_MSG
       {switch $component
@@ -45,6 +56,7 @@
                         {set $controller_type kControllerVocals}
                      }
                      {switch $controller_type
+                        #ifdef HX_NG
                         (kControllerDrum
                            {gamemode set_mode tutorial_drums}
                            {{gamemode get main_panel} set_tutorial_player $player_num}
@@ -66,6 +78,44 @@
                            {$this wait_for_session_ready}
                            {session_mgr add_local_player $player_num $controller_type}
                         )
+                        #else
+                        (kControllerDrum
+                           {game set leader_num $player_num}
+                           {band_ui_sink set post_matchmaking TRUE}
+                           {gamemode set_mode tutorial_drums $player_num}
+                           {{gamemode get main_panel} set_tutorial_player $player_num}
+                           {game set_player_slot_num $player_num kGameCoopSlotDrum}
+                           {$this wait_for_session_ready}
+                           {session_mgr add_local_player
+                              $player_num
+                              {gamecfg get_controller_type_from_controller $player_num}
+                           }
+                        )
+                        (kControllerGuitar
+                           {game set leader_num $player_num}
+                           {band_ui_sink set post_matchmaking TRUE}
+                           {gamemode set_mode tutorial_guitar $player_num}
+                           {{gamemode get main_panel} set_tutorial_player $player_num}
+                           {game set_player_slot_num $player_num kGameCoopSlotGuitar0}
+                           {$this wait_for_session_ready}
+                           {session_mgr add_local_player
+                              $player_num
+                              {gamecfg get_controller_type_from_controller $player_num}
+                           }
+                        )
+                        (kControllerVocals
+                           {game set leader_num $player_num}
+                           {band_ui_sink set post_matchmaking TRUE}
+                           {gamemode set_mode tutorial_vocals $player_num}
+                           {{gamemode get main_panel} set_tutorial_player $player_num}
+                           {game set_player_slot_num $player_num kGameCoopSlotVocals}
+                           {$this wait_for_session_ready}
+                           {session_mgr add_local_player
+                              $player_num
+                              {gamecfg get_controller_type_from_controller $player_num}
+                           }
+                        )
+                        #endif
                         (TRUE
                            {notify "player selected a tutorial with an unknown controller type!"}
                         )
@@ -75,6 +125,7 @@
             }
          )
          (practice.btn
+            #ifdef HX_NG
             {if_else
                {&&
                   {player_on_instrument $player_num kControllerVocals}
@@ -94,6 +145,37 @@
                   }
                }
             }
+            #else
+            {if_else
+               {&&
+                  {player_on_instrument $player_num kControllerVocals}
+                  {gamecfg is_missing_mic $player_num FALSE}
+               }
+               {do
+                  {vocalist_must_have_mic_screen set message solo_vocalist_needs_mic}
+                  {ui push_screen vocalist_must_have_mic_screen}
+               }
+               {do
+                  {game set leader_num $player_num}
+                  {if
+                     {!=
+                        {gamecfg get_controller_type_from_controller $player_num}
+                        kControllerNone
+                     }
+                     {game set leader_num $player_num}
+                     {gamemode set_mode practice $player_num}
+                     {$this wait_for_session_ready}
+                     {session_mgr add_local_player
+                        $player_num
+                        {gamecfg get_controller_type_from_controller $player_num}
+                     }
+                     {band_ui_sink set post_matchmaking TRUE}
+                     {set [mode_focus] practice.btn}
+                     {gamecfg set practice_speed 0}
+                  }
+               }
+            }
+            #endif
          )
          (drum_freestyle.btn
             {set [mode_focus] drum_freestyle.btn}
@@ -114,6 +196,7 @@
       }
    )
    (JOYPAD_CONNECT_MSG {$this update_available_inst})
+   #ifdef HX_NG
    (session_ready_complete_msg
       {gamecfg auto_assign_missing_slots}
       {game foreach_player_config $pcfg
@@ -129,6 +212,15 @@
       {submenu02.mesh set_showing TRUE}
       {submenu02.mesh set_local_pos_index 2 0.5}
    )
+   #else
+   (session_ready
+      {gamecfg auto_assign_missing_slots}
+      {game foreach_player_config $pcfg
+         {set_char_from_controller {$pcfg get player_num}}
+      }
+      {ui goto_screen {gamemode get first_screen}}
+   )
+   #endif
 }
 {new UIScreen
    training_menu_screen
@@ -139,11 +231,26 @@
       main_panel
       training_menu_panel
       fx
+      #ifndef HX_NG
+      build_number
+      #endif
    )
    (focus training_menu_panel)
    (back main_screen)
+   #ifndef HX_NG
+   (enter {helpbar set_limit_to_player_num -1})
+   (TRANSITION_COMPLETE_MSG {main_panel attempt_to_autoload} kDataUnhandled)
+   #endif
    MAIN_SCREEN_TRANSITION_HANDLER
 }
 #include ../tutorial/tutorial.dta
+#ifdef HX_NG
 #include ../drum_trainer/drum_trainer.dta
 #include practice.dta
+#endif
+#ifdef HX_EE
+#include practice_ps2.dta
+#endif
+#ifdef HX_WII
+#include practice_wii.dta
+#endif

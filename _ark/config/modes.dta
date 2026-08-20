@@ -34,7 +34,11 @@
    (separate_parts FALSE)
    (max_delta FALSE)
    (skip_matchmaking FALSE)
+   #ifdef HX_NG
    (load_chars TRUE)
+   #else
+   (load_chars FALSE)
+   #endif
    (allow_bass TRUE)
    (max_players 4)
    (max_local_players 4)
@@ -55,7 +59,11 @@
    (post_matchmaking_screen QP_SELSONG_SCREEN)
    (continue_screen QP_SELSONG_SCREEN)
    (game_screen game_screen)
+   #ifdef HX_NG
    (community_screen tour_hub_community_screen)
+   #else
+   (community_screen main_community_screen)
+   #endif
    (quit_screen meta_loading_main_screen)
    (show_pause_quit TRUE)
    (pause_new_song_screen QP_SELSONG_SCREEN)
@@ -148,6 +156,10 @@
    (matchmaking_screen matchmaking_hth_screen)
    (game_screen hth_game_screen)
    (track_panel hth_track_panel)
+   #ifndef HX_NG
+   (endgame_screen qp_hth_endgame_screen)
+   (uisink_default_screen main_screen)
+   #endif
    (uisink_default_screen matchmaking_hth_screen)
    (auto_choose_char TRUE)
    (allow_create_char FALSE)
@@ -163,7 +175,9 @@
 )
 #define HTH_SPLIT_PROPERTIES (
    HTH_PROPERTIES
+   #ifdef HX_NG
    (endgame_screen qp_hth_tow_endgame_screen)
+   #endif
    (separate_parts TRUE)
    (max_delta TRUE)
    (game_mode_context CONTEXT_GAME_MODE_TYPE_TUG_OF_WAR)
@@ -171,7 +185,9 @@
 )
 #define HTH_UNSPLIT_PROPERTIES (
    HTH_PROPERTIES
+   #ifdef HX_NG
    (endgame_screen qp_hth_endgame_screen)
+   #endif
    (game_mode_context CONTEXT_GAME_MODE_TYPE_SCORE_DUEL)
 )
 (qp_hth_local
@@ -241,7 +257,11 @@
    (missing_part_type kMissingRankedH2H)
 )
 #define COOP_MODE_PROPERTIES (
+   #ifdef HX_NG
    (main_mode_screen main_bandcoop_screen)
+   #else
+   (main_mode_screen main_multimode_screen)
+   #endif
    (auto_choose_char TRUE)
    (allow_create_char FALSE)
    (uisink_default_screen matchmaking_band_screen)
@@ -266,6 +286,7 @@
    (show_loading_images TRUE)
    (is_tour TRUE)
 )
+#ifdef HX_NG
 #define TOUR_SOLO_PROPERTIES (
    TOUR_MODE_PROPERTIES
    (pause_new_song_screen tour_solo_event_screen)
@@ -300,10 +321,6 @@
    (missing_part_type kMissingSoloTour)
 )
 (tour_solo TOUR_SOLO_PROPERTIES)
-(permadeath
-   TOUR_SOLO_PROPERTIES
-   (is_permadeath TRUE)
-)
 #define TOUR_BAND_PROPERTIES (
    TOUR_MODE_PROPERTIES
    (pause_new_song_screen
@@ -379,6 +396,155 @@
    (unlock_song_instrument band)
    (missing_part_type kMissingBWT)
 )
+#else
+(tour_solo
+   TOUR_MODE_PROPERTIES
+   (pause_new_song_screen tour_solo_event_screen)
+   (continue_screen
+      #ifndef HX_XBOX
+      tour_solo_event_screen
+      #else
+      {if_else {tour hint}
+         {{tour hint} get screen}
+         tour_solo_event_screen
+      }
+      #endif
+   )
+   (tour_win_screen
+      {if_else {== {{tour performer} solo_difficulty} kDifficultyEasy}
+         tour_solo_easy_win_screen
+         tour_solo_congrats_screen
+      }
+   )
+   (tour_event_screen tour_solo_event_screen)
+   (max_players 1)
+   (max_local_players 1)
+   (min_players 1)
+   (band_name {{tour performer} get_char_name})
+   (online_mode CONTEXT_GAME_MODE_SOLO_TOUR)
+   (matchmaking_screen tour_solo_char_screen)
+   (post_matchmaking_screen tour_solo_hub_screen)
+   (endgame_screen tour_solo_endgame_screen)
+   (sendoff_screen tour_solo_sendoff_screen)
+   (lose_screen tour_solo_lose_screen)
+   (allow_bass FALSE)
+   (intro_category INTRO_VENUE)
+   (show_pause_quit FALSE)
+   (game_mode_context CONTEXT_GAME_MODE_TYPE_TOUR)
+   (cannot_connect_warning solo_no_server_warning)
+   (unlock_song_instrument {{tour performer} get_instrument})
+   #ifndef HX_XBOX
+   (ready_screen tour_solo_ready_screen)
+   #endif
+)
+(tour_band
+   TOUR_MODE_PROPERTIES
+   (pause_new_song_screen tour_band_event_screen)
+   (continue_screen
+      #ifndef HX_XBOX
+      tour_band_event_screen
+      #else
+      {if_else {tour hint}
+         {{tour hint} get screen}
+         tour_band_event_screen
+      }
+      #endif
+   )
+   (tour_win_screen tour_band_win_screen)
+   (tour_event_screen tour_band_event_screen)
+   (max_players 4)
+   (max_local_players 4)
+   (min_players 1)
+   (online_mode CONTEXT_GAME_MODE_SOLO_TOUR)
+   (matchmaking_screen matchmaking_band_screen)
+   (post_matchmaking_screen
+      #ifndef HX_XBOX
+      tour_band_event_screen
+      #else
+      tour_band_seldiff_screen
+      #endif
+   )
+   (ready_screen tour_band_seldiff_screen)
+   (endgame_screen tour_band_endgame_screen)
+   (sendoff_screen tour_band_event_screen)
+   (lose_screen tour_solo_lose_screen)
+   (allow_bass TRUE)
+   (intro_category INTRO_VENUE)
+   (pause_quit_screen gNullStr)
+   (main_mode_screen main_multimode_screen)
+)
+#define TOUR_BAND_PROPERTIES (
+   TOUR_MODE_PROPERTIES
+   (pause_new_song_screen tour_band_event_screen)
+   (continue_screen
+      {if_else {tour hint}
+         {{tour hint} get screen}
+         tour_band_event_screen
+      }
+   )
+   (main_mode_screen tour_band_sel_screen)
+   (profile_required TRUE)
+   (choose_leader_from_band TRUE)
+   (post_matchmaking_screen
+      {do
+         ($band {tour performer})
+         {if_else {$band is_finalized}
+            tour_band_hub_screen
+            tour_band_create_screen
+         }
+      }
+   )
+   #ifdef HX_BOX
+   (ready_screen
+      {if_else {== {{tour event} get warning_screen} ''}
+         tour_band_seldiff_screen
+         tour_band_marathon_screen
+      }
+   )
+   #else
+   (ready_screen tour_band_seldiff_screen)
+   #endif
+   (min_players 1)
+   (min_num_participants
+      {if_else $cheat.bwt_no_min_participants
+         1
+         2
+      }
+   )
+   (band_name {{tour performer} band_name})
+   (band_logo
+      {if_else {{tour performer} has_logo_patch}
+         {{tour performer} logo_patch}
+         0
+      }
+   )
+   (tour_win_screen tour_band_win_screen)
+   (endgame_screen
+      {if_else {{tour performer} last_song}
+         tour_band_endgame_screen
+         tour_nextsong_screen
+      }
+   )
+   (lose_screen tour_band_lose_screen)
+   (uisink_default_screen tour_band_sel_screen)
+   (uisink_signout_screen tour_band_sel_screen)
+   (intro_category
+      {if_else {{tour performer} first_song}
+         {gamecfg get coop_intro_category}
+         INTRO_MULTI
+      }
+   )
+   (online_mode CONTEXT_GAME_MODE_BAND_WORLD_TOUR)
+   (win_camera
+      {if_else {{tour performer} last_song}
+         WIN
+         WIN_QUICK
+      }
+   )
+   (game_mode_context CONTEXT_GAME_MODE_TYPE_BAND_WORLD_TOUR)
+   (unlock_song_instrument band)
+)
+#endif
 (tour_world_local
    TOUR_BAND_PROPERTIES
    (show_pause_quit FALSE)
@@ -463,7 +629,11 @@
    (win_screen tutorials_drums_beat_menu)
    (righty_assets "drum_tutorial_righty.milo")
    (lefty_assets "drum_tutorial_lefty.milo")
+   #ifdef HX_NG
    (lesson_menu_assets "drum_tutorial_menu.milo")
+   #else
+   (lesson_menu_assets "drum_tutorial_menu_og.milo")
+   #endif
    (start_tracktype kTrackDrum)
    (failure_vo drum_tut_thrash_didnt_finish)
    (notes_format tutorial_drum_notes_format)
@@ -480,7 +650,11 @@
    (main_screen tutorials_guitar_main_screen)
    (righty_assets "guitar_tutorial_righty.milo")
    (lefty_assets "guitar_tutorial_lefty.milo")
+   #ifdef HX_NG
    (lesson_menu_assets "guitar_tutorial_menu.milo")
+   #else
+   (lesson_menu_assets "guitar_tutorial_menu_og.milo")
+   #endif
    (start_tracktype kTrackGuitar)
    (failure_vo drum_tut_thrash_didnt_finish)
    (notes_format tutorial_guitar_notes_format)
@@ -499,7 +673,11 @@
    (main_screen tutorials_vocals_main_screen)
    (mixed_assets "vocals_tutorial_scrolling.milo")
    (static_assets "vocals_tutorial_static.milo")
+   #ifdef HX_NG
    (lesson_menu_assets "vocals_tutorial_menu.milo")
+   #else
+   (lesson_menu_assets "vocals_tutorial_menu_og.milo")
+   #endif
    (start_tracktype kTrackVocals)
    (failure_vo drum_tut_thrash_didnt_finish)
    (notes_format tutorial_vocals_notes_format)
@@ -596,6 +774,10 @@
    (skip_matchmaking TRUE)
    (is_autoplay TRUE)
    COOP_MODE_PROPERTIES
+)
+(permadeath
+   TOUR_SOLO_PROPERTIES
+   (is_permadeath TRUE)
 )
 (camera_debug
    COOP_MODE_PROPERTIES

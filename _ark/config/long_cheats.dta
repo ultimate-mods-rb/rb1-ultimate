@@ -40,7 +40,11 @@
          ;}
       }
       {print "overshell blocked from opening"}
+      #ifdef HX_NG
       {overshell set_up TRUE}
+      #else
+      {ui push_screen overshell_screen}
+      #endif
    }
 )
 (

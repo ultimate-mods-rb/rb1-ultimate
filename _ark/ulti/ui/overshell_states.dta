@@ -50,11 +50,6 @@
          (bool $nofail)
          (sel_script {toggle_var nofail})
       )
-      (os_autokick
-         (type uOnOFF)
-         (bool $autokick)
-         (sel_script {toggle_var autokick})
-      )
       (os_tiltsensor
          (type uOnOFF)
          (bool $tiltsensor)
@@ -109,11 +104,13 @@
          (bool $kickbounce)
          (sel_script {toggle_var kickbounce})
       )
+      #ifdef HX_NG
       (os_prodrums
          (type uOnOFF)
          (bool $prodrums)
          (sel_script {toggle_var prodrums})
       )
+      #endif
       (os_fcring
          (type uOnOFF)
          (bool $fcring)
@@ -131,11 +128,13 @@
          (bool $countdown)
          (sel_script {toggle_var countdown})
       )
+      #ifdef HX_NG
       (os_videobgs
          (type uOnOFF)
          (bool $videobgs)
          (sel_script {toggle_var videobgs})
       )
+      #endif
       (os_songtimer
          (type uFakeSld)
          (fmt_type uTimer)
@@ -151,17 +150,12 @@
 (gfx
    (title os_gfx)
    (data (
+      #ifdef HX_NG
       (os_fps_fmt
          (type uFakeSld)
          (fmt_type uNormal)
          (var emulatefps)
-         (array
-            #ifdef HX_NG
-            (1 6 12 15 24 30 60)
-            #else
-            (15 30)
-            #endif
-         )
+         (array (1 6 12 15 24 30 60))
       )
       (os_vsync_fmt
          (type uFakeSld)
@@ -169,21 +163,25 @@
          (var vsyncrate)
          (array (0 1 2 4))
       )
+      #endif
       (os_blackbg
          (type uOnOFF)
          (bool $blackbg)
          (sel_script {toggle_var blackbg})
       )
+      #ifdef HX_NG
       (os_fxdof
          (type uOnOFF)
          (bool $fxdof)
          (sel_script {toggle_var fxdof})
       )
+      #endif
       (os_scrnoise
          (type uOnOFF)
          (bool $scrnoise)
          (sel_script {toggle_var scrnoise})
       )
+      #ifdef HX_NG
       (os_scrbloom
          (type uOnOFF)
          (bool $scrbloom)
@@ -206,6 +204,8 @@
          (sel_script {toggle_var force_per_pixel})
       )
       #endif
+      #endif
+      #ifndef HX_EE
       (os_aspect_fmt
          (type uFakeSld)
          (fmt_type uAspect)
@@ -213,6 +213,18 @@
          (set {rnd set_aspect $r})
          (array (kSquareAspect kRegularAspect kWidescreenAspect))
       )
+      #else
+      (progressive_scan
+         (type uOnOFF)
+         (bool {profile_mgr get_progressive_scan})
+         (sel_script {profile_mgr set_progressive_scan {! {profile_mgr get_progressive_scan}}})
+      )
+      (widescreen
+         (type uOnOFF)
+         (bool {profile_mgr get_widescreen})
+         (sel_script {profile_mgr set_widescreen {! {profile_mgr get_widescreen}}})
+      )
+      #endif
    ))
    (enter {$this setup_common})
    (component_select {$this sel_common})
@@ -229,12 +241,14 @@
             {$this update_state remap_cnt}
          )
       )
+      #ifndef HX_WII
       (os_cnt_map_fmt
          (type uFakeSld)
          (fmt_type uMapping)
          (var pad_map)
          (array (0 1 2 3 4))
       )
+      #endif
       (os_padinst_fmt
          (type uFakeSld)
          (fmt_type uInst)
@@ -385,6 +399,7 @@
          (block_ingame TRUE)
          (sel_script {run ulti/ulti_init_apperance.dta})
       )
+      #ifdef HX_NG
       (os_gems
          (type uFakeSld)
          (fmt_type uLocalize)
@@ -409,6 +424,7 @@
             }
          )
       )
+      #endif
       (os_colors
          (type uNormal)
          (sel_script
@@ -418,6 +434,7 @@
             }
          )
       )
+      #ifdef HX_NG
       (os_notergb
          (type uOnOFF)
          (bool $notergb)
@@ -427,6 +444,7 @@
             {asset_mgr ensure_stuff}
          )
       )
+      #endif
       (os_track_config
          (type uFakeSld)
          (fmt_type uLocalize)
@@ -844,6 +862,7 @@
          (type uNormal)
          (sel_script {$this update_state av})
       )
+      #ifdef HX_NG
       (os_ven
          (type uNormal)
          (sel_script {$this update_state ven})
@@ -867,6 +886,7 @@
          (bool $fast_selsong)
          (sel_script {toggle_var fast_selsong})
       )
+      #endif
       (os_reset_all
          (type uNormal)
          (block_ingame TRUE)
@@ -875,7 +895,7 @@
             {run ulti/ulti_init_apperance.dta}
          )
       )
-      #ifdef _DEBUG
+      #ifdef MOD_DEBUG
       ('debug'
          (type uNormal)
          (sel_script {$this update_state debug})
@@ -895,6 +915,7 @@
          (bool $colorshuffle)
          (sel_script {toggle_var colorshuffle})
       )
+      #ifdef HX_NG
       (os_smallworld
          (type uOnOFF)
          (bool $smallworld)
@@ -926,6 +947,7 @@
          (bool $hidechars)
          (sel_script {toggle_var hidechars})
       )
+      #endif
       (os_flashbang
          (type uOnOFF)
          (bool $flashbang)
@@ -954,6 +976,7 @@
 (av
    (title os_av)
    (data (
+      #ifdef HX_NG
       (bass_boost
          (type uOnOFF)
          (bool {profile_mgr get_bass_boost})
@@ -976,6 +999,7 @@
          (bool {profile_mgr get_overscan})
          (sel_script {profile_mgr set_overscan {! {profile_mgr get_overscan}}})
       )
+      #endif
       (os_ivol_fmt VOL_SLD
          (get {profile_mgr get_foreground_volume})
          (set {profile_mgr set_foreground_volume $r})
@@ -993,12 +1017,22 @@
          (set {profile_mgr set_fx_volume $r})
       )
       (os_avs_fmt CALI_SLD
+         #ifdef HX_NG
          (get {int {profile_mgr get_song_to_taskmgr_ms_ui}})
          (set {profile_mgr set_song_to_taskmgr_ms_ui $r})
+         #else
+         (get {int {profile_mgr get_excess_audio_lag}})
+         (set {profile_mgr set_excess_audio_lag $r})
+         #endif
       )
       (os_lo_fmt CALI_SLD
+         #ifdef HX_NG
          (get {int {profile_mgr get_sync_offset_ui}})
          (set {profile_mgr set_sync_offset_ui $r})
+         #else
+         (get {int {profile_mgr get_excess_video_lag}})
+         (set {profile_mgr set_excess_video_lag $r})
+         #endif
       )
    ))
    (enter {$this setup_common})
@@ -1397,7 +1431,7 @@
    (button_down {$this down_common})
    (back online)
 )
-#ifdef _DEBUG
+#ifdef MOD_DEBUG
 (debug
    (title 'debug')
    (data (

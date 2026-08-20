@@ -1,7 +1,18 @@
 #define LOSE_PANEL_HANDLERS (
+   #ifdef HX_NG
    LIMIT_TO_LEADER_SESSION
+   #else
+   LIMIT_TO_SESSION
+   (player_num {local_to_leader_player_num})
+   #endif
    (quit_button '')
    (enter
+      #ifdef HX_WII
+      {hmb_allow TRUE}
+      #endif
+      #ifndef HX_NG
+      {crowd_audio turn_off}
+      #endif
       {$this set_focus lose_restart.btn}
       {lose_song_data.lbl set_localized {song_mgr song_name {game get_song}}}
       {lose_progress_data.lbl set_localized
@@ -22,9 +33,15 @@
             {$this enable [quit_button]}
             {[quit_button] set_showing TRUE}
             {[quit_button] set text_token QUIT}
+            #ifdef HX_NG
             {if {exists menu_item_3.btn}
                {menu_item_3.btn set text_token practice}
             }
+            #else
+            {if {exists lose_practice.btn}
+               {lose_practice.btn set text_token practice}
+            }
+            #endif
          }
       }
       {session add_sink $this remote_player_left_msg}
@@ -32,6 +49,7 @@
    )
    (exit {session remove_sink $this remote_player_left_msg})
    (set_up_buttons
+      #ifdef HX_NG
       {if_else {< {session num_players} {gamemode get min_players}}
          {do
             {$this disable lose_restart.btn}
@@ -49,6 +67,14 @@
             {$this enable lose_selsong.btn}
          }
       }
+      #else
+      {if {< {session num_players} {gamemode get min_players}}
+         {$this disable lose_restart.btn}
+         {$this disable lose_diff.btn}
+         {$this disable lose_selsong.btn}
+         {$this set_focus lose_quit.btn}
+      }
+      #endif
    )
    (REMOTE_PLAYER_LEFT_MSG {$this set_up_buttons})
    (SELECT_MSG
@@ -62,18 +88,44 @@
             {$this confirm_goto meta_loading_ready_screen}
          )
          (lose_selsong.btn
+            #ifndef HX_NG
+            {set [exit_destination] exit_new_song}
+            {if_else {== $this lose}
+               {ui goto_screen lose_confirm_screen}
+               {ui goto_screen lose_tour_confirm_screen}
+            }
+            #else
             {[quit_confirm_screen] set quitting FALSE}
             {$this confirm_goto meta_loading_continue_screen}
+            #endif
          )
          {if_else {== $component [quit_button]}
             {do
+               #ifndef HX_NG
+               {set [exit_destination] exit_quit}
+               {if_else {== $this lose}
+                  {ui goto_screen lose_confirm_screen}
+                  {ui goto_screen lose_tour_confirm_screen}
+               }
+               #else
                {[quit_confirm_screen] set quitting TRUE}
                {$this confirm_goto meta_loading_main_screen}
+               #endif
             }
+            #ifdef HX_NG
             {if {&& {exists menu_item_3.btn} {== $component menu_item_3.btn}}
                {[quit_confirm_screen] set quitting TRUE}
                {$this confirm_goto goto_practice_screen}
             }
+            #else
+            {if {exists lose_practice.btn}
+               {set [exit_destination] exit_practice}
+               {if_else {== $this lose}
+                  {ui goto_screen lose_confirm_screen}
+                  {ui goto_screen lose_tour_confirm_screen}
+               }
+            }
+            #endif
          }
       }
    )
@@ -84,16 +136,50 @@
       {[quit_confirm_screen] set confirm_screen $destination}
       {ui goto_screen [quit_confirm_screen]}
    )
+   #ifndef HX_NG
+   (exit_destination exit_quit)
+   (on_quit
+      {switch [exit_destination]
+         (exit_quit
+            {session clear}
+            {ui goto_screen meta_loading_main_screen}
+         )
+         (exit_new_song {ui goto_screen meta_loading_continue_screen})
+         (exit_practice
+            {gamemode set_mode practice}
+            {if_else
+               {==
+                  {{game get_player_config {gamecfg get leader_num}} get_track_sym}
+                  vocals
+               }
+               {ui goto_screen meta_loading_practice_vocals_screen}
+               {ui goto_screen meta_loading_practice_screen}
+            }
+         )
+      }
+   )
+   #endif
 )
+#ifndef HX_NG
+{new UIPanel lose_background (file lose_background.milo)}
+#endif
 {new UIPanel
    lose
+   #ifdef HX_NG
    (file lose.milo)
+   #else
+   (file lose_og.milo)
+   #endif
    (quit_confirm_screen lose_confirm_quit_screen)
    LOSE_PANEL_HANDLERS
 }
 {new UIPanel
    tour_solo_lose_panel
+   #ifdef HX_NG
    (file tour_solo_lose.milo)
+   #else
+   (file tour_solo_lose_og.milo)
+   #endif
    (quit_confirm_screen lose_tour_solo_confirm_quit_screen)
    LOSE_PANEL_HANDLERS
 }
@@ -105,16 +191,28 @@
       }
    )
    HELPBAR_WAITING_FOR_LEADER
+   #ifndef HX_NG
+   LIMIT_TO_SESSION
+   (enter {helpbar set_limit_to_player_num -1})
+   #endif
 )
 {new UIScreen
    lose_screen
+   #ifdef HX_NG
    (panels lose helpbar)
+   #else
+   (panels lose_background lose helpbar)
+   #endif
    (focus lose)
    LOSE_SCREEN_HANDLERS
 }
 {new UIScreen
    tour_solo_lose_screen
+   #ifdef HX_NG
    (panels tour_solo_lose_panel helpbar)
+   #else
+   (panels lose_background tour_solo_lose_panel helpbar)
+   #endif
    (focus tour_solo_lose_panel)
    LOSE_SCREEN_HANDLERS
 }
@@ -122,7 +220,9 @@
    goto_practice_screen
    (panels)
    (TRANSITION_COMPLETE_MSG
+      #ifndef HX_NG
       {tour clear_performer}
+      #endif
       {gamemode set_mode practice}
       {band_ui_sink sync_screen meta_loading_practice_screen 1}
    )
@@ -131,7 +231,9 @@
    (focus dialog_panel)
    (confirm_screen '')
    (quitting FALSE)
+   #ifndef HX_NG
    (back $lose_confirm_screen_return_to)
+   #endif
    (enter
       {dialog_panel set_yesno {localize confirm_quit} no.btn}
       {dialog_panel set limit leader_session}
@@ -153,6 +255,7 @@
             {gamemode get always_allow_player}
          }
          {switch $component
+            #ifdef HX_NG
             (yes.btn
                {if_else [quitting]
                   {ui goto_screen [confirm_screen]}
@@ -163,6 +266,10 @@
                {ui goto_screen $lose_confirm_screen_return_to}
                {band_ui_sink set_net_sync TRUE}
             )
+            #else
+            (yes.btn {band_ui_sink sync_screen [confirm_screen] 1})
+            (no.btn {ui goto_screen $lose_confirm_screen_return_to})
+            #endif
          }
          kDataUnhandled
       }
@@ -170,11 +277,55 @@
 )
 {new UIScreen
    lose_confirm_quit_screen
+   #ifdef HX_NG
    (panels lose dialog_panel)
+   #else
+   (panels lose dialog_panel helpbar_dialog)
+   #endif
    COMMON_LOSE_QUIT_CONFIRM
 }
 {new UIScreen
    lose_tour_solo_confirm_quit_screen
+   #ifdef HX_NG
    (panels tour_solo_lose_panel dialog_panel)
+   #else
+   (panels tour_solo_lose_panel lose_background dialog_panel helpbar_dialog)
+   #endif
    COMMON_LOSE_QUIT_CONFIRM
+}
+#define LOSE_CONFIRM_HANDLERS (
+   LIMIT_TO_SESSION
+   (enter
+      {helpbar hide_helpbar}
+      {dialog_panel set_yesno {localize confirm_quit} no.btn}
+      {dialog_panel set limit session}
+      {helpbar_dialog set_config ('' helpbar_select)}
+      {helpbar_dialog set_limit_to_player_num -1}
+   )
+   (exit {helpbar unhide_helpbar})
+)
+{new UIScreen
+   lose_confirm_screen
+   (panels lose dialog_panel helpbar helpbar_dialog)
+   (focus dialog_panel)
+   LOSE_CONFIRM_HANDLERS
+   (SELECT_MSG
+      {switch $component
+         (yes.btn {lose on_quit})
+         (no.btn {ui goto_screen lose_screen})
+      }
+   )
+}
+{new UIScreen
+   lose_tour_confirm_screen
+   (panels tour_solo_lose_panel dialog_panel helpbar_dialog)
+   (helpbar ('' helpbar_select))
+   (focus dialog_panel)
+   LOSE_CONFIRM_HANDLERS
+   (SELECT_MSG
+      {switch $component
+         (yes.btn {tour_solo_lose_panel on_quit})
+         (no.btn {ui goto_screen tour_solo_lose_screen})
+      }
+   )
 }

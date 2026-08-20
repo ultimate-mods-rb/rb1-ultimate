@@ -180,6 +180,7 @@
                      {'++' $index}
                   }
                }
+               #ifndef HX_EE ; fix
                {foreach $track {{$this dir} get gem_tracks} {do
                   ($l
                      {eval_var
@@ -215,6 +216,7 @@
                      }
                   }
                }}
+               #endif
             }
          )
          (save_objects
@@ -775,10 +777,14 @@
             {star_meter_multiplier reset}
             {crowd_meter reset}
             {ending_bonus reset}
+            #ifdef HX_NG
             {switch {rnd aspect}
                (kRegularAspect {Cam.cam set_local_pos 0 -1.6 0})
                (kWidescreenAspect {Cam.cam set_local_pos 0 0 0})
             }
+            #else
+            {Cam.cam set_local_pos 0 0 0}
+            #endif
             {Cam.cam set_local_rot 0 0 0}
             {$this update_track_speed}
             {if $edit_mode
@@ -823,7 +829,13 @@
                }
             }
          )
-         (play_intro {intro.trig trigger})
+         (play_intro
+            #ifdef HX_NG
+            {intro.trig trigger}
+            #else
+            {script_task kTaskBeats (delay 1.0e-3) (script {intro.trig trigger})}
+            #endif
+         )
          (game_over
             {bass game_over}
             {drum game_over}
@@ -843,10 +855,12 @@
             {game_lost.trig trigger}
             {$this set_multiplier 1}
          )
+         #ifdef HX_NG
          (set_crowd_rating
             ($val)
             {crowd_meter set_crowd $val}
          )
+         #endif
          (set_showing
             ($visible)
             {draw.grp set_showing $visible}
@@ -867,6 +881,19 @@
                {$activator set_showing {! {$activator showing}}}
             }
          )
+         (toggle_track_fade
+            {foreach $obj [gem_tracks]
+               {$obj toggle_track_fade}
+            }
+         )
+         (toggle_track_fade_instrument
+            ($instrument)
+            {foreach $obj [gem_tracks]
+               {if {== {$obj name} $instrument}
+                  {$obj toggle_track_fade}
+               }
+            }
+         )
          (coda
             {if {'||' $edit_mode {! {game is_game_over}}}
                {bre_start.trig trigger}
@@ -881,6 +908,11 @@
          (set_coda_score
             ($in_val)
             {ending_bonus set_score $in_val}
+         )
+         (vocal_hide_streak
+            {if {== {vocals get_display_mode} 0}
+               {vocals vocal_hide_streak}
+            }
          )
          (coda_success {bre_success.trig trigger})
          (unison_start {ending_bonus unison_start})

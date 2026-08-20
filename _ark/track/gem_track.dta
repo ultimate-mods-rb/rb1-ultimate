@@ -57,7 +57,13 @@
             ($start $length)
             {track.env set fade_start $start}
             {track.env set fade_end {'+' $start $length}}
-            {{$this get cam} set far_plane {'+' $start $length}}
+            {{$this get cam} set far_plane
+               #ifdef HX_NG
+               {'+' $start $length}
+               #else
+               {'+' {'+' $start $length} 20}
+               #endif
+            }
          )
          (set_fov
             ($in_val)
@@ -147,6 +153,7 @@
             }
          )
          (play_intro
+            #ifdef HX_NG
             {reset.trig trigger}
             {if {!= [player_intro] ""}
                {if_else
@@ -175,6 +182,54 @@
                   (script {intro.trig trigger})
                }
             }
+            #else
+            {if {exists game}
+               {$this set_track_fade FALSE}
+            }
+            {reset.trig trigger}
+            {if {!= [player_intro] ""}
+               {if_else {'||' {&& [player] {[player] is_net}} [simulated_net]}
+                  {do
+                     {[player_intro] fade}
+                     {[player_intro] intro}
+                  }
+                  {do
+                     {[player_intro] intro}
+                     {script_task kTaskSeconds (delay 2) (script {[player_intro] hide})}
+                  }
+               }
+            }
+            {script_task kTaskBeats
+               (delay
+                  {if_else {== $game.play_mode coop}
+                     {'+' {'*' 0.6 [gem_track_index]} 1.0e-3}
+                     1.0e-3
+                  }
+               )
+               (script
+                  {do
+                     {intro.trig trigger}
+                     {if {exists game}
+                        {script_task kTaskSeconds
+                           (delay 0.35)
+                           (script
+                              {$this set_track_fade TRUE}
+                              {if {&& {!= [player_feedback] ""} {exists game}}
+                                 {if_else {! {gamemode is_hth_arrangement}}
+                                    {[player_feedback] set_trans_parent aspect_ratio.grp}
+                                    {[player_feedback] set_trans_parent $this}
+                                 }
+                              }
+                              {if [player]
+                                 {[player] set_enable_drum_solo TRUE}
+                              }
+                           )
+                        }
+                     }
+                  }
+               )
+            }
+            #endif
          )
          (track_reset
             {$this update_surface_texture}
@@ -196,6 +251,23 @@
                {[effect_selector] set_trans_parent [player_feedback]}
                {[effect_selector] set_showing FALSE}
             }
+            #ifndef HX_NG
+            {if {&& {!= [player_feedback] ""} {exists game}}
+               {if {&& {! {gamemode is_practice}} {! {gamemode is_tutorial}}}
+                  {if_else {! {gamemode is_hth_arrangement}}
+                     {[player_feedback] set_trans_parent $this}
+                     {[player_feedback] set_trans_parent score.grp}
+                  }
+               }
+            }
+            {if {exists game}
+               {if {&& {! {gamemode is_practice}} {! {gamemode is_tutorial}}}
+                  {if [player]
+                     {[player] set_enable_drum_solo FALSE}
+                  }
+               }
+            }
+            #endif
             {do
                ($smasher_plate
                   {if_else {== [instrument] drum}
@@ -204,17 +276,75 @@
                   }
                )
                {$smasher_plate reset}
+               #ifndef HX_NG
+               {if_else {== [instrument] drum}
+                  {do
+                     {{{$smasher_plate find gem_smasher0} find kick_flash.anim} set_frame 4}
+                     {{{$smasher_plate find gem_smasher0}
+                           find
+                           kick_smasher_base.tnm} set_frame
+                        7
+                     }
+                     {{{$smasher_plate find gem_smasher1} find smasher_react.tnm} set_frame 0}
+                     {{{$smasher_plate find gem_smasher2} find smasher_react.tnm} set_frame 0}
+                     {{{$smasher_plate find gem_smasher3} find smasher_react.tnm} set_frame 0}
+                     {{{$smasher_plate find gem_smasher4} find smasher_react.tnm} set_frame 0}
+                  }
+                  {do
+                     {{{$smasher_plate find gem_smasher0} find smasher_react.tnm} set_frame 0}
+                     {{{$smasher_plate find gem_smasher1} find smasher_react.tnm} set_frame 0}
+                     {{{$smasher_plate find gem_smasher2} find smasher_react.tnm} set_frame 0}
+                     {{{$smasher_plate find gem_smasher3} find smasher_react.tnm} set_frame 0}
+                     {{{$smasher_plate find gem_smasher4} find smasher_react.tnm} set_frame 0}
+                  }
+               }
+               #endif
                {if {'||' {! $edit_mode} {$this is_proxy}}
                   {smasher_fx.grp add_object {$smasher_plate find after_gems.grp}}
                   {{$smasher_plate find after_hide.grp} set_showing FALSE}
                }
             }
+            #ifndef HX_NG
+            {if {$this is_proxy}
+               {do
+                  ($remove_group
+                     {if_else {== [instrument] drum}
+                        {object guitar_gems.grp}
+                        {object drum_gems.grp}
+                     }
+                  )
+                  ($objects {$remove_group get_array objects})
+                  {foreach $elem $objects
+                     {if {== {$elem class_name} TrackWidget}
+                        {delete $elem}
+                     }
+                  }
+               }
+            }
+            #endif
             {$this setup_widget_lod}
             {$this enable_player}
             {set [kick_pass_counter] 0}
+            #ifdef HX_WII
+            {track01.lit set range 400.0}
+            {track01.lit set intensity 1.15}
+            {track_now_bar.lit set range 75.0}
+            {track_now_bar.lit set intensity 20.0}
+            #endif
          )
          (practice_reset
+            #ifndef HX_NG
+            {if {&& [parent] {{[parent] panel} exists reset_all.trig}}
+               {{{[parent] panel} find ending_bonus.tnm} set_frame 0}
+               {{{[parent] panel} find ending_bonus} reset}
+            }
+            #endif
             {$this reset}
+            #ifndef HX_NG
+            {if {exists game}
+               {$this set_track_fade [track_fading]}
+            }
+            #endif
             {if {exists intro_anim.grp}
                {intro_anim.grp animate
                   (range
@@ -226,9 +356,32 @@
             {if {exists guitar_solo_mask.wid}
                {guitar_solo_mask.wid clear}
             }
+            #ifndef HX_NG
+            {do
+               ($mash_widget "")
+               {foreach_int $i 0 5
+                  {set $mash_widget {sprintf "drum_mash%i.wid" $i}}
+                  {if {exists $mash_widget}
+                     {{object $mash_widget} clear}
+                  }
+                  {set $mash_widget {sprintf "gem_mash%i.wid" $i}}
+                  {if {exists $mash_widget}
+                     {{object $mash_widget} clear}
+                  }
+               }
+            }
+            {{$this find bar_half_beat.wid} clear}
+            {{$this find bar_beat.wid} clear}
+            {{$this find bar_measure.wid} clear}
+            #endif
          )
          (practice_track_in {intro.trig trigger})
-         (practice_track_out {retract.trig trigger})
+         (practice_track_out
+            #ifndef HX_NG
+            {$this set_track_fade FALSE}
+            #endif
+            {retract.trig trigger}
+         )
          (set_multiplier
             ($val)
             {set [multiplier] $val}
@@ -236,8 +389,10 @@
          (hide_masks
             {drum_fill.mesh set_showing FALSE}
             {guitar_fill.mesh set_showing FALSE}
-            {unison_mask.mesh set_showing FALSE}
             {guitar_solo_mask.mesh set_showing FALSE}
+            #ifndef HX_NG
+            {unison_mask.mesh set_showing FALSE}
+            #endif
          )
          (gem_pass
             ($gem_id $lanes)
@@ -339,6 +494,10 @@
          (reset_coda
             {drum_mash_hit_anim.grp set_frame {drum_mash_hit_anim.grp end_frame}}
             {fill_colors.grp set_frame {fill_colors.grp end_frame}}
+            #ifndef HX_NG
+            {drum_mash_2nd_pass_activate.anim set_frame 0}
+            {drum_mash_2nd_pass_activate.anim animate (range 0 0)}
+            #endif
          )
          (crash_fill
             {do
@@ -372,6 +531,11 @@
                   {$this set_widget_glow gem_yellow_hopo.wid $glow_visible}
                   {$this set_widget_glow star_gem.wid $glow_visible}
                   {$this set_widget_glow star_hopo.wid $glow_visible}
+                  #ifndef HX_NG
+                  {unless $glow_visible
+                     {prism_mat.mat set diffuse_tex prism_gems_lod.tex}
+                  }
+                  #endif
                }
             }
          )

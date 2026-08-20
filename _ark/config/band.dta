@@ -1,10 +1,15 @@
 #include macros.dta
 #include ../ulti/ulti_macros.dta
 (mem
+   #ifndef HX_EE ; fix!
    #include mem.dta
+   #else
+   #include mem_ps2.dta
+   #endif
 )
 (content_mgr
    (roots ".")
+   #ifdef HX_NG
    (file_read_failed
       ($content_name $corrupt)
       {do
@@ -23,44 +28,65 @@
          }
       }
    )
+   #else
+   (file_read_failed {band_ui_sink content_file_read_failed})
+   #endif
 )
 (profile_mgr
    (max_chars_per_inst 8)
    (max_leaders_per_char 10)
    (max_bands_per_char 20)
+   #ifdef HX_NG
    (char_name_length 16)
    (band_name_length 32)
+   #else
+   (char_name_length 20)
+   (band_name_length 40)
+   #endif
    (motto_length 64)
 )
 (platform_mgr
+   #ifdef HX_NG
    #include allowed_chars.dta
+   #else
+   (keyboard_allowed_chars
+      " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\q#$%&'()*+,-./:;=?@[\\]^_`{|}~ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ"
+   )
+   #endif
 )
 (system
    (language (force eng))
+   (region (force na))
    (iop_modules
       (iop/scrtchpd.irx)
       (iop/sio2man.irx)
+      (iop/mtapman.irx)
       (iop/mcman.irx)
       (iop/mcserv.irx)
-      #ifdef _SHIP
-      (iop/usbd.irx FALSE)
-      (iop/usbkb.irx FALSE)
-      #else
-      (iop/usbd.irx)
+      (iop/usbd.irx "thpri=15,16")
+      #ifndef _SHIP
       (iop/usbkb.irx "keybd=1" "debug=0")
       #endif
       (iop/padman.irx)
       (iop/msifrpc.irx)
-      #ifdef _SHIP
-      (iop/mtapman.irx FALSE)
-      #else
-      (iop/mtapman.irx)
-      #endif
       (iop/libsd.irx)
       (iop/sdrdrv.irx)
       (iop/cdvdstm.irx)
+      #ifdef _DEBUG
+      (iop/usbhmx_d.irx)
+      #else
+         #ifdef _SHIP
+         (iop/usbhmx_s.irx)
+         #else
+         (iop/usbhmx_r.irx)
+         #endif
+      #endif
    )
+   #ifdef HX_NG
    (ng TRUE)
+   #else
+   (ng FALSE)
+   #endif
    (xbox_map_file "%s/band_%s.map")
    #ifdef HX_PS3
    (load_commerce_container $commerce)
@@ -83,11 +109,19 @@
       (midi midi_drums)
       (hx_drums_xbox hx_drums_xbox)
       (hx_drums_ps3 hx_drums_ps3)
+      (ro_drums_ps3 ro_drums_ps3)
       (hx_xbox joypad_guitar_xbox)
       (digital joypad)
       (analog joypad)
       (dualshock joypad)
       (stagekit_xbox joypad)
+      (gamecube joypad)
+      (wii_core joypad)
+      (wii_freestyle joypad)
+      (wii_classic joypad)
+      (wii_guitar wii_guitar)
+      (wii_drums wii_drums)
+      (wii_rodrums wii_rodrums)
       (none joypad)
    )
    (instrument_mapping
@@ -98,12 +132,20 @@
       (ro_guitar_ps3 kControllerGuitar)
       (midi kControllerDrum)
       (hx_drums_xbox kControllerDrum)
+      (ro_drums_ps3 kControllerDrum)
       (hx_drums_ps3 kControllerDrum)
       (hx_xbox $pad_inst)
       (digital $pad_inst)
       (analog $pad_inst)
       (dualshock $pad_inst)
       (stagekit_xbox $pad_inst)
+      (gamecube $pad_inst)
+      (wii_core $pad_inst)
+      (wii_freestyle $pad_inst)
+      (wii_classic $pad_inst)
+      (wii_guitar kControllerGuitar)
+      (wii_drums kControllerDrum)
+      (wii_rodrums kControllerDrum)
       (none kControllerNone)
    )
 )
@@ -155,6 +197,10 @@
 )
 (rnd
    (title "Rock Band")
+   #ifndef HX_NG
+   (bpp 32)
+   (pal FALSE)
+   #endif
    (overlays
       (time
          (lines 1)
@@ -237,9 +283,11 @@
    )
    (text_superscript_scale 0.42)
 )
+#ifdef HX_NG
 (store
    #include store.dta
 )
+#endif
 (ui
    #include ../ui/ui.dta
 )
@@ -254,10 +302,16 @@
    #merge ../ulti/ulti_objects.dta
 )
 (locale
+   #ifdef HX_NG
    ../ui/eng/locale_milo.dta
-   ../ui/eng/locale.dta
+   ../ui/eng/locale_ng.dta
    ../ui/eng/locale_updates.dta
    ../ulti/locale_mod.dta
+   #else
+   ../ui/eng/locale_milo.dta
+   ../ui/eng/locale.dta
+   ../ulti/locale_mod.dta
+   #endif
 )
 (venues VENUES)
 (song_groupings
@@ -463,24 +517,49 @@
    (sp_deploy_repeat_delay 7)
 )
 (characters
+   #ifdef HX_NG
    #include characters.dta
+   #else
+   #include characters_og.dta
+   #endif
 )
 (tips (#include tips.dta))
 (loading_screens (#include loading_screens.dta))
 (videos
    #include videos.dta
 )
+#ifdef HX_NG
 (event_unlocks #include ../ulti/event_unlocks.dta)
 (missing_song_data
    #include ../ulti/missing_song_data/missing_song_data.dta
 )
+#endif
 (gems #include ../ulti/track/gems/gems.dta)
 (smashers #include ../ulti/track/smashers/smashers.dta)
 (track_configs #include ../ulti/track/track_configs.dta)
 (data_graveyard)
 (generate_weights FALSE)
+(generate_panfiles FALSE)
 (holmes
    (log_host video)
    (log_path "O:\\filedepot\\rockband\\statlor\\uploaded")
+)
+(save_names
+   #ifdef HX_WII
+   (save_name_deu "RB Ultimate Spielstand")
+   (save_name_eng "RB Ultimate Save Data")
+   (save_name_esl "RB Ultimate Datos Guardados")
+   (save_name_fre "RB Ultimate Données Sauvegardées")
+   (save_name_ita "RB Ultimate Dati Salvati")
+   (save_game_name "RB Ultimate")
+   (save_game_comment_deu "Spielstand")
+   (save_game_comment_eng "Save Data")
+   (save_game_comment_esl "Datos guardatos")
+   (save_game_comment_fre "Données sauvegardées")
+   (save_game_comment_ita "Dati salvati")
+   #else
+   (save_title_ps2 "Rock Band Ultimate")
+   (save_title_newline_ps2 18)
+   #endif
 )
 #merge ../../../system/run/config/default.dta

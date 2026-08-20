@@ -345,6 +345,7 @@
    (panels eyecolor_panel)
    (focus eyecolor_panel)
 }
+#ifdef HX_NG
 {new OutfitPanel
    charcreator_appearance_panel
    (file "charcreator_appearance.milo")
@@ -499,17 +500,24 @@
       }
    )
 }
+#endif
 {new UIScreen
    charcreator_appearance_screen
    (panels
       meta
       charcreator_panel
       practice_space_panel
+      #ifdef HX_NG
       charcreator_appearance_panel
       shop_closet_lower3rd_panel
+      #endif
       helpbar
    )
    (helpbar (helpbar_back helpbar_select))
+   #ifdef HX_NG
    (focus charcreator_appearance_panel)
+   #else
+   (focus charcreator_panel)
+   #endif
    (back charcreator_maker_screen)
 }

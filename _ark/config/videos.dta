@@ -1,3 +1,4 @@
+#ifdef HX_NG
 (stream_begin
    {unless {exists beatmatch}
       {char_cache cache_enable FALSE}
@@ -45,3 +46,31 @@
    (files "")
    (fill_width TRUE)
 )
+#else
+(intro
+   (files "rb_cinematic.bik")
+   (fill_width TRUE)
+)
+(attract (files "rb_video.bik"))
+(background (files "rb_video.bik" "rb_video1.bik" "rb_video2.bik"))
+#ifndef HX_XBOX
+(tempvideo "testmovie.pss")
+#endif
+(win_credits (files "rb_endcredits.bik"))
+(featurette_0
+   (files "rb_video.bik")
+   (fill_width TRUE)
+)
+(featurette_1
+   (files "rb_video.bik")
+   (fill_width TRUE)
+)
+(featurette_2
+   (files "rb_video.bik")
+   (fill_width TRUE)
+)
+(featurette_3
+   (files "rb_video.bik")
+   (fill_width TRUE)
+)
+#endif

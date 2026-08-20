@@ -1,22 +1,41 @@
 (init
    #include ../ulti/ulti_funcs.dta
+   #include ../ulti/ulti_objs.dta
    #include ../ulti/ulti_init.dta
    #include ../ulti/ulti_init_apperance.dta
+   #ifdef HX_NG
    #include ../ulti/ui/ulti_pi_screens.dta
+   #endif
    #include init.dta
    #include ../ulti/ui/ulti_screens.dta
+   #ifdef HX_NG
    #include ../ulti/mod_settings_rw.dta
+   #endif
    {meta_loading load TRUE}
    {pause_panel load TRUE}
+   #ifndef HX_NG
+   {tutorials_pause_panel load TRUE}
+   {pause_controller_background_panel load TRUE}
+   {pause_controller_panel load TRUE}
+   #endif
    {pause_mics_panel load TRUE}
    {helpbar load TRUE}
    {helpbar_dialog load TRUE}
    {dialog_panel load TRUE}
+   #ifdef HX_NG
    {event_dialog_panel load TRUE}
+   #else
+   {lose_background load TRUE}
+   #endif
    {lose load TRUE}
+   #ifndef HX_NG
+   {tour_solo_lose_panel load TRUE}
+   {endgame_background_panel load TRUE}
+   #endif
    {qp_endgame_panel load TRUE}
    {tour_band_endgame_panel load TRUE}
    {tour_solo_endgame_panel load TRUE}
+   #ifdef HX_NG
    {qp_hth_endgame_panel load TRUE}
    {qp_hth_tow_endgame_panel load TRUE}
    {network_busy_icon_panel load TRUE}
@@ -29,7 +48,15 @@
    #ifndef _SHIP
    {set $g_net_cache_test_server TRUE}
    #endif
+   #else
+   {error_dialog_panel load TRUE}
+   #ifdef HX_WII
+   {highscores_qp_panel load TRUE}
+   {overflow_dialog_panel load TRUE}
+   #endif
+   #endif
    {set $first_screen
+      #ifdef HX_NG
       {if_else $commerce
          store_loading_screen
          {if_else $skipintro
@@ -37,23 +64,54 @@
             intro_movie_screen
          }
       }
+      #else
+      intro_to_splash_screen
+      #endif
    }
    {ui my_init}
    {if $commerce
       {gamemode set_mode store}
    }
+   #ifdef HX_NG
    {ui goto_screen $first_screen}
+   #else
+   {script_task kTaskUISeconds
+      (delay 1)
+      (script {ui goto_screen auto_load_intro_screen})
+   }
+   #endif
+   #ifdef HX_NG
    {thread_task kTaskUISeconds
       (delay 0.01)
       (script {mod_overlay init_group})
    }
+   #endif
 )
 (band_ui_sink
    #include band_ui_sink.dta
 )
+#ifdef HX_NG
 (max_push_depth 2)
 (min_splash_time 3)
-(my_init)
+#else
+(max_push_depth 3)
+(min_splash_time 0)
+#endif
+#ifdef HX_WII
+(min_splash_time_wii 23)
+(min_splash_time_no_input_wii 2.5)
+#endif
+(my_init
+   #ifdef HX_NG
+   {run
+      #ifdef HX_PS3
+         "GD:/dev_hdd0/game/BLUS30050/USRDIR/my.dta"
+      #else
+         "GAME:/my.dta"
+      #endif
+   }
+   #endif
+)
 (music_start)
 (color_presets
    #include ../ui/color_presets.dta
@@ -237,6 +295,7 @@
 (overload_horizontal_nav TRUE)
 #include cam.dta
 (SELECT_START_MSG
+   #ifdef HX_NG
    {if_else {&& {exists overshell} {overshell up}}
       FALSE
       {do
@@ -244,6 +303,10 @@
          kDataUnhandled
       }
    }
+   #else
+   {synth play button_select}
+   kDataUnhandled
+   #endif
 )
 (SCROLL_MSG
    {if {ui current_screen}
@@ -282,9 +345,11 @@
    {if {helpbar is_up}
       {helpbar update $new_screen}
    }
+   #ifdef HX_NG
    {if {&& {fx is_up} {fx get in_transition}}
       {fx fade_in}
    }
+   #endif
    {if
       {&&
          {gamemode get is_permadeath}
@@ -296,11 +361,12 @@
 )
 (update_band {update_tour_display} kDataUnhandled)
 (JOYPAD_CONNECT_MSG
-   {if {helpbar is_up}
+   {if {'||' {helpbar is_up} {helpbar_dialog is_up}}
       {helpbar joypad_connect $player_num $connected}
    }
    kDataUnhandled
 )
+#ifdef HX_NG
 (BUTTON_DOWN_MSG
    {if_else {&& {exists overshell} {overshell up}}
       {overshell button_down $button $player_num}
@@ -377,3 +443,4 @@
    (254 112)
    (255 121)
 )
+#endif

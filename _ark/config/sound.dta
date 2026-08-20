@@ -3,6 +3,7 @@
    (meta sfx/metagame_bank.milo)
 )
 (crowd_audio TRUE)
+#ifdef HX_NG
 (crowd_volume -4.0)
 (crowd_reactions TRUE)
 (slider -96 -13.5 -12 -10.5 -9 -7.5 -6 -4.5 -3 -2 -1 0)
@@ -20,6 +21,25 @@
    0.7
    1.0
 )
+#else
+(crowd_volume 1.0)
+(crowd_reactions TRUE)
+(slider -96 -10 -9 -8 -7 -6 -5 -4 -3 -2 -1 0)
+(ratio_slider
+   1.0e-2
+   2.5e-2
+   5.0e-2
+   0.1
+   0.225
+   0.25
+   0.275
+   0.3
+   0.4
+   0.5
+   0.7
+   1.0
+)
+#endif
 (tutorial
    (streaming_vo
       (volume -3.0)

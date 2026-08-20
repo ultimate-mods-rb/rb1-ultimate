@@ -67,8 +67,14 @@
 #define kTrackBass (1)
 #define kTrackGuitar (2)
 #define kTrackVocals (3)
-#define kTrackNone (4)
-#define TRACK_SYMBOLS (drum bass guitar vocals none)
+#ifdef HX_NG
+   #define kTrackNone (4)
+   #define TRACK_SYMBOLS (drum bass guitar vocals none)
+#else
+   #define kTrackBand (4)
+   #define kTrackNone (5)
+   #define TRACK_SYMBOLS (drum bass guitar vocals band none)
+#endif
 #define kTrackOff (0)
 #define kTrackLocal (1)
 #define kTrackNet (2)
@@ -88,6 +94,7 @@
 #define kPlayerDisabled (1)
 #define kPlayerBeingSaved (2)
 #define kPlayerDisconnected (3)
+#define kPlayerInactive (4)
 #define kBassPluck (16777216)
 #define kBassSlap (33554432)
 #define kArrangeBand (0)
@@ -147,9 +154,16 @@
 #define kPullOffTutorial (2)
 #define kPlayerSong (0)
 #define kBandSong (1)
-#define kBandFans (2)
-#define kHTHRanked (3)
-#define kHTHProRanked (4)
+#ifdef HX_NG
+   #define kBandFans (2)
+   #define kHTHRanked (3)
+   #define kHTHProRanked (4)
+#else
+   #define kBandStars (2)
+   #define kBandFans (3)
+   #define kHTHRanked (4)
+   #define kHTHProRanked (5)
+#endif
 #define kByGamer (0)
 #define kByGamerRank (1)
 #define kByRank (2)
@@ -185,15 +199,24 @@
 #define kNoLeader (3)
 #define kKicked (4)
 #define kLostServer (5)
-#define kEthernetUnplugged (6)
-#define kLocalUserSignedOut (7)
-#define kBandOwnerSignedOut (8)
-#define kProfileOwnerSignedOut (9)
-#define kLostSongData (10)
-#define kCorruptSongData (11)
-#define kStorageChanged (12)
-#define kLostLeaderboards (13)
-#define kDiskError (14)
+#ifdef HX_NG
+   #define kEthernetUnplugged (6)
+   #define kLocalUserSignedOut (7)
+   #define kBandOwnerSignedOut (8)
+   #define kProfileOwnerSignedOut (9)
+   #define kLostSongData (10)
+   #define kCorruptSongData (11)
+   #define kStorageChanged (12)
+   #define kLostLeaderboards (13)
+   #define kDiskError (14)
+#else
+   #define kControllerSwap (6)
+   #define kEthernetUnplugged (7)
+   #define kLocalUserSignedOut (8)
+   #define kBandOwnerSignedOut (9)
+   #define kProfileOwnerSignedOut (10)
+   #define kLostSongData (11)
+#endif
 #define kBlockNone (0)
 #define kBlockShop (1)
 #define kBlockRankedResults (2)
@@ -302,7 +325,11 @@
 #define kRemoteSoloEnd (13)
 #define kRemoteVocalState (14)
 #define kRemoteTambourine (15)
-#define kRemoteCodaHit (16)
+#ifdef HX_NG
+   #define kRemoteCodaHit (16)
+#else
+   #define kRemoteCodaPoints (16)
+#endif
 #define kRemoteCodaLastGem (17)
 #define kRemoteBlowCoda (18)
 #define kRemoteAlreadySaved (19)
@@ -327,6 +354,7 @@
 #define kTourBuzzMaxCap (2)
 #define kVocalStyleStatic (0)
 #define kVocalStyleScrolling (1)
+#define kProgressiveScanConfirmTime (15.0)
 #define LIMIT_TO_LEADER_SESSION (
    (allow_player
       ($player_num)

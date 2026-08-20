@@ -29,7 +29,11 @@
 }
 {new UIPanel
    qp_hth_seltrack_panel
+   #ifdef HX_NG
    (file "qp_hth_seltrack.milo")
+   #else
+   (file "qp_hth_seltrack_og.milo")
+   #endif
    LIMIT_TO_LEADER_SESSION
    (focus guitar.btn)
    (enter
@@ -40,6 +44,7 @@
          }
          {$this set_focus guitar.btn}
       }
+      #ifdef HX_NG
       {foreach $part (guitar bass)
          {do
             ($button {sprint $part ".btn"})
@@ -55,6 +60,7 @@
             }
          }
       }
+      #endif
    )
    (SELECT_MSG
       {do

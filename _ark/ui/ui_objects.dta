@@ -1,3 +1,6 @@
+#ifndef HX_NG
+#include ui_objects_og.dta
+#else
 #include ..\config\macros.dta
 #define BAND_SPIN_TYPE (
    (resource_file "resource\\list_spin.milo")
@@ -2875,3 +2878,4 @@
       )
    )
 )
+#endif
