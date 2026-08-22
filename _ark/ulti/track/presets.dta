@@ -1,0 +1,122 @@
+(default
+   (guitar
+      (gems rb2)
+      (smashers rb1)
+      (gem_colors (1 4 2 0 3))
+      (smasher_colors (1 4 2 0 3))
+      (sustain_colors (1 4 2 0 3))
+      (rgb FALSE)
+      (rgb_colors
+         (
+            255
+            65280
+            16711680
+            16711935
+            16776960
+            16777215
+            255
+         )
+      )
+      (rgb_sustain_base 0)
+   )
+   (bass
+      (gems rb2)
+      (smashers rb1)
+      (gem_colors (1 4 2 0 3))
+      (smasher_colors (1 4 2 0 3))
+      (sustain_colors (1 4 2 0 3))
+      (rgb FALSE)
+      (rgb_colors
+         (
+            255
+            65280
+            16711680
+            16711935
+            16776960
+            16777215
+            255
+         )
+      )
+      (rgb_sustain_base 0)
+   )
+   (drum
+      (gems rb1)
+      (smashers rb1)
+      (gem_colors (0 1 2 3 4))
+      (smasher_colors (1 2 3 0))
+      (rgb FALSE)
+      (rgb_colors
+         (
+            255
+            65280
+            16711680
+            16711935
+            16776960
+            16777215
+            255
+            29695
+         )
+      )
+   )
+)
+(vanilla
+   (guitar
+      (gems rb1)
+      (smashers rb1)
+      (rgb FALSE)
+      (gem_colors (0 1 2 3 4))
+      (smasher_colors (0 1 2 3 4))
+      (sustain_colors (0 1 2 3 4))
+      (rgb_colors
+         (
+            255
+            65280
+            16711680
+            16711935
+            16776960
+            16777215
+            255
+         )
+      )
+      (rgb_sustain_base 0)
+   )
+   (bass
+      (gems rb1)
+      (smashers rb1)
+      (rgb FALSE)
+      (gem_colors (0 1 2 3 4))
+      (smasher_colors (0 1 2 3 4))
+      (sustain_colors (0 1 2 3 4))
+      (rgb_colors
+         (
+            255
+            65280
+            16711680
+            16711935
+            16776960
+            16777215
+            255
+         )
+      )
+      (rgb_sustain_base 0)
+   )
+   (drum
+      (gems rb1)
+      (smashers rb1)
+      (gem_colors (0 1 2 3 4))
+      (smasher_colors (1 2 3 0))
+      (rgb FALSE)
+      (rgb_colors
+         (
+            255
+            65280
+            16711680
+            16711935
+            16776960
+            16777215
+            255
+            29695
+         )
+      )
+   )
+)

@@ -142,12 +142,21 @@
       #ifdef HX_XBOX
       {check_song_corrupt}
       #endif
+      #ifdef HX_NG
+      {if_else {!= {session mode} kNetLocal}
+         {asset_mgr sync_assets}
+         {asset_mgr clear_synced}
+      }
+      #endif
       #ifdef IGNORE_PRELOAD_OK
       {ui goto_screen real_loading_screen}
       #else
       {if_else [preload_ok]
          {ui goto_screen real_loading_screen}
          {do
+            #ifdef HX_NG
+            {asset_mgr clear_synced}
+            #endif
             {band_ui_sink set_block_mode kBlockNone}
             {band_ui_sink content_file_read_failed [content_name] [corrupt]}
          }

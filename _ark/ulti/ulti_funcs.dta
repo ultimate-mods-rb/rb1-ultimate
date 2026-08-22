@@ -624,11 +624,11 @@
       {if_else $milo
          {do
             {$milo delete_loader}
-            {reserve_to_fit $milo $dir 0}
+            ;{reserve_to_fit $milo $dir 0} ; was causing crashes. not required but look into!
             {merge_dirs $milo $dir kMergeMerge}
             {delete $milo}
          }
-         {print {sprint "WARNING! failed to load " $milo}}
+         {print {sprint "WARNING! failed to load " $file}}
       }
    }
 }

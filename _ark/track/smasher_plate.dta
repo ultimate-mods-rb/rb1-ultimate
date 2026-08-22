@@ -78,11 +78,20 @@
                   }
                }
                {do
-                  {gem_smasher0 set_color {asset_mgr get_smasher_color guitar 0}}
-                  {gem_smasher1 set_color {asset_mgr get_smasher_color guitar 1}}
-                  {gem_smasher2 set_color {asset_mgr get_smasher_color guitar 2}}
-                  {gem_smasher3 set_color {asset_mgr get_smasher_color guitar 3}}
-                  {gem_smasher4 set_color {asset_mgr get_smasher_color guitar 4}}
+                  ($sym
+                     {if_else {gamemode is_hth_arrangement}
+                        {{beatmatch active_player 0} instrument}
+                        {if_else {== {$this dir} drum}
+                           guitar
+                           {symbol {{$this dir} name}}
+                        }
+                     }
+                  )
+                  {gem_smasher0 set_color {asset_mgr get_smasher_color $sym 0}}
+                  {gem_smasher1 set_color {asset_mgr get_smasher_color $sym 1}}
+                  {gem_smasher2 set_color {asset_mgr get_smasher_color $sym 2}}
+                  {gem_smasher3 set_color {asset_mgr get_smasher_color $sym 3}}
+                  {gem_smasher4 set_color {asset_mgr get_smasher_color $sym 4}}
                }
             }
          )

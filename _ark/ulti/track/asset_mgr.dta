@@ -1,47 +1,83 @@
 (asset_mgr
-   (gems [gems])
    (gems_dir [gems_dir])
-   (all_gems [all_gems])
-   (all_gems_rgb [all_gems_rgb])
 
-   (smashers [smashers])
+   (guitar_gems [guitar_gems])
+   (guitar_gems_rgb [guitar_gems_rgb])
+   (drum_gems [drum_gems])
+   (drum_gems_rgb [drum_gems_rgb])
+
    (smashers_dir [smashers_dir])
-   (all_smashers [all_smashers])
-   (all_smashers_rgb [all_smashers_rgb])
+
+   (guitar_smashers [guitar_smashers])
+   (guitar_smashers_rgb [guitar_smashers_rgb])
+   (drum_smashers [drum_smashers])
+   (drum_smashers_rgb [drum_smashers_rgb])
 
    (track_configs [track_configs])
+
+   (config [config])
+   (config_net [config_net])
+
+   (target [target])
+
+   (i [i])
+   (li [li])
 
    (init
       {print "asset_mgr init"}
 
-      {set [gems] ''}
       {set [gems_dir] ''}
-      {set [all_gems] {array 0}}
-      {set [all_gems_rgb] {array 0}}
+
+      {set [guitar_gems] {array 0}}
+      {set [drum_gems] {array 0}}
+      {set [guitar_gems_rgb] {array 0}}
+      {set [drum_gems_rgb] {array 0}}
 
       {foreach $a {find $syscfg gems}
          {if {== {type $a} kDataArray}
             {unless {$this find_get $a rgb_only}
-               {push_back [all_gems] {elem $a 0}}
+               {if {$this find_get $a guitar}
+                  {push_back [guitar_gems] {elem $a 0}}
+               }
+               {if {$this find_get $a drum}
+                  {push_back [drum_gems] {elem $a 0}}
+               }
             }
             {if {$this find_get $a rgb}
-               {push_back [all_gems_rgb] {elem $a 0}}
+               {if {$this find_get $a guitar}
+                  {push_back [guitar_gems_rgb] {elem $a 0}}
+               }
+               {if {$this find_get $a drum}
+                  {push_back [drum_gems_rgb] {elem $a 0}}
+               }
             }
          }
       }
 
-      {set [smashers] ''}
       {set [smashers_dir] ''}
-      {set [all_smashers] {array 0}}
-      {set [all_smashers_rgb] {array 0}}
+
+      {set [guitar_smashers] {array 0}}
+      {set [drum_smashers] {array 0}}
+      {set [guitar_smashers_rgb] {array 0}}
+      {set [drum_smashers_rgb] {array 0}}
 
       {foreach $a {find $syscfg smashers}
          {if {== {type $a} kDataArray}
             {unless {$this find_get $a rgb_only}
-               {push_back [all_smashers] {elem $a 0}}
+               {if {$this find_get $a guitar}
+                  {push_back [guitar_smashers] {elem $a 0}}
+               }
+               {if {$this find_get $a drum}
+                  {push_back [drum_smashers] {elem $a 0}}
+               }
             }
             {if {$this find_get $a rgb}
-               {push_back [all_smashers_rgb] {elem $a 0}}
+               {if {$this find_get $a guitar}
+                  {push_back [guitar_smashers_rgb] {elem $a 0}}
+               }
+               {if {$this find_get $a drum}
+                  {push_back [drum_smashers_rgb] {elem $a 0}}
+               }
             }
          }
       }
@@ -54,247 +90,409 @@
          }
       }
 
+      {set [config] {array 0}}
+      {set [config_net] {array 0}}
+      {$this apply_preset default}
+
+      {set [target] ''}
+
+      {set [i] 0}
+      {set [li] 0}
 
       {print "asset_mgr initalized"}
    )
-   (load_gems {do
-      ($data {find_exists $syscfg gems $gems})
-      {if_else $data
-         {do
-            ($gems_dir '')
-            ($file {$this find_get_opt $data file})
-            ($meshes {$this find_get_opt $data meshes})
-            ($on_load
-               {cond
-                  ({&& $notergb {find_exists $data on_load_rgb}}
-                     {find $data on_load_rgb}
+   (load_gems
+      {with {get_track_panel}
+         {if {exists gems_dir}
+            {fail "gems_dir already exists. it's not safe to load gems!"}
+         }
+         {asset_mgr set gems_dir {new ObjectDir gems_dir}}
+      }
+      {beatmatch foreach_active_player $player
+         {unless {== {$player instrument} vocals} {do
+            ($inst {$player instrument})
+            ($rgb {$this config_get $inst rgb})
+            ($gems {$this config_get $inst gems})
+            ($data {find_exists $syscfg gems $gems})
+            {if_else $data
+               {do
+                  ($gems_dir '')
+                  ($file {$this find_get_opt $data file $rgb})
+                  ($meshes {$this find_get_opt $data meshes $rgb})
+                  ($on_load
+                     {cond
+                        ({&& $rgb {find_exists $data on_load_rgb}}
+                           {find $data on_load_rgb}
+                        )
+                        ({find_exists $data on_load}
+                           {find $data on_load}
+                        )
+                        (TRUE kDataUnhandled)
+                     }
                   )
-                  ({find_exists $data on_load}
-                     {find $data on_load}
-                  )
-                  (TRUE kDataUnhandled)
-               }
-            )
-
-            {set [gems] $gems}
-            {with {get_track_panel}
-               {if {exists gems_dir}
-                  {fail "gems_dir already exists. it's not safe to load gems!"}
-               }
-               {set $gems_dir {new ObjectDir gems_dir}}
-            }
-            {set [gems_dir] $gems_dir}
-            {if $file
-               {[gems_dir] insert (subdirs 0) $file}
-            }
-
-            {if_else $meshes
-               {{get_track_panel} iterate TrackDir $dir {with $dir
-                  {foreach $entry $meshes
-                     {if {exists {elem $entry 0}}
-                        {clear_array {elem $entry 0} meshes}
-                        {if_else {== {type {elem $entry 1}} kDataArray}
-                           {foreach $m {elem $entry 1}
-                              {{elem $entry 0} insert (meshes 0) {$gems_dir find $m}}
-                           }
-                           {{elem $entry 0} insert (meshes 0) {$gems_dir find {elem $entry 1}}}
-                        }
-                        #ifdef HX_NG
-                        {{elem $entry 0} set multi_mesh
-                           {if_else {== {size $entry} 3}
-                              {elem $entry 2}
-                              TRUE
+                  {if $file
+                     {with [gems_dir]
+                        {print {sprint "loading " $file}}
+                        {insert_milo {new ObjectDir {{$player track} name}} $file}
+                        {set $gems_dir {$this find {{$player track} name}}}
+                        {$gems_dir set rgb $rgb}
+                        {$gems_dir set inst $inst}
+                        {$gems_dir set gems $gems}
+                     }
+                     {if_else $meshes
+                        {with {get_dir_from_player $player}
+                           {foreach $entry $meshes
+                              {if {exists {elem $entry 0}}
+                                 {clear_array {elem $entry 0} meshes}
+                                 {if_else {== {type {elem $entry 1}} kDataArray}
+                                    {foreach $m {elem $entry 1}
+                                       {{elem $entry 0} insert (meshes 0) {$gems_dir find $m}}
+                                    }
+                                    {{elem $entry 0} insert (meshes 0) {$gems_dir find {elem $entry 1}}}
+                                 }
+                                 #ifdef HX_NG
+                                 {{elem $entry 0} set multi_mesh
+                                    {if_else {== {size $entry} 3}
+                                       {elem $entry 2}
+                                       TRUE
+                                    }
+                                 }
+                                 #endif
+                              }
                            }
                         }
-                        #endif
+                        {print "no meshes found for " $gems}
                      }
                   }
-               }}
-               {print "no meshes found for " $gems}
-            }
 
-            {if $on_load
-               {foreach $c $on_load
-                  {eval $c}
+                  {if $on_load {do
+                     ($dir {get_dir_from_player $player})
+                     {foreach $c $on_load
+                        {eval $c}
+                     }
+                  }}
                }
+               {print {sprint "no gems data for " $gems}}
             }
-         }
-         {print {sprint "no gems data for " $gems}}
+         }}
       }
-   })
-   (load_smashers {do
-      ($data {find_exists $syscfg smashers $smashers})
-      {if_else $data
-         {do
-            ($smashers_dir '')
-            ($on_load
-               {cond
-                  ({&& $notergb {find_exists $data on_load_rgb}}
-                     {find $data on_load_rgb}
-                  )
-                  ({find_exists $data on_load}
-                     {find $data on_load}
-                  )
-                  (TRUE kDataUnhandled)
-               }
-            )
-
-            {set [smashers] $smashers}
-            {with {get_track_panel}
-               {if {exists smashers_dir}
-                  {fail "smashers_dir already exists. it's not safe to load smashers!"}
-               }
-               {set $smashers_dir {new ObjectDir smashers_dir}}
-            }
-            {set [smashers_dir] $smashers_dir}
-
-            {if $on_load
-               {foreach $c $on_load
-                  {eval $c}
-               }
-            }
+   )
+   (load_smashers
+      {with {get_track_panel}
+         {if {exists smashers_dir}
+            {fail "smashers_dir already exists. it's not safe to load smashers!"}
          }
-         {print {sprint "no smasher data for " $smashers}}
+         {asset_mgr set smashers_dir {new ObjectDir smashers_dir}}
       }
-   })
+      {beatmatch foreach_active_player $player
+         {unless {== {$player instrument} vocals} {do
+            ($inst {$player instrument})
+            ($rgb {$this config_get $inst rgb})
+            ($smashers {$this config_get $inst smashers})
+            ($data {find_exists $syscfg smashers $smashers})
+            ($smashers_dir {asset_mgr smashers_dir})
+            {if_else $data
+               {do
+                  ($on_load
+                     {cond
+                        ({&& $rgb {find_exists $data on_load_rgb}}
+                           {find $data on_load_rgb}
+                        )
+                        ({find_exists $data on_load}
+                           {find $data on_load}
+                        )
+                        (TRUE kDataUnhandled)
+                     }
+                  )
+                  {if $on_load
+                     {foreach $c $on_load
+                        {eval $c}
+                     }
+                  }
+               }
+               {print {sprint "no smasher data for " $smashers}}
+            }
+         }}
+      }
+   )
    (apply_all_rgb
       {$this apply_default_rgb}
       {$this apply_gem_rgb}
       {$this apply_sus_rgb}
       {$this apply_smasher_rgb}
    )
-   (apply_gem_rgb {do
-      ($data {find_exists $syscfg gems [gems]})
-      {if {&& [gems_dir] $data} {do
-         ($rgb_mats {find_exists $data rgb_mats})
-         {if $rgb_mats
-            {foreach $inst (guitar drum) {do
-               ($ma {find_exists $rgb_mats $inst})
-               {if $ma
-                  {foreach_int $i 0 {size $ma}
-                     {if $i {do
-                        ($mar {elem $ma $i})
-                        {if {!= {type $mar} kDataArray}
-                           {set $mar {eval_array ($mar)}}
-                        }
-                        {foreach $mat $mar
-                           {if_else {[gems_dir] exists $mat}
-                              {{[gems_dir] find $mat} set color
-                                 {$this get_color $inst {- $i 1}}
-                              }
-                              {fail {sprint $mat " doesn't exist in gems_dir"}}
+   (apply_gem_rgb
+      {[gems_dir] iterate ObjectDir $dir {do
+         ($rgb {$dir get rgb})
+         ($inst {$dir get inst})
+         ($gems {$dir get gems})
+         ($data {find_exists $syscfg gems $gems})
+         {if {&& $data $rgb} {do
+            ($rgb_mats {find_exists $data rgb_mats})
+            {if $rgb_mats
+               {foreach $sym (guitar drum) {do
+                  ($ma {find_exists $rgb_mats $sym})
+                  {if $ma
+                     {foreach_int $i 0 {size $ma}
+                        {if $i {do
+                           ($mar {elem $ma $i})
+                           {if {!= {type $mar} kDataArray}
+                              {set $mar {eval_array ($mar)}}
                            }
-                        }
-                     }}
+                           {foreach $mat $mar
+                              {if_else {$dir exists $mat}
+                                 {{$dir find $mat} set color
+                                    {$this get_color $inst {- $i 1}}
+                                 }
+                                 {fail {sprint $mat " doesn't exist in dir"}}
+                              }
+                           }
+                        }}
+                     }
                   }
-               }
-            }}
-         }
+               }}
+            }
+         }}
       }}
-   })
+   )
    (apply_sus_rgb {do
+      ($v 0)
+      ($a {array 0})
       ($dirs {array 0})
+      {beatmatch foreach_active_player $player
+         {if {!= {$player instrument} vocals}
+            {push_back $a {$player instrument}}
+         }
+      }
+      {set $v {- {size $a} 1}}
       ; as fucking stupid as this looks i think this is the only way of getting the gem_tail dirs
       ; the loading of these seems to be dynamic and the dir of these dirs is itself so they're def loaded weird
       {{{get_track_panel} find line01.tex} iterate_refs $ref
          {push_back $dirs {$ref dir}}
       }
-      {foreach $dir $dirs {with $dir
-         {foreach_int $i 0 6 {do
-            ($m
-               {elem
-                  (
-                     tail_green.mat
-                     tail_red.mat
-                     tail_yellow.mat
-                     tail_blue.mat
-                     tail_orange.mat
-                     tail_bonus.mat
-                  )
-                  $i
-               }
-            )
-            ($mg
-               {elem
-                  (
-                     tail_glow_green.mat
-                     tail_glow_red.mat
-                     tail_glow_yellow.mat
-                     tail_glow_blue.mat
-                     tail_glow_orange.mat
-                     tail_glow_star.mat
-                  )
-                  $i
-               }
-            )
-            ($c {asset_mgr get_color guitar $i})
-            {$m copy tail_base.mat kCopyShallow}
-            {$m set color $c}
+      {foreach $dir $dirs
+         {if {asset_mgr config_get {elem $a $v} rgb} {with $dir
+            {foreach_int $i 0 6 {do
+               ($m
+                  {elem
+                     (
+                        tail_green.mat
+                        tail_red.mat
+                        tail_yellow.mat
+                        tail_blue.mat
+                        tail_orange.mat
+                        tail_bonus.mat
+                     )
+                     $i
+                  }
+               )
+               ($mg
+                  {elem
+                     (
+                        tail_glow_green.mat
+                        tail_glow_red.mat
+                        tail_glow_yellow.mat
+                        tail_glow_blue.mat
+                        tail_glow_orange.mat
+                        tail_glow_star.mat
+                     )
+                     $i
+                  }
+               )
+               ($c {asset_mgr get_color {elem $a $v} $i})
+               {$m copy tail_base.mat kCopyShallow}
+               {$m set color $c}
 
-            {$mg set color $c}
-            {$mg set blend kBlendSrcAlpha}
-            {$mg set diffuse_tex track_flash_white_glow.tex}
+               {$mg set color $c}
+               {$mg set blend kBlendSrcAlpha}
+               {$mg set diffuse_tex track_flash_white_glow.tex}
+            }}
+         }}
+         {-- $v}
+      }
+   })
+   (apply_smasher_rgb
+      {[smashers_dir] iterate ObjectDir $dir {do
+         ($rgb {$dir get rgb})
+         ($inst {$dir get inst})
+         ($smashers {$dir get smashers})
+         ($data {find_exists $syscfg smashers $smashers})
+         {if {&& $data $rgb} {do
+            ($apply_rgb {find_exists $data apply_rgb})
+            {if $apply_rgb
+               {foreach $c $apply_rgb
+                  {eval $c}
+               }
+            }
          }}
       }}
-   })
-   (apply_smasher_rgb {do
-      ($data {find_exists $syscfg smashers [smashers]})
-      {if {&& [smashers_dir] $data} {do
-         ($apply_rgb {find_exists $data apply_rgb})
-         {if $apply_rgb
-            {foreach $c $apply_rgb
-               {eval $c}
-            }
-         }
-      }}
-   })
+   )
    (apply_default_rgb
-      {{get_track_panel} iterate TrackDir $td
-         {with $td
-            {foreach_int $i 0 7 {do
-               ($base {sprintf "gtr_base_%d.mat" $i})
-               ($color {sprintf "gtr_color_%d.mat" $i})
-               ($c {asset_mgr get_color guitar $i})
-               ($cs {elem (green red yellow blue orange style miss) $i})
+      {beatmatch foreach_active_player $player {do
+         ($inst {$player instrument})
+         {if {&& {!= $inst vocals} {$this config_get $inst rgb}} {do
+            ($td {get_dir_from_player $player})
+            {with $td
+               {foreach_int $i 0 7 {do
+                  ($base {sprintf "gtr_base_%d.mat" $i})
+                  ($color {sprintf "gtr_color_%d.mat" $i})
+                  ($c
+                     {asset_mgr get_color
+                        {if_else {== $inst bass}
+                           bass
+                           guitar
+                        }
+                        $i
+                     }
+                  )
+                  ($cs {elem (green red yellow blue orange style miss) $i})
 
-               {if_else {exists $color}
-                  {$color set color $c}
-                  {do
-                     {new Mat $base}
-                     {new Mat $color}
-
-                     {$base copy prism_mat.mat kCopyShallow}
-                     {$base set next_pass $color}
-                     {$base set diffuse_tex prism_gems_base.tex}
-                     {$base set emissive_map prism_gems_emis.tex}
-
-                     {$color copy prism_glow_blue.mat kCopyShallow}
+                  {if_else {exists $color}
                      {$color set color $c}
-                     {$color set prelit FALSE}
-                     {$color set blend kBlendAdd}
-                     {$color set diffuse_tex prism_gems_rgb.tex}
+                     {do
+                        {new Mat $base}
+                        {new Mat $color}
 
-                     {if {== $i 5}
-                        {new Mat gtr_glow_style.mat}
-                        {gtr_glow_style.mat copy $color 0}
-                        {gtr_glow_style.mat set color {pack_color 1 1 1}}
-                        {gtr_glow_style.mat set next_pass $color}
-                        {gtr_glow_style.mat set diffuse_tex prism_gems_base.tex}
-                        {set $color gtr_glow_style.mat}
-                     }
+                        {$base copy prism_mat.mat kCopyShallow}
+                        {$base set next_pass $color}
+                        {$base set diffuse_tex prism_gems_base.tex}
+                        {$base set emissive_map prism_gems_emis.tex}
 
-                     {foreach $m ("prism_gem_stepped_%s.mesh" "prism_gem_hopo_%s.mesh")
-                        {{sprintf $m $cs} set_mat $base}
-                     }
-                     {foreach $m ("prism_glow_%s.mesh" "prism_glow_hopo_%s.mesh")
-                        {{sprintf $m $cs} set_mat $color}
+                        {$color copy prism_glow_blue.mat kCopyShallow}
+                        {$color set color $c}
+                        {$color set prelit FALSE}
+                        {$color set blend kBlendAdd}
+                        {$color set diffuse_tex prism_gems_rgb.tex}
+
+                        {if {== $i 5}
+                           {new Mat gtr_glow_style.mat}
+                           {gtr_glow_style.mat copy $color 0}
+                           {gtr_glow_style.mat set color {pack_color 1 1 1}}
+                           {gtr_glow_style.mat set next_pass $color}
+                           {gtr_glow_style.mat set diffuse_tex prism_gems_base.tex}
+                           {set $color gtr_glow_style.mat}
+                        }
+
+                        {foreach $m ("prism_gem_stepped_%s.mesh" "prism_gem_hopo_%s.mesh")
+                           {{sprintf $m $cs} set_mat $base}
+                        }
+                        {foreach $m ("prism_glow_%s.mesh" "prism_glow_hopo_%s.mesh")
+                           {{sprintf $m $cs} set_mat $color}
+                        }
                      }
                   }
+               }}
+               {foreach_int $i 0 7 {do
+                  ($base {sprintf "drum_base_%d.mat" $i})
+                  ($color {sprintf "drum_color_%d.mat" $i})
+                  ($c {asset_mgr get_color drum $i})
+                  ($cs {elem (red yellow blue green style '' miss) $i})
+
+                  {if_else {exists $color}
+                     {$color set color $c}
+                     {do
+                        {new Mat $base}
+                        {new Mat $color}
+
+                        {$base copy prism_mat.mat kCopyShallow}
+                        {$base set next_pass $color}
+                        {$base set diffuse_tex prism_gems_base.tex}
+                        {$base set emissive_map prism_gems_emis.tex}
+
+                        {$color copy prism_glow_blue.mat kCopyShallow}
+                        {$color set color $c}
+                        {$color set prelit FALSE}
+                        {$color set blend kBlendAdd}
+                        {$color set diffuse_tex prism_gems_rgb.tex}
+
+                        {if {== $i 4}
+                           {new Mat drum_glow_style.mat}
+                           {drum_glow_style.mat copy $color 0}
+                           {drum_glow_style.mat set color {pack_color 1 1 1}}
+                           {drum_glow_style.mat set next_pass $color}
+                           {drum_glow_style.mat set diffuse_tex prism_gems_base.tex}
+                           {set $color drum_glow_style.mat}
+                        }
+
+                        {if $cs
+                           {{sprintf "prism_gem_drum_%s.mesh" $cs} set_mat $base}
+                           {{sprintf "prism_glow_drum_%s.mesh" $cs} set_mat $color}
+                        }
+                     }
+                  }
+               }}
+
+               {prism_gem_kick_glow.mesh set_mat drum_color_5.mat}
+               {prism_gem_kick.mesh set_mat drum_base_5.mat}
+
+               {prism_gem_kick_miss.mesh set_mat drum_base_6.mat}
+               {prism_gem_kick_miss_glow.mesh set_mat drum_color_6.mat}
+
+               {prism_gem_kick_style.mesh set_mat drum_base_4.mat}
+               {prism_gem_kick_glow_style.mesh set_mat drum_color_4.mat}
+            }
+            {foreach $sym (guitar drum) {do
+               ($o {asset_mgr get_color $inst 5})
+               ($dir {sprint "smasher_plate_" $sym})
+               {if {$td exists $dir}
+                  {{$td find $dir} iterate RndDir $smasher {do
+                     ($i {siti {str_elem {$smasher name} 11}})
+                     {with $smasher
+                        {if_else {&& {== $sym drum} {== $i 0}}
+                           {print "!!! implement kick stuff !!!"}
+                           {do
+                              ($c {asset_mgr get_color $inst {- $i {== $inst drum}}})
+                              {glow.mat set diffuse_tex white_smasher.tex}
+                              {glow.mat set next_pass smasher_sides.mat}
+                              {glow.mat set color $c}
+
+                              {glow_miss.mat set diffuse_tex white_smasher.tex}
+                              {glow_miss.mat set next_pass smasher_sides.mat}
+                              {glow_miss.mat set color $c}
+
+                              {radial_flare.mat set diffuse_tex flare_style.tex}
+
+                              {foreach $part
+                                 (
+                                    sparks01.part
+                                    sparks03.part
+                                    sparks04.part
+                                    big_rock_sparks.part
+                                 )
+                                 {$part set start_color_low $c}
+                                 {$part set start_color_high $c}
+                              }
+                              {foreach $part
+                                 (
+                                    sparks01_bonus.part
+                                    sparks03_bonus.part
+                                 )
+                                 {$part set start_color_low $o}
+                                 {$part set start_color_high $o}
+                              }
+                              {foreach $ml
+                                 (
+                                    broken_glass_squares.ml
+                                    broken_glass_triangles.ml
+                                    radial_debris.ml
+                                 )
+                                 {$ml set start_color $c}
+                                 {{sprint {basename $ml} "_bonus.ml"} set start_color $o}
+                              }
+                              {set [rgb] TRUE}
+                           }
+                        }
+                     }
+                  }}
                }
             }}
+         }}
+      }}
+      {if {$this config_get drum rgb}
+         {with {{get_track_panel} find pro_drums}
             {foreach_int $i 0 7 {do
-               ($base {sprintf "drum_base_%d.mat" $i})
-               ($color {sprintf "drum_color_%d.mat" $i})
+               ($base {sprintf "cymbal_base_%d.mat" $i})
+               ($color {sprintf "cymbal_color_%d.mat" $i})
                ($c {asset_mgr get_color drum $i})
                ($cs {elem (red yellow blue green style '' miss) $i})
 
@@ -304,128 +502,24 @@
                      {new Mat $base}
                      {new Mat $color}
 
-                     {$base copy prism_mat.mat kCopyShallow}
+                     {$base copy gem_cymbal.mat kCopyShallow}
                      {$base set next_pass $color}
-                     {$base set diffuse_tex prism_gems_base.tex}
-                     {$base set emissive_map prism_gems_emis.tex}
+                     {$base set diffuse_tex  {{get_track_panel} find cymbal_rgb_base.tex}}
+                     {$base set emissive_map {{get_track_panel} find cymbal_ems_rgb_base.tex}}
 
-                     {$color copy prism_glow_blue.mat kCopyShallow}
+                     {$color copy gem_cymbal.mat kCopyShallow}
                      {$color set color $c}
-                     {$color set prelit FALSE}
                      {$color set blend kBlendAdd}
-                     {$color set diffuse_tex prism_gems_rgb.tex}
-
-                     {if {== $i 4}
-                        {new Mat drum_glow_style.mat}
-                        {drum_glow_style.mat copy $color 0}
-                        {drum_glow_style.mat set color {pack_color 1 1 1}}
-                        {drum_glow_style.mat set next_pass $color}
-                        {drum_glow_style.mat set diffuse_tex prism_gems_base.tex}
-                        {set $color drum_glow_style.mat}
-                     }
+                     {$color set z_mode kZModeTransparent}
+                     {$color set diffuse_tex {{get_track_panel} find cymbal_rgb_color.tex}}
 
                      {if $cs
-                        {{sprintf "prism_gem_drum_%s.mesh" $cs} set_mat $base}
-                        {{sprintf "prism_glow_drum_%s.mesh" $cs} set_mat $color}
+                        {{sprintf "cymbal_gem_%s.mesh" $cs} set_mat $base}
                      }
                   }
                }
             }}
-
-            {prism_gem_kick_glow.mesh set_mat drum_color_5.mat}
-            {prism_gem_kick.mesh set_mat drum_base_5.mat}
-
-            {prism_gem_kick_miss.mesh set_mat drum_base_6.mat}
-            {prism_gem_kick_miss_glow.mesh set_mat drum_color_6.mat}
-
-            {prism_gem_kick_style.mesh set_mat drum_base_4.mat}
-            {prism_gem_kick_glow_style.mesh set_mat drum_color_4.mat}
          }
-         {foreach $inst (guitar drum) {do
-            ($o {asset_mgr get_color $inst 5})
-            ($dir {sprint "smasher_plate_" $inst})
-            {if {$td exists $dir}
-               {{$td find $dir} iterate RndDir $smasher {do
-                  ($i {siti {str_elem {$smasher name} 11}})
-                  {with $smasher
-                     {if_else {&& {== $inst drum} {== $i 0}}
-                        {print "!!! implement kick stuff !!!"}
-                        {do
-                           ($c {asset_mgr get_color $inst {- $i {== $inst drum}}})
-                           {glow.mat set diffuse_tex white_smasher.tex}
-                           {glow.mat set next_pass smasher_sides.mat}
-                           {glow.mat set color $c}
-
-                           {glow_miss.mat set diffuse_tex white_smasher.tex}
-                           {glow_miss.mat set next_pass smasher_sides.mat}
-                           {glow_miss.mat set color $c}
-
-                           {radial_flare.mat set diffuse_tex flare_style.tex}
-
-                           {foreach $part
-                              (
-                                 sparks01.part
-                                 sparks03.part
-                                 sparks04.part
-                                 big_rock_sparks.part
-                              )
-                              {$part set start_color_low $c}
-                              {$part set start_color_high $c}
-                           }
-                           {foreach $part
-                              (
-                                 sparks01_bonus.part
-                                 sparks03_bonus.part
-                              )
-                              {$part set start_color_low $o}
-                              {$part set start_color_high $o}
-                           }
-                           {foreach $ml
-                              (
-                                 broken_glass_squares.ml
-                                 broken_glass_triangles.ml
-                                 radial_debris.ml
-                              )
-                              {$ml set start_color $c}
-                              {{sprint {basename $ml} "_bonus.ml"} set start_color $o}
-                           }
-                        }
-                     }
-                  }
-               }}
-            }
-         }}
-      }
-      {with {{get_track_panel} find pro_drums}
-         {foreach_int $i 0 7 {do
-            ($base {sprintf "cymbal_base_%d.mat" $i})
-            ($color {sprintf "cymbal_color_%d.mat" $i})
-            ($c {asset_mgr get_color drum $i})
-            ($cs {elem (red yellow blue green style '' miss) $i})
-
-            {if_else {exists $color}
-               {$color set color $c}
-               {do
-                  {new Mat $base}
-                  {new Mat $color}
-
-                  {$base copy gem_cymbal.mat kCopyShallow}
-                  {$base set next_pass $color}
-                  {$base set diffuse_tex  {{get_track_panel} find cymbal_rgb_base.tex}}
-                  {$base set emissive_map {{get_track_panel} find cymbal_ems_rgb_base.tex}}
-
-                  {$color copy gem_cymbal.mat kCopyShallow}
-                  {$color set color $c}
-                  {$color set blend kBlendAdd}
-                  {$color set z_mode kZModeTransparent}
-                  {$color set diffuse_tex {{get_track_panel} find cymbal_rgb_color.tex}}
-
-                  {if $cs
-                     {{sprintf "cymbal_gem_%s.mesh" $cs} set_mat $base}
-                  }
-               }
-            }
-         }}
       }
    )
    (apply_config {do
@@ -476,43 +570,10 @@
    })
    (get_color
       ($inst $i)
-      {switch $inst
-         (guitar
-            {eval
-               {elem
-                  (
-                     $gtr_rgb_1
-                     $gtr_rgb_2
-                     $gtr_rgb_3
-                     $gtr_rgb_4
-                     $gtr_rgb_5
-                     $gtr_rgb_o
-                     $gtr_rgb_m
-                  )
-                  $i
-               }
-            }
-         )
-         (drum
-            {eval
-               {elem
-                  (
-                     $drum_rgb_1
-                     $drum_rgb_2
-                     $drum_rgb_3
-                     $drum_rgb_4
-                     $drum_rgb_o
-                     $drum_rgb_k
-                     $drum_rgb_m
-                  )
-                  $i
-               }
-            }
-         )
-      }
+      {elem {$this config_get $inst rgb_colors} $i}
    )
    (get_widget
-      ($type $i)
+      ($inst $type $i)
       {if {&& {! $prodrums} {== $type cymbal}}
          {set $type drum}
       }
@@ -580,32 +641,33 @@
                {fail {sprint $type " is an unhandled widget type"}}
             }
          )
+         ($rgb {$this config_get $inst rgb})
          ($index
             {switch $type
                ((normal hopo)
                   {cond
                      ($colorshuffle {random_int 0 5})
-                     ($notergb $i)
-                     (TRUE {eval_var {sprint "gtrgem" {+ $i 1}}})
+                     ($rgb $i)
+                     (TRUE {elem {$this config_get $inst gem_colors} $i})
                   }
                )
                ((drum cymbal)
                   {cond
                      ({&& $i $colorshuffle} {random_int 0 5})
-                     ($notergb $i)
-                     (TRUE {eval_var {sprint "drmgem" {+ $i 1}}})
+                     ($rgb $i)
+                     (TRUE {elem {$this config_get $inst gem_colors} $i})
                   }
                )
                (gtr_mash
-                  {if_else $notergb
+                  {if_else $rgb
                      $i
-                     {eval_var {sprint "gtrsm" {+ $i 1}}}
+                     {elem {$this config_get $inst smasher_colors} $i}
                   }
                )
                (drum_mash
-                  {if_else $notergb
+                  {if_else $rgb
                      $i
-                     {eval_var {sprint "drms" $i}}
+                     {elem {$this config_get $inst smasher_colors} $i}
                   }
                )
             }
@@ -615,7 +677,41 @@
       }
    )
    (get_sus
-      ($i)
+      ($i) {do
+      ($inst ; :3 :3 :3 :3 :3 :#
+         {if_else {|| {== {beatmatch num_active_players} 1} {gamemode is_hth_arrangement}}
+            {if_else {!= {{beatmatch active_player 0} instrument} drum}
+               {{beatmatch active_player 0} instrument}
+               guitar
+            }
+            {do
+               ($r guitar)
+               ($a {array 0})
+               {beatmatch foreach_active_player $player
+                  {if {!= {$player instrument} vocals}
+                     {push_back $a {$player instrument}}
+                  }
+               }
+               {if {&& {== $i 0} {== [li] 4}}
+                  {++ [i]}
+               }
+               {set $r
+                  {if_else {!= {elem $a [i]} drum}
+                     {elem $a [i]}
+                     guitar
+                  }
+               }
+               {if_else {&& {== $i 4} {== [li] 4} {== {- {size $a} 1} [i]}}
+                  {do
+                     {set [i] 0}
+                     {set [li] 0}
+                  }
+                  {set [li] $i}
+               }
+               $r
+            }
+         }
+      )
       {elem
          (
             green
@@ -627,26 +723,91 @@
          )
          {cond
             ($colorshuffle {random_int 0 5})
-            ($notergb $i)
-            (TRUE {eval_var {sprint "gtrsus" {+ $i 1}}})
+            ({$this config_get $inst rgb} $i)
+            (TRUE {elem {$this config_get $inst sustain_colors} $i})
          }
       }
-   )
+   })
    (get_smasher_color
       ($inst $i)
       {elem 
-         {if_else {|| {! $notergb} {== $inst guitar}}
+         {if_else {|| {! {$this config_get $inst rgb}} {!= $inst drum}}
             (green red yellow blue orange)
             (red yellow blue green)
          }
-         {if_else $notergb
+         {if_else {$this config_get $inst rgb}
             $i
-            {switch $inst
-               (guitar {eval_var {sprint "gtrsm" {+ $i 1}}})
-               (drum {eval_var {sprint "drms" {+ $i 1}}})
-            }
+            {elem {$this config_get $inst smasher_colors} $i}
          }
       }
+   )
+   (apply_preset
+      ($s)
+      {resize [config] 0}
+      {foreach $a {find $syscfg track_presets $s}
+         {if {== {type $a} kDataArray}
+            {push_back [config] {eval $a}}
+         }
+      }
+   )
+   (clear_synced {resize [config_net] 0})
+   (sync_assets
+      {if {&& {!= {session mode} kNetLocal} {! {gamemode is_hth_arrangement}}} {do
+         ($a {array 0})
+         {gamecfg foreach_local_player_config $pcfg
+            {switch {$pcfg get_track_type}
+               (kTrackGuitar {push_back $a {eval {find [config] guitar}}})
+               (kTrackBass   {push_back $a {eval {find [config] bass}}})
+               (kTrackDrum   {push_back $a {eval {find [config] drum}}})
+            }
+         }
+         {if {size $a}
+            {session send_to_all
+               {`
+                  (if {exists asset_mgr}
+                     {asset_mgr rsa {, $a}}
+                  )
+               }
+               kNetReliable
+            }
+         }
+      }}
+   )
+   (rsa
+      ($a)
+      {print "rec rsa"}
+      {if $sync_online
+         {foreach $c $a
+            {push_back [config_net] $c}
+         }
+      }
+   )
+   (config_get
+      ($i $s)
+      {cond
+         ({find_exists [config_net] $i $s}
+            {elem {find [config_net] $i $s} 1}
+         )
+         ({find_exists [config] $i $s}
+            {elem {find [config] $i $s} 1}
+         )
+         ({find_exists $syscfg track_presets default $i $s}
+            {elem {find $syscfg track_presets default $i $s} 1}
+         )
+         (TRUE {fail {sprint "failed to find " $s " for " $i}})
+      }
+   )
+   (config_set
+      ($i $s $v)
+      {set_elem {find [config] $i $s} 1 $v}
+   )
+   (ui_get
+      ($s)
+      {elem {find [config] {asset_mgr target} $s} 1}
+   )
+   (ui_set
+      ($s $v)
+      {set_elem {find [config] {asset_mgr target} $s} 1 $v}
    )
    (find_get
       ($a $s)
@@ -656,9 +817,9 @@
       }
    )
    (find_get_opt
-      ($a $s)
+      ($a $s $b)
       {cond
-         ({&& $notergb {find_exists $a {symbol {sprint $s _rgb}}}}
+         ({&& $b {find_exists $a {symbol {sprint $s _rgb}}}}
             {elem {find $a {symbol {sprint $s _rgb}}} 1}
          )
          ({find_exists $a $s}
@@ -667,15 +828,22 @@
          (TRUE kDataUnhandled)
       }
    )
-   (ensure_stuff
+   (ensure_stuff {do
+      ($rgb {$this ui_get rgb})
       {foreach $a
-         (
-            (all_gems all_gems_rgb gems)
-            (all_smashers all_smashers_rgb smashers)
-         )
-         {unless {find_elem {$this get {elem $a $notergb}} {eval_var {elem $a 2}}}
-            {set_var {elem $a 2} {elem {$this get {elem $a $notergb}} 0}}
+         {if_else {!= [target] drum}
+            (
+               (guitar_gems guitar_gems_rgb gems)
+               (guitar_smashers guitar_smashers_rgb smashers)
+            )
+            (
+               (drum_gems drum_gems_rgb gems)
+               (drum_smashers drum_smashers_rgb smashers)
+            )
+         }
+         {unless {find_elem {$this get {elem $a $rgb}} {$this ui_get {elem $a 2}}}
+            {$this ui_set {elem $a 2} {elem {$this get {elem $a $rgb}} 0}}
          }
       }
-   )
+   })
 )

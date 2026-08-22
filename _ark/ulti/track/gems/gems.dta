@@ -1,6 +1,11 @@
-(rb1 (rgb TRUE))
+(rb1
+   (rgb TRUE)
+   (guitar TRUE)
+   (drum TRUE)
+)
 (rb2
    (rgb TRUE)
+   (guitar TRUE)
    (file "ulti/track/gems/rb2/gems.milo")
    (meshes
       (
@@ -14,19 +19,17 @@
       )
    )
    (on_load
-      {{get_track_panel} iterate TrackDir $dir
-         {with $dir
-            {foreach $color (green red yellow blue orange miss)
-               {{$gems_dir find {sprintf "prism_glow_hopo_%s.mesh" $color}} set_mat prism_glow_blue.mat}
-               {{$gems_dir find {sprintf "prism_gem_hopo_%s.mesh" $color}} set_mat prism_mat.mat}
-            }
-            {{$gems_dir find prism_glow_hopo_style.mesh} set_mat prism_glow_blue.mat}
-            {{$gems_dir find prism_gem_hopo_style.mesh} set_mat prism_mat.mat}
+      {with $dir
+         {foreach $color (green red yellow blue orange miss)
+            {{$gems_dir find {sprintf "prism_glow_hopo_%s.mesh" $color}} set_mat prism_glow_blue.mat}
+            {{$gems_dir find {sprintf "prism_gem_hopo_%s.mesh" $color}} set_mat prism_mat.mat}
          }
+         {{$gems_dir find prism_glow_hopo_style.mesh} set_mat prism_glow_blue.mat}
+         {{$gems_dir find prism_gem_hopo_style.mesh} set_mat prism_mat.mat}
       }
    )
    (on_load_rgb
-      {{get_track_panel} iterate TrackDir $dir {with $dir
+      {with $dir
          {foreach_int $i 0 7 {do
             ($base {sprintf "gtr_base_%d.mat" $i})
             ($color {sprintf "gtr_color_%d.mat" $i})
@@ -37,10 +40,12 @@
             {{$gems_dir find {sprintf "prism_gem_hopo_%s.mesh" $cs}} set_mat $base}
             {{$gems_dir find {sprintf "prism_glow_hopo_%s.mesh" $cs}} set_mat $color}
          }}
-      }}
+      }
    )
 )
 (rb2_wii
+   (guitar TRUE)
+   (drum TRUE)
    (file "ulti/track/gems/rb2_wii/gems.milo")
    (meshes
       (
@@ -77,6 +82,8 @@
    )
 )
 (tbrb
+   (guitar TRUE)
+   (drum TRUE)
    (file "ulti/track/gems/tbrb/gems.milo")
    (meshes
       (
@@ -113,6 +120,8 @@
    )
 )
 (rb3
+   (guitar TRUE)
+   (drum TRUE)
    (file "ulti/track/gems/rb3/gems.milo")
    (meshes
       (
@@ -149,6 +158,8 @@
    )
 )
 (lrb
+   (guitar TRUE)
+   (drum TRUE)
    (file "ulti/track/gems/lrb/gems.milo")
    (meshes
       (
@@ -182,6 +193,9 @@
 )
 (gh2
    (rgb TRUE)
+   (guitar TRUE)
+   (drum TRUE)
+   (drum_rgb FALSE)
    (file "ulti/track/gems/gh2/gems.milo") ; gems stolen from rb3dx
    (file_rgb "ulti/track/gems/gh2/gems_rgb.milo")
    (meshes
@@ -257,6 +271,7 @@
    )
 )
 #define GH_GEMS_COMMON (
+   (guitar TRUE)
    (meshes
       (
          (gem_green.wid gem_green.mesh)
@@ -279,6 +294,7 @@
 )
 #define GH_RGB_COMMON (
    (rgb TRUE)
+   (guitar TRUE)
    (meshes_rgb
       (
          (gem_green.wid gem_0.mesh)
@@ -326,6 +342,9 @@
 (ghl (file "ulti/track/gems/ghl/gems.milo") GH_GEMS_COMMON)
 (yarg
    (rgb TRUE)
+   (guitar TRUE)
+   (drum TRUE)
+   (drum_rgb FALSE)
    (file "ulti/track/gems/yarg/gems.milo")
    (meshes
       (

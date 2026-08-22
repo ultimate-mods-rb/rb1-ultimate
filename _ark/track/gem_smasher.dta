@@ -34,6 +34,7 @@
          (burning FALSE)
          (base_frame 0)
          (custom '')
+         (rgb FALSE)
          (set_color
             ($in_color)
             {do
@@ -110,11 +111,17 @@
             }
             {if {exists smasher_glow.anim}
                {if_else [glow]
-                  {smasher_glow.anim animate
-                     (range
-                        {'+' [base_frame] 19}
-                        {'+' [base_frame] 19}
-                     )
+                  {if_else [rgb]
+                     {do
+                        {glow.mat set emissive_map smasher_bright.tex}
+                        {glow.mat set emissive_multiplier 1.0}
+                     }
+                     {smasher_glow.anim animate
+                        (range
+                           {'+' [base_frame] 19}
+                           {'+' [base_frame] 19}
+                        )
+                     }
                   }
                   {smasher_glow.anim animate (dest [base_frame])}
                }

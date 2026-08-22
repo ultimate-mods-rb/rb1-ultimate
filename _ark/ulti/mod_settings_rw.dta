@@ -44,8 +44,6 @@
       cnt_slot4
       cnt_slot5
       cnt_star
-      gems
-      smashers
       track_config
       selectvenue
       nohud
@@ -60,45 +58,6 @@
       force_vg
       fast_selsong
       videobgs
-      gtrgem1
-      gtrgem2
-      gtrgem3
-      gtrgem4
-      gtrgem5
-      drmgem1
-      drmgem2
-      drmgem3
-      drmgem4
-      drmgem5
-      gtrsm1
-      gtrsm2
-      gtrsm3
-      gtrsm4
-      gtrsm5
-      gtrsus1
-      gtrsus2
-      gtrsus3
-      gtrsus4
-      gtrsus5
-      drms1
-      drms2
-      drms3
-      drms4
-      notergb
-      gtr_rgb_1
-      gtr_rgb_2
-      gtr_rgb_3
-      gtr_rgb_4
-      gtr_rgb_5
-      gtr_rgb_o
-      gtr_rgb_m
-      drum_rgb_1
-      drum_rgb_2
-      drum_rgb_3
-      drum_rgb_4
-      drum_rgb_o
-      drum_rgb_m
-      drum_rgb_k
    ))
    (save_settings
       {print "attempting to save mod settings"}
@@ -121,6 +80,7 @@
          }
          {mod_settings set mic_volumes $array}
       }
+      {mod_settings set config {asset_mgr config}}
       
       {mod_settings save_objects MOD_SETTINGS_PATH}
       {delete mod_settings}
@@ -146,6 +106,10 @@
                      {{profile_mgr get_char_options_from_player $i} set_vocal_volume {elem {elem $array $i} 1}}
                   }
                }}
+
+               {if {$mod_settings has (config)}
+                  {asset_mgr set config {$mod_settings get config}}
+               }
 
                {delete $mod_settings}
                {print "mod settings loaded"}

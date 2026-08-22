@@ -536,6 +536,7 @@
 #endif
 (gems #include ../ulti/track/gems/gems.dta)
 (smashers #include ../ulti/track/smashers/smashers.dta)
+(track_presets #include ../ulti/track/presets.dta)
 (track_configs #include ../ulti/track/track_configs.dta)
 (data_graveyard)
 (generate_weights FALSE)

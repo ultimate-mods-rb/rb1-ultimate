@@ -54,27 +54,11 @@
             {$this sync_objects}
          }
       }
-      {if $notergb
-         {with {dust.tex dir}
-            {$this insert (subdirs 0) "ulti/track/rgb_tex.milo"}
-            {foreach $t ; due to annoying propanim stuff
-               (
-                  square_smasher_bright_green.tex
-                  square_smasher_bright_red.tex
-                  square_smasher_bright_yellow.tex
-                  square_smasher_bright_blue.tex
-                  square_smasher_bright_orange.tex
-               )
-               {$t set_bitmap "ulti/track/smashers/smasher_bright.png"}
-            }
-         }
-         {asset_mgr apply_default_rgb}
-      }
+      {{dust.tex dir} insert (subdirs 0) "ulti/track/rgb_tex.milo"}
+      {asset_mgr apply_default_rgb}
       {asset_mgr load_gems}
       {asset_mgr load_smashers}
-      {if $notergb
-         {asset_mgr apply_all_rgb}
-      }
+      {asset_mgr apply_all_rgb}
       #else
       {unless $kickbounce
          {$this iterate TrackDir $dir
@@ -205,13 +189,14 @@
    )
    (do_stuff
       #ifdef HX_NG
-      {if {gems_dir exists animate.trig}
-         {{gems_dir find animate.trig} trigger}
+      {gems_dir iterate ObjectDir $dir
+         {if {$dir exists animate.trig}
+            {{$dir find animate.trig} trigger}
+         }
       }
-      {if $notergb
-         {asset_mgr apply_all_rgb}
-      }
+      {asset_mgr apply_all_rgb}
       #endif
+      {beatmatch set_kick_autoplay $autokick}
       {beatmatch foreach_active_player $player ;handle adding the appropriate callbacks to each player
          {if_else {== {$player instrument} vocals}
             {if_else $micdeploy
@@ -285,6 +270,9 @@
       }
       #endif
    )
+   #ifdef HX_NG
+   (unload {asset_mgr clear_synced})
+   #endif
 )
 {new TrackPanel
    coop_track_panel

@@ -373,7 +373,7 @@
       {$this update_helpbar}
    })
    (setup_common
-      {title.lbl set text_token {$this state_get title}}
+      {title.lbl set text_token {eval {$this state_get title}}}
       {$this lst_reset}
    )
    (sel_common {do

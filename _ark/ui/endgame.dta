@@ -437,15 +437,15 @@
    )
    (update_font {do
       ($s
-         #ifdef HX_NG
-         {cond
-            ({|| {!= $gems gh2} {!= $smashers gh2}} kabel_bold)
-            ({== $this tour_nextsong_panel} dyingmarker)
-            (TRUE blockletters)
-         }
-         #else
+         ; #ifdef HX_NG
+         ; {cond
+         ;    ({|| {!= $gems gh2} {!= $smashers gh2}} kabel_bold)
+         ;    ({== $this tour_nextsong_panel} dyingmarker)
+         ;    (TRUE blockletters)
+         ; }
+         ; #else
          kabel_bold
-         #endif
+         ; #endif
       )
       {foreach $lbl (heading.lbl score.lbl)
          {if {&& {exists $lbl} {!= {$lbl get_type} $s}}

@@ -101,6 +101,10 @@
 
 {set $videobgs TRUE}
 
+{set $track_config rb1}
+
+{set $sync_online TRUE}
+
 {set $smallworld FALSE}
 
 {set $bigmode FALSE}
