@@ -29,6 +29,7 @@
                }
             }}
             {print {sprint {$player instrument} " " {[track] name} " " {$dir name}}}
+            #ifdef HX_NG
             {with $dir
                {unless {$this has (init)}
                   {{meter_wipe.mnm dir} set_trans_parent $this}
@@ -53,6 +54,17 @@
             {set [target] {$dir find multiplier.txt}}
             {set [anim] {$dir find meter_wipe.mnm}}
             {set [parent] {$dir find streak_meter.grp}}
+            #else
+            {set [target] {$dir find count.lbl}}
+            {set [parent] [target]}
+            {if_else {== {$player instrument} vocals}
+               {do
+                  {[target] set_local_pos 0 0 0.8}
+                  {[target] set_local_scale 0.3 0.3 0.3}
+               }
+               {[target] set_local_pos 0 0 -25}
+            }
+            #endif
             {[parent] set_showing FALSE}
             {set [event_array] {eval_array {[parser] get event_array}}}
             {unless {[parser] get first_note}
@@ -73,7 +85,11 @@
          )
          (set_lbl
             ($text)
+            #ifdef HX_NG
             {[target] set_text {sprint $text}}
+            #else
+            {[target] set_localized {sprint $text}}
+            #endif
          )
          (downbeat
             {if {&& {== {mod {int {taskmgr beat}} 4} 0} {size [event_array]} {! [done]}}
@@ -87,10 +103,12 @@
                      {do
                         {set [remaining] {int {/ {elem {elem [event_array] [current_event]} 1} 4}}}
                         {set [active] TRUE}
-                        {[anim] animate
-                           (units kTaskBeats)
-                           (period {* {- [remaining] 1} 4})
-                           (range 0 1)
+                        {if [anim]
+                           {[anim] animate
+                              (units kTaskBeats)
+                              (period {* {- [remaining] 1} 4})
+                              (range 0 1)
+                           }
                         }
                         {if [alive]
                            {[parent] set_showing TRUE}

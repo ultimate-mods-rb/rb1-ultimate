@@ -124,11 +124,13 @@
          (block_ingame TRUE)
          (sel_script {toggle_var goldprogress})
       )
+      #endif
       (os_countdown
          (type uOnOFF)
          (bool $countdown)
          (sel_script {toggle_var countdown})
       )
+      #ifdef HX_NG
       (os_videobgs
          (type uOnOFF)
          (bool $videobgs)

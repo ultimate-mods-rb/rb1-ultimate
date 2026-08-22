@@ -100,6 +100,40 @@
             {{track_1 get failed_feedback} insert (subdirs 0) "ulti/track/countdown_1.milo"}
          )
       }
+      #else
+      {do
+         ($a
+            {cond
+               ({exists vocals}
+                  (
+                     player_feedback_01
+                     player_feedback_02
+                     player_feedback_03
+                     {vocals get failed_feedback}
+                  )
+               )
+               ({exists guitar_fx_0}
+                  (player_feedback_01 player_feedback_02)
+               )
+               (TRUE
+                  (
+                     {track_0 get failed_feedback}
+                     {track_1 get failed_feedback}
+                  )
+               )
+            }
+         )
+         {foreach $d $a
+            {with {eval $d}
+               {new BandLabel count.lbl}
+               {count.lbl set_trans_parent $this}
+               {count.lbl set_type default}
+               {count.lbl set text_size 2.75}
+               {count.lbl set color_preset safe_white}
+               {$this sync_objects}
+            }
+         }
+      }
       #endif
       {if {exists scoreboard}
          {with scoreboard
@@ -205,7 +239,6 @@
                {$obj init $player}
             }
          }
-         #ifdef HX_NG
          {unless {|| {! $countdown} {gamemode get is_practice} {gamemode get is_drum_trainer}}
             {do
                ($obj {sprint {$player track} "_countdown"})
@@ -227,7 +260,6 @@
                {$obj init $player $dir}
             }
          }
-         #endif
          {if {gamemode get is_permadeath}
             {do
                ($obj "perma_callback")
@@ -238,6 +270,20 @@
             }
          }
       }
+      #ifndef HX_NG
+      ; something is wrong on og (duh) and BeatMaster::HandleBeatCallback is never called for any event other than reset
+      ; none of the events do anything so it makes sense how it was missed but thx pi
+      {unless {|| {! $countdown} {gamemode get is_practice} {gamemode get is_drum_trainer}}
+         {thread_task kTaskBeats
+            (script
+               {$task wait {== {mod {int {taskmgr beat}} 4} 0}}
+               {$this iterate (Object countdown) $o {$o downbeat}}
+               {$task sleep 1}
+               {$task loop}
+            )
+         }
+      }
+      #endif
    )
 )
 {new TrackPanel
