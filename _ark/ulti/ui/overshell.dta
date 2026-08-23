@@ -351,6 +351,19 @@
                      }
                   }
                )
+               (uInvoke
+                  {push_back $array {do
+                     ($selected {== {- {size $array} 1} {OS_LIST selected_pos}})
+                     {if_else {&& $selected [focused]}
+                        {sprint
+                           {localize os_l} 
+                           {OS_LIST get store}
+                           {localize os_r}
+                        }
+                        {elem $entry 0}
+                     }
+                  }}
+               )
                {fail {sprint {elem {find $entry type} 1} " is an unknown type"}}
             }
             {push_back $array {eval $entry}}
@@ -420,6 +433,13 @@
                      }
                   }
                )
+               (uInvoke {do
+                  ($a {eval {elem {find $entry array} 1}})
+                  {if {size $a}
+                     {set [focused] TRUE}
+                     {OS_LIST set store {elem $a 0}}
+                  }
+               })
             }
          }
          {synth play button_error}
@@ -612,6 +632,54 @@
                   }
                }
             )
+            (uInvoke
+               {if_else [focused]
+                  {switch $button
+                     (kPad_X
+                        {synth play button_select}
+                        {set [focused] FALSE}
+                        {do
+                           ($r {OS_LIST get store})
+                           {foreach $cmd {find $entry on_invoke}
+                              {eval $cmd}
+                           }
+                        }
+                        {OS_LIST set store 0}
+                        {$this update_helpbar}
+                        {$this lst_reset}
+                     )
+                     (kPad_Tri
+                        {synth play button_back}
+                        {set [focused] FALSE}
+                        {OS_LIST set store 0}
+                        {$this update_helpbar}
+                        {$this lst_reset}
+                     )
+                     ((kPad_DUp kPad_DLeft)
+                        {synth play button_toggle}
+                        {OS_LIST set store
+                           {prev_elem
+                              {eval {elem {find $entry array} 1}}
+                              {OS_LIST get store}
+                           }
+                        }
+                        {$this lst_reset}
+                     )
+                     ((kPad_DDown kPad_DRight)
+                        {synth play button_toggle}
+                        {OS_LIST set store
+                           {next_elem
+                              {eval {elem {find $entry array} 1}}
+                              {OS_LIST get store}
+                           }
+                        }
+                        {$this lst_reset}
+                     )
+                     {$this unhandled_down}
+                  }
+                  {$this unhandled_down}
+               }
+            )
             {$this unhandled_down}
          }
          {$this unhandled_down}
@@ -660,6 +728,12 @@
                      helpbar_back
                      os_changecolor
                      os_copy
+                  )
+               )
+               ({&& {== $type uInvoke} [focused]}
+                  (
+                     helpbar_cancel
+                     helpbar_select
                   )
                )
                ([focused]

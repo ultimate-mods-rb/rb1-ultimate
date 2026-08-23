@@ -40,6 +40,7 @@
 #define uFakeSld   (2)
 #define uSld       (3)
 #define uColorSld  (4)
+#define uInvoke    (5)
 
 #define uColor     (1)
 #define uDrumColor (2)

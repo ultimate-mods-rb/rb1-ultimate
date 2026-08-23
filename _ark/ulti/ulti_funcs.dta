@@ -42,9 +42,14 @@
 {func eval_array
    ($array)
    {do
-      ($a {array 0})
-      {foreach $elem $array
-         {push_back $a {eval $elem}}
+      ($a {array {size $array}})
+      {foreach_int $i 0 {size $array}
+         {set_elem $a $i
+            {if_else {== {type {elem $array $i}} kDataArray}
+               {eval_array {elem $array $i}} ; this is silly but it works!
+               {eval {elem $array $i}}
+            }
+         }
       }
       $a
    }

@@ -1,7 +1,7 @@
 (init
+   #include ../ulti/ulti_init.dta
    #include ../ulti/ulti_funcs.dta
    #include ../ulti/ulti_objs.dta
-   #include ../ulti/ulti_init.dta
    #ifdef HX_NG
    #include ../ulti/ui/ulti_pi_screens.dta
    #endif

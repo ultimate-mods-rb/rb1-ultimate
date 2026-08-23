@@ -396,6 +396,28 @@
 (trk
    (title os_trk)
    (data (
+      #ifdef HX_NG
+      (os_preset
+         (type uNormal)
+         (block_ingame TRUE)
+         (sel_script {$this update_state preset})
+      )
+      #else
+      (os_apply_preset
+         (type uInvoke)
+         (array {do
+            ($a {array 0})
+            {foreach $p {find $syscfg track_presets}
+               {if {&& {== {type $p} kDataArray} {size $p}}
+                  {push_back $a {elem $p 0}}
+               }
+            }
+            $a
+         })
+         (block_ingame TRUE)
+         (on_invoke {asset_mgr apply_preset $r})
+      )
+      #endif
       (guitar
          (type uNormal)
          (sel_script
@@ -436,6 +458,81 @@
    (component_select {$this sel_common})
    (button_down {$this down_common})
    (back main)
+)
+(preset
+   (title os_preset)
+   (dirty FALSE)
+   (data (
+      (os_apply_preset
+         (type uInvoke)
+         (array {do
+            ($a {array 0})
+            {foreach $p {find $syscfg track_presets}
+               {if {&& {== {type $p} kDataArray} {size $p}}
+                  {push_back $a {elem $p 0}}
+               }
+            }
+            {foreach $p $user_presets
+               {if {&& {== {type $p} kDataArray} {size $p}}
+                  {push_back $a {elem $p 0}}
+               }
+            }
+            $a
+         })
+         (on_invoke {asset_mgr apply_preset $r})
+      )
+      (os_save_preset
+         (type uNormal)
+         (sel_script
+            {platform_mgr show_keyboard
+               $player_num
+               16
+               {localize os_save_preset_info}
+               ""
+               ""
+               overshell
+            }
+         )
+      )
+      (os_delete_preset
+         (type uInvoke)
+         (array {do
+            ($a {array 0})
+            {foreach $p $user_presets
+               {if {&& {== {type $p} kDataArray} {size $p}}
+                  {push_back $a {elem $p 0}}
+               }
+            }
+            $a
+         })
+         (on_invoke
+            {remove_elem $user_presets {find_exists $user_presets $r}}
+            {$this state_set dirty TRUE}
+         )
+      )
+   ))
+   (enter {$this setup_common})
+   (exit
+      {if {$this state_get dirty}
+         {mod_settings_rw save_presets}
+         {$this state_set dirty FALSE}
+      }
+   )
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (virtual_keyboard_result_msg
+      {if {&& $ok $text}
+         {set $text {symbol $text}}
+         {if_else {find_exists $syscfg track_presets $text}
+            {passive_messages_panel queue_message {localize os_diff_name}}
+            {do
+               {asset_mgr save_preset $text}
+               {$this state_set dirty TRUE}
+            }
+         }
+      }
+   )
+   (back trk)
 )
 (trk_config
    (title {asset_mgr target})
@@ -547,18 +644,24 @@
    )
    (exit
       {resize {$this state_get data} 0}
+      #ifdef HX_NG
       {if {exists beatmatch}
          {asset_mgr apply_all_rgb}
       }
+      #endif
    )
    (copy
-      ($from $to)
-      {foreach $a {find {asset_mgr config} $from}
-         {if {== {type $a} kDataArray}
-            {asset_mgr config_set $to {elem $a 0} {elem $a 1}}
+      ($from $to) {do
+      ($a {eval_array {find {asset_mgr config} $from}})
+      {set_elem $a 0 $to}
+      {set_elem {asset_mgr config}
+         {get_elem
+            {asset_mgr config}
+            {find {asset_mgr config} $to}
          }
+         $a
       }
-   )
+   })
    (component_select {$this sel_common})
    (button_down {$this down_common})
    (back trk)

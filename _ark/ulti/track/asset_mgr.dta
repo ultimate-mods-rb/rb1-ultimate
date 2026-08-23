@@ -744,12 +744,29 @@
    (apply_preset
       ($s)
       {resize [config] 0}
-      {foreach $a {find $syscfg track_presets $s}
+      {foreach $a
+         {cond
+            ({find_exists $user_presets $s}
+               {find $user_presets $s}
+            )
+            ({find_exists $syscfg track_presets $s}
+               {find $syscfg track_presets $s}
+            )
+            (TRUE {fail {sprint $s " is an unknown preset"}})
+         }
          {if {== {type $a} kDataArray}
-            {push_back [config] {eval $a}}
+            {push_back [config] {eval_array $a}}
          }
       }
    )
+   (save_preset
+      ($s) {do
+      ($a {eval_array ($s)})
+      {foreach $i [config]
+         {push_back $a {eval_array $i}}
+      }
+      {push_back $user_presets $a}
+   })
    (clear_synced {resize [config_net] 0})
    (sync_assets
       {if {&& {!= {session mode} kNetLocal} {! {gamemode is_hth_arrangement}}} {do

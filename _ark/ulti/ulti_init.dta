@@ -105,6 +105,8 @@
 
 {set $sync_online TRUE}
 
+{set $user_presets {array 0}}
+
 {set $smallworld FALSE}
 
 {set $bigmode FALSE}

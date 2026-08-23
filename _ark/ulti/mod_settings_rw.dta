@@ -1,7 +1,9 @@
 #ifdef HX_PS3
    #define MOD_SETTINGS_PATH ("GD:/dev_hdd0/game/BLUS30050/USRDIR/mod_settings.milo")
+   #define PRESETS_PATH ("GD:/dev_hdd0/game/BLUS30050/USRDIR/user_presets.milo")
 #else
    #define MOD_SETTINGS_PATH ("GAME:/mod_settings.milo")
+   #define PRESETS_PATH ("GAME:/user_presets.milo")
 #endif
 {new ObjectDir
    mod_settings_rw
@@ -126,5 +128,31 @@
       {delete user_prefabs}
       {print "user prefabs saved to milo"}
    )
+   (load_presets
+      {print "attempting to load user presets"}
+      {do
+         ($presets {load_objects PRESETS_PATH})
+         {if_else $presets
+            {do
+               {$presets delete_loader}
+               {if {$presets has (user_presets)}
+                  {set $user_presets {$presets get user_presets}}
+               }
+               {delete $presets}
+               {print "user presets loaded"}
+            }
+            {print "user presets not loaded"}
+         }
+      }
+   )
+   (save_presets
+      {print "attempting to save user presets"}
+      {new ObjectDir user_presets}
+      {user_presets set user_presets $user_presets}
+      {user_presets save_objects PRESETS_PATH}
+      {delete user_presets}
+      {print "user presets saved to milo"}
+   )
 }
 {mod_settings_rw load_settings}
+{mod_settings_rw load_presets}
