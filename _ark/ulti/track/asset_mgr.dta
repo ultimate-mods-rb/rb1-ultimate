@@ -47,7 +47,16 @@
                {if {$this find_get $a guitar}
                   {push_back [guitar_gems_rgb] {elem $a 0}}
                }
-               {if {$this find_get $a drum}
+               {if
+                  {&&
+                     {$this find_get $a drum}
+                     {!
+                        {&&
+                           {find_exists $a drum_rgb}
+                           {! {$this find_get $a drum_rgb}}
+                        }
+                     }
+                  }
                   {push_back [drum_gems_rgb] {elem $a 0}}
                }
             }
@@ -686,12 +695,7 @@
             }
             {do
                ($r guitar)
-               ($a {array 0})
-               {beatmatch foreach_active_player $player
-                  {if {!= {$player instrument} vocals}
-                     {push_back $a {$player instrument}}
-                  }
-               }
+               ($a {game get_instrument_track_order})
                {if {&& {== $i 0} {== [li] 4}}
                   {++ [i]}
                }

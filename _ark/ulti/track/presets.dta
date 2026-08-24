@@ -40,7 +40,11 @@
       (rgb_sustain_base 0)
    )
    (drum
+      #ifdef HX_NG
       (gems rb1)
+      #else
+      (gems rb2)
+      #endif
       (smashers rb1)
       (gem_colors (0 1 2 3 4))
       (smasher_colors (1 2 3 0))

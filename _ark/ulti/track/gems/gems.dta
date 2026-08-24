@@ -3,6 +3,7 @@
    (guitar TRUE)
    (drum TRUE)
 )
+#ifdef HX_NG
 (rb2
    (rgb TRUE)
    (guitar TRUE)
@@ -43,7 +44,8 @@
       }
    )
 )
-(rb2_wii
+#endif
+(#ifdef HX_NG rb2_wii #else rb2 #endif
    (guitar TRUE)
    (drum TRUE)
    (file "ulti/track/gems/rb2_wii/gems.milo")
@@ -76,8 +78,10 @@
          (kick_miss.wid (prism_gem_kick_miss_glow.mesh prism_gem_kick_miss.mesh) FALSE)
          (star_kick.wid (prism_gem_kick_glow_style.mesh prism_gem_kick_style.mesh) FALSE)
 
+         #ifdef HX_NG
          (dynamic_crash_gem.wid dynamic_crash_green.mesh)
          (dynamic_crash_gem_lefty.wid dynamic_crash_red.mesh)
+         #endif
       )
    )
 )
@@ -194,8 +198,10 @@
 (gh2
    (rgb TRUE)
    (guitar TRUE)
+   #ifdef HX_NG
    (drum TRUE)
    (drum_rgb FALSE)
+   #endif
    (file "ulti/track/gems/gh2/gems.milo") ; gems stolen from rb3dx
    (file_rgb "ulti/track/gems/gh2/gems_rgb.milo")
    (meshes

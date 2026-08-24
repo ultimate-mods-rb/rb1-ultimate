@@ -538,7 +538,7 @@
    (title {asset_mgr target})
    (data ())
    (data_static (
-      #ifdef HX_NG
+      #ifndef HX_EE
       (os_gems
          (type uFakeSld)
          (fmt_type uLocalize)

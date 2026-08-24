@@ -546,9 +546,24 @@
                   ($object {object $obj_name})
                   {$object set
                      max_meshes
-                     {if_else $val
-                        2
-                        1
+                     {cond
+                        (
+                           {||
+                              #ifdef HX_NG
+                              {!
+                                 {find_elem (rb1 rb2)
+                                    {asset_mgr config_get [instrument] gems}
+                                 }
+                              }
+                              #else
+                              {!= {asset_mgr config_get [instrument] gems} rb1}
+                              #endif
+                              {asset_mgr config_get [instrument] rgb}
+                           }
+                           99
+                        )
+                        ($val 2)
+                        (TRUE 1)
                      }
                   }
                }

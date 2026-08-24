@@ -697,11 +697,7 @@
                   {bass set effect_selector {$this find bass_effects}}
                }
             }
-            #ifdef HX_NG
-            {set $track_LOD 0}
-            #else
             {set $track_LOD {&& [bass] {&& [drum] [guitar]}}}
-            #endif
             {bass set_showing [bass]}
             {drum set_showing [drum]}
             {guitar set_showing [guitar]}

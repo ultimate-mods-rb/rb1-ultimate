@@ -125,7 +125,7 @@
       (star drum_star.wid)
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash {asset_mgr get_widget drum drum_mash 1})
+      (mash {asset_mgr get_widget drum drum_mash 0})
    )
    (2
       (normal {asset_mgr get_widget drum cymbal 2})
@@ -133,7 +133,7 @@
       (star {if_else $prodrums cymbal_gem_star.wid drum_star.wid})
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash {asset_mgr get_widget drum drum_mash 2})
+      (mash {asset_mgr get_widget drum drum_mash 1})
    )
    (3
       (normal {asset_mgr get_widget drum cymbal 3})
@@ -141,7 +141,7 @@
       (star {if_else $prodrums cymbal_gem_star.wid drum_star.wid})
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash {asset_mgr get_widget drum drum_mash 3})
+      (mash {asset_mgr get_widget drum drum_mash 2})
    )
    (4
       (normal {asset_mgr get_widget drum cymbal 4})
@@ -149,7 +149,7 @@
       (star {if_else $prodrums cymbal_gem_star.wid drum_star.wid})
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash {asset_mgr get_widget drum drum_mash 4})
+      (mash {asset_mgr get_widget drum drum_mash 3})
       (crash {if_else $prodrums dynamic_crash_gem_cymbal.wid dynamic_crash_gem.wid})
    )
 )
@@ -166,7 +166,7 @@
       (star drum_star.wid)
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash {asset_mgr get_widget drum drum_mash 4})
+      (mash {asset_mgr get_widget drum drum_mash 3})
    )
    (2
       (normal {asset_mgr get_widget drum cymbal 3})
@@ -174,7 +174,7 @@
       (star {if_else $prodrums cymbal_gem_star.wid drum_star.wid})
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash {asset_mgr get_widget drum drum_mash 3})
+      (mash {asset_mgr get_widget drum drum_mash 2})
    )
    (3
       (normal {asset_mgr get_widget drum cymbal 2})
@@ -182,7 +182,7 @@
       (star {if_else $prodrums cymbal_gem_star.wid drum_star.wid})
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash {asset_mgr get_widget drum drum_mash 2})
+      (mash {asset_mgr get_widget drum drum_mash 1})
    )
    (4
       (normal {asset_mgr get_widget drum drum 1})
@@ -190,7 +190,7 @@
       (star {if_else $prodrums cymbal_gem_star.wid drum_star.wid})
       (unison drum_star.wid)
       (miss drum_miss.wid)
-      (mash {asset_mgr get_widget drum drum_mash 1})
+      (mash {asset_mgr get_widget drum drum_mash 0})
       (crash {if_else $prodrums dynamic_crash_gem_cymbal_lefty.wid dynamic_crash_gem_lefty.wid})
    )
 )
