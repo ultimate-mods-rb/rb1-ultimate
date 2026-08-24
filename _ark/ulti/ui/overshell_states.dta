@@ -538,7 +538,6 @@
    (title {asset_mgr target})
    (data ())
    (data_static (
-      #ifndef HX_EE
       (os_gems
          (type uFakeSld)
          (fmt_type uLocalize)
@@ -581,7 +580,6 @@
             }
          )
       )
-      #endif
       (os_colors
          (type uNormal)
          (sel_script

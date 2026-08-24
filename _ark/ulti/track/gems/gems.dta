@@ -85,6 +85,7 @@
       )
    )
 )
+#ifndef HX_EE
 (tbrb
    (guitar TRUE)
    (drum TRUE)
@@ -276,6 +277,7 @@
       )
    )
 )
+#endif
 #define GH_GEMS_COMMON (
    (guitar TRUE)
    (meshes
@@ -346,6 +348,7 @@
    GH_RGB_COMMON
 )
 (ghl (file "ulti/track/gems/ghl/gems.milo") GH_GEMS_COMMON)
+#ifndef HX_EE
 (yarg
    (rgb TRUE)
    (guitar TRUE)
@@ -401,3 +404,4 @@
       )
    )
 )
+#endif

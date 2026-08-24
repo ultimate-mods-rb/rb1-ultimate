@@ -3,6 +3,7 @@
    (guitar TRUE)
    (drum TRUE)
 )
+#ifndef HX_EE
 (gh2
    (guitar TRUE)
    (rgb TRUE)
@@ -76,6 +77,7 @@
       }
    )
 )
+#endif
 #define GH_SMASHERS_COMMON (
    (guitar TRUE)
    (on_load {do

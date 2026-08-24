@@ -60,10 +60,8 @@
       {asset_mgr load_smashers}
       {asset_mgr apply_all_rgb}
       #else
-      #ifdef HX_WII
       {asset_mgr load_gems}
       {asset_mgr load_smashers}
-      #endif
       {unless $kickbounce
          {$this iterate TrackDir $dir
             {clear_array {$dir find kick_drummer.trig} anims}
