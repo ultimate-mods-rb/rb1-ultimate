@@ -492,6 +492,9 @@
 (komaru "Komaru Naegi")
 (guitar_komaru "Komaru Naegi")
 (komaru_desc "She doesn't have any special talents.")
+(fernet "Fernet")
+(guitar_fernet "Fernet")
+(fernet_desc "Captain of the M.A.H.O.U unit.")
 ; guitar
 (mustang02 "Fender<sup>TM</sup> '65 Mustang<sup>TM</sup>")
 (mustang02_desc
