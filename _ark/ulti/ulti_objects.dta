@@ -428,6 +428,7 @@
          (player 0)
          (exiting FALSE)
       )
+      (custom_hider)
       #include track/asset_mgr.dta
       #include mod_overlay.dta
    )
