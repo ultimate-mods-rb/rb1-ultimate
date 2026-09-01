@@ -584,17 +584,9 @@
          (type uNormal)
          (sel_script
             {$this update_state
-               {cond
-                  ({&& {== {asset_mgr target} drum} {asset_mgr ui_get rgb}}
-                     drm_rgb_color
-                  )
-                  ({== {asset_mgr target} drum}
-                     colors_drum
-                  )
-                  ({asset_mgr ui_get rgb}
-                     gtr_rgb_color
-                  )
-                  (TRUE colors_gtr)
+               {if_else {!= {asset_mgr target} drum}
+                  colors_gtr
+                  colors_drum
                }
             }
          )
@@ -669,15 +661,30 @@
    (data (
       (os_gems_colors
          (type uNormal)
-         (sel_script {$this update_state gtr_gem_color})
+         (sel_script
+            {if_else {asset_mgr ui_get rgb}
+               {$this update_state gtr_rgb_color}
+               {$this update_state gtr_gem_color}
+            }
+         )
       )
       (os_smashers_colors
          (type uNormal)
-         (sel_script {$this update_state gtr_smasher_color})
+         (sel_script
+            {if_else {asset_mgr ui_get rgb}
+               {$this update_state gtr_rgb_smasher}
+               {$this update_state gtr_smasher_color}
+            }
+         )
       )
       (os_sus_colors
          (type uNormal)
-         (sel_script {$this update_state gtr_sus_color})
+         (sel_script
+            {if_else {asset_mgr ui_get rgb}
+               {$this update_state gtr_rgb_sus}
+               {$this update_state gtr_sus_color}
+            }
+         )
       )
    ))
    (enter {$this setup_common})
@@ -690,11 +697,21 @@
    (data (
       (os_gems_colors
          (type uNormal)
-         (sel_script {$this update_state drm_gem_color})
+         (sel_script
+            {if_else {asset_mgr ui_get rgb}
+               {$this update_state drm_rgb_color}
+               {$this update_state drm_gem_color}
+            }
+         )
       )
       (os_smashers_colors
          (type uNormal)
-         (sel_script {$this update_state drm_smasher_color})
+         (sel_script
+            {if_else {asset_mgr ui_get rgb}
+               {$this update_state drm_rgb_smasher}
+               {$this update_state drm_smasher_color}
+            }
+         )
       )
    ))
    (enter {$this setup_common})
@@ -868,7 +885,7 @@
    (back colors_drum)
 )
 (gtr_rgb_color
-   (title os_rgb_colors)
+   (title os_gems_colors)
    (data (
       (os_slot_1
          (type uColorSld)
@@ -912,14 +929,122 @@
          (get {elem {asset_mgr ui_get rgb_colors} 6})
          (set {set_elem {asset_mgr ui_get rgb_colors} 6 $r})
       )
+      (os_mirror
+         (type uNormal)
+         (sel_script {asset_mgr ui_mirror rgb_colors (rgb_smashers rgb_sustains)})
+      )
    ))
    (enter {$this setup_common})
    (component_select {$this sel_common})
    (button_down {$this down_common})
-   (back trk_config)
+   (back colors_gtr)
+)
+(gtr_rgb_smasher
+   (title os_smashers_colors)
+   (data (
+      (os_slot_1
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 0})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 0 $r})
+      )
+      (os_slot_2
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 1})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 1 $r})
+      )
+      (os_slot_3
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 2})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 2 $r})
+      )
+      (os_slot_4
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 3})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 3 $r})
+      )
+      (os_slot_5
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 4})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 4 $r})
+      )
+      (os_slot_6
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 5})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 5 $r})
+      )
+      (os_mirror
+         (type uNormal)
+         (sel_script {asset_mgr ui_mirror rgb_smashers (rgb_colors rgb_sustains)})
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back colors_gtr)
+)
+(gtr_rgb_sus
+   (title os_sus_colors)
+   (data (
+      (os_slot_1
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_sustains} 0})
+         (set {set_elem {asset_mgr ui_get rgb_sustains} 0 $r})
+      )
+      (os_slot_2
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_sustains} 1})
+         (set {set_elem {asset_mgr ui_get rgb_sustains} 1 $r})
+      )
+      (os_slot_3
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_sustains} 2})
+         (set {set_elem {asset_mgr ui_get rgb_sustains} 2 $r})
+      )
+      (os_slot_4
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_sustains} 3})
+         (set {set_elem {asset_mgr ui_get rgb_sustains} 3 $r})
+      )
+      (os_slot_5
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_sustains} 4})
+         (set {set_elem {asset_mgr ui_get rgb_sustains} 4 $r})
+      )
+      (os_slot_6
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_sustains} 5})
+         (set {set_elem {asset_mgr ui_get rgb_sustains} 5 $r})
+      )
+      (miss
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_sustains} 6})
+         (set {set_elem {asset_mgr ui_get rgb_sustains} 6 $r})
+      )
+      (os_mirror
+         (type uNormal)
+         (sel_script {asset_mgr ui_mirror rgb_sustains (rgb_colors rgb_smashers)})
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back colors_gtr)
 )
 (drm_rgb_color
-   (title os_rgb_colors)
+   (title os_gems_colors)
    (data (
       (os_slot_1
          (type uColorSld)
@@ -963,11 +1088,64 @@
          (get {elem {asset_mgr ui_get rgb_colors} 6})
          (set {set_elem {asset_mgr ui_get rgb_colors} 6 $r})
       )
+      (os_mirror
+         (type uNormal)
+         (sel_script {asset_mgr ui_mirror rgb_colors (rgb_smashers)})
+      )
    ))
    (enter {$this setup_common})
    (component_select {$this sel_common})
    (button_down {$this down_common})
-   (back trk_config)
+   (back colors_drum)
+)
+(drm_rgb_smasher
+   (title os_smashers_colors)
+   (data (
+      (os_slot_1
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 0})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 0 $r})
+      )
+      (os_slot_2
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 1})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 1 $r})
+      )
+      (os_slot_3
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 2})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 2 $r})
+      )
+      (os_slot_4
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 3})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 3 $r})
+      )
+      (os_slot_6
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 4})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 4 $r})
+      )
+      (kick
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_smashers} 5})
+         (set {set_elem {asset_mgr ui_get rgb_smashers} 5 $r})
+      )
+      (os_mirror
+         (type uNormal)
+         (sel_script {asset_mgr ui_mirror rgb_smashers (rgb_colors)})
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back colors_drum)
 )
 (remap_cnt
    (title os_remap_cnt)
@@ -1063,7 +1241,7 @@
          (block_ingame TRUE)
          (sel_script
             {run ulti/ulti_init.dta}
-            {run ulti/ulti_init_apperance.dta}
+            {asset_mgr apply_preset default}
          )
       )
       #ifdef MOD_DEBUG

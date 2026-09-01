@@ -111,6 +111,7 @@
 
                {if {$mod_settings has (config)}
                   {asset_mgr set config {$mod_settings get config}}
+                  {asset_mgr add_missing}
                }
 
                {delete $mod_settings}

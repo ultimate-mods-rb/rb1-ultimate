@@ -56,7 +56,7 @@
    (apply_rgb
       {with $dir
          {foreach_int $i 0 5 {do
-            ($c {asset_mgr get_color $inst $i})
+            ($c {asset_mgr get_color_smasher $inst $i})
             ($cs {elem (green red yellow blue orange) $i})
 
             ($r {sprintf "now_ring_%s.mat" $cs})
@@ -180,7 +180,7 @@
    (apply_rgb
       {with $dir
          {foreach_int $i 0 5 {do
-            ($c {asset_mgr get_color $inst $i})
+            ($c {asset_mgr get_color_smasher $inst $i})
             ($m {sprintf "fret_%d_color.mat" {+ $i 1}})
             {$m set color $c}
          }}

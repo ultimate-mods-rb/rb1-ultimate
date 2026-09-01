@@ -75,6 +75,7 @@
 (os_copy_bass "Copy to Bass")
 (os_rgb_colors "Note Colors")
 (os_notergb "Advanced Colors")
+(os_mirror "Mirror")
 (os_sync_online "Sync Online")
 (os_track_config "Track Angle")
 (os_preset "Presets")

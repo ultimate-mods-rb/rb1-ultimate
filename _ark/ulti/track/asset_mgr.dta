@@ -280,7 +280,7 @@
          {push_back $dirs {$ref dir}}
       }
       {foreach $dir $dirs
-         {if {asset_mgr config_get {elem $a $v} rgb} {with $dir
+         {if {&& {!= {elem $a $v} drum} {asset_mgr config_get {elem $a $v} rgb}} {with $dir
             {foreach_int $i 0 6 {do
                ($m
                   {elem
@@ -308,7 +308,7 @@
                      $i
                   }
                )
-               ($c {asset_mgr get_color {elem $a $v} $i})
+               ($c {asset_mgr get_color_sus {elem $a $v} $i})
                {$m copy tail_base.mat kCopyShallow}
                {$m set color $c}
 
@@ -443,16 +443,16 @@
                {foreach_int $i 0 5
                   {{sprintf "gem_mash%d.mat" $i} set emissive_map gem_mash_white_glow.tex}
                   {{sprintf "gem_mash%d_2nd_pass.mat" $i} set diffuse_tex gem_mash_white_merged.tex}
-                  {{sprintf "gem_mash%d_2nd_pass.mat" $i} set color {asset_mgr get_color $inst $i}}
+                  {{sprintf "gem_mash%d_2nd_pass.mat" $i} set color {asset_mgr get_color_smasher $inst $i}}
                }
                {foreach_int $i 1 5
                   {{sprintf "drum_mash%d.mat" $i} set emissive_map gem_mash_white_glow.tex}
                   {{sprintf "drum_mash%d_2nd_pass.mat" $i} set diffuse_tex gem_mash_white_merged.tex}
-                  {{sprintf "drum_mash%d_2nd_pass.mat" $i} set color {asset_mgr get_color drum {- $i 1}}}
+                  {{sprintf "drum_mash%d_2nd_pass.mat" $i} set color {asset_mgr get_color_smasher drum {- $i 1}}}
                }
             }
             {foreach $sym (guitar drum) {do
-               ($o {asset_mgr get_color $inst 5})
+               ($o {asset_mgr get_color_smasher $inst 5})
                ($dir {sprint "smasher_plate_" $sym})
                {if {$td exists $dir}
                   {{$td find $dir} iterate RndDir $smasher {do
@@ -461,7 +461,7 @@
                         {if_else {&& {== $sym drum} {== $i 0}}
                            {print "!!! implement kick stuff !!!"}
                            {do
-                              ($c {asset_mgr get_color $inst {- $i {== $inst drum}}})
+                              ($c {asset_mgr get_color_smasher $inst {- $i {== $inst drum}}})
                               {glow.mat set diffuse_tex white_smasher.tex}
                               {glow.mat set next_pass smasher_sides.mat}
                               {glow.mat set color $c}
@@ -591,6 +591,14 @@
    (get_color
       ($inst $i)
       {elem {$this config_get $inst rgb_colors} $i}
+   )
+   (get_color_smasher
+      ($inst $i)
+      {elem {$this config_get $inst rgb_smashers} $i}
+   )
+   (get_color_sus
+      ($inst $i)
+      {elem {$this config_get $inst rgb_sustains} $i}
    )
    (get_widget
       ($inst $type $i)
@@ -779,9 +787,6 @@
             {unless $rgb {with $dir
                {if_else {!= $inst drum}
                   {foreach_int $i 0 5
-                     {print "gem_mash_%s_emmisive.tex"}
-                     {print {asset_mgr get_smasher_color $inst $i}}
-                     {print {sprintf "gem_mash_%s_emmisive.tex" {asset_mgr get_smasher_color $inst $i}}}
                      {{sprintf "gem_mash%d.mat" $i} set emissive_map
                         {sprintf "gem_mash_%s_emmisive.tex" {asset_mgr get_smasher_color $inst $i}}
                      }
@@ -819,6 +824,7 @@
             {push_back [config] {eval_array $a}}
          }
       }
+      {$this add_missing}
    )
    (save_preset
       ($s) {do
@@ -828,6 +834,21 @@
       }
       {push_back $user_presets $a}
    })
+   (add_missing
+      {foreach $c [config]
+         {foreach $a {find $syscfg track_presets default {elem $c 0}}
+            {if 
+               {&&
+                  {== {type $a} kDataArray}
+                  {size $a}
+                  {! {find_exists [config] {elem $c 0} {elem $a 0}}}
+               }
+               {print {sprint "pushing back " {elem $a 0} " into " {elem $c 0}}}
+               {push_back $c {eval_array $a}}
+            }
+         }
+      }
+   )
    (clear_synced {resize [config_net] 0})
    (sync_assets
       {if {&& {!= {session mode} kNetLocal} {! {gamemode is_hth_arrangement}}} {do
@@ -886,6 +907,16 @@
    (ui_set
       ($s $v)
       {set_elem {find [config] {asset_mgr target} $s} 1 $v}
+   )
+   (ui_mirror
+      ($from $a)
+      {foreach $to $a
+         {foreach_int $i 0 {size {$this ui_get $from}}
+            {if {< $i {size {$this ui_get $to}}}
+               {set_elem {$this ui_get $to} $i {elem {$this ui_get $from} $i}}
+            }
+         }
+      }
    )
    (find_get
       ($a $s)
