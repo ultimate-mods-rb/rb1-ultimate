@@ -1208,7 +1208,7 @@
                {if {$hider has ($cat)}
                   {foreach $draw {$hider get $cat}
                      {$draw set_showing
-                        {find_elem (none blank) {OutfitLoader.outfit current_name $cat}}
+                        {find_elem (none blank empty) {OutfitLoader.outfit current_name $cat}}
                      }
                   }
                }
