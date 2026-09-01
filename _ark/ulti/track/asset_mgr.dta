@@ -439,6 +439,17 @@
 
                {prism_gem_kick_style.mesh set_mat drum_base_4.mat}
                {prism_gem_kick_glow_style.mesh set_mat drum_color_4.mat}
+
+               {foreach_int $i 0 5
+                  {{sprintf "gem_mash%d.mat" $i} set emissive_map gem_mash_white_glow.tex}
+                  {{sprintf "gem_mash%d_2nd_pass.mat" $i} set diffuse_tex gem_mash_white_merged.tex}
+                  {{sprintf "gem_mash%d_2nd_pass.mat" $i} set color {asset_mgr get_color $inst $i}}
+               }
+               {foreach_int $i 1 5
+                  {{sprintf "drum_mash%d.mat" $i} set emissive_map gem_mash_white_glow.tex}
+                  {{sprintf "drum_mash%d_2nd_pass.mat" $i} set diffuse_tex gem_mash_white_merged.tex}
+                  {{sprintf "drum_mash%d_2nd_pass.mat" $i} set color {asset_mgr get_color drum {- $i 1}}}
+               }
             }
             {foreach $sym (guitar drum) {do
                ($o {asset_mgr get_color $inst 5})
@@ -639,6 +650,15 @@
                   )
                )
                (drum_mash
+                  #ifdef HX_NG
+                  (
+                     drum_mash1.wid
+                     drum_mash2.wid
+                     drum_mash3.wid
+                     drum_mash4.wid
+                     drum_mash4.wid
+                  )
+                  #else
                   (
                      drum_mash4.wid
                      drum_mash1.wid
@@ -646,6 +666,7 @@
                      drum_mash3.wid
                      drum_mash4.wid
                   )
+                  #endif
                )
                {fail {sprint $type " is an unhandled widget type"}}
             }
@@ -667,6 +688,9 @@
                      (TRUE {elem {$this config_get $inst gem_colors} $i})
                   }
                )
+               #ifdef HX_NG
+               ((gtr_mash drum_mash) $i)
+               #else ; fix
                (gtr_mash
                   {if_else $rgb
                      $i
@@ -679,6 +703,7 @@
                      {elem {$this config_get $inst smasher_colors} $i}
                   }
                )
+               #endif
             }
          )
          ;{print {sprint $type " " $i " " $index " " {elem $wa $index}}}
@@ -743,6 +768,38 @@
             $i
             {elem {$this config_get $inst smasher_colors} $i}
          }
+      }
+   )
+   (set_mash_colors
+      {beatmatch foreach_active_player $player
+         {unless {== {$player instrument} vocals} {do
+            ($inst {$player instrument})
+            ($rgb {$this config_get $inst rgb})
+            ($dir {get_dir_from_player $player})
+            {unless $rgb {with $dir
+               {if_else {!= $inst drum}
+                  {foreach_int $i 0 5
+                     {print "gem_mash_%s_emmisive.tex"}
+                     {print {asset_mgr get_smasher_color $inst $i}}
+                     {print {sprintf "gem_mash_%s_emmisive.tex" {asset_mgr get_smasher_color $inst $i}}}
+                     {{sprintf "gem_mash%d.mat" $i} set emissive_map
+                        {sprintf "gem_mash_%s_emmisive.tex" {asset_mgr get_smasher_color $inst $i}}
+                     }
+                     {{sprintf "gem_mash%d_2nd_pass.mat" $i} set diffuse_tex
+                        {sprintf "gem_mash_%s_emmisive_2nd_pass.tex" {asset_mgr get_smasher_color $inst $i}}
+                     }
+                  }
+                  {foreach_int $i 1 5
+                     {{sprintf "drum_mash%d.mat" $i} set emissive_map
+                        {sprintf "gem_mash_%s_emmisive.tex" {asset_mgr get_smasher_color drum {- $i 1}}}
+                     }
+                     {{sprintf "drum_mash%d_2nd_pass.mat" $i} set diffuse_tex
+                        {sprintf "gem_mash_%s_emmisive_2nd_pass.tex" {asset_mgr get_smasher_color drum {- $i 1}}}
+                     }
+                  }
+               }
+            }}
+         }}
       }
    )
    (apply_preset
