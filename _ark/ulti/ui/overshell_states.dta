@@ -694,7 +694,8 @@
 )
 (colors_drum
    (title os_colors)
-   (data (
+   (data ())
+   (data_cond (
       (os_gems_colors
          (type uNormal)
          (sel_script
@@ -703,6 +704,11 @@
                {$this update_state drm_gem_color}
             }
          )
+      )
+      (os_cymbal_colors
+         (type uNormal)
+         (cond {asset_mgr ui_get rgb})
+         (sel_script {$this update_state drm_rgb_cymbal})
       )
       (os_smashers_colors
          (type uNormal)
@@ -1090,7 +1096,56 @@
       )
       (os_mirror
          (type uNormal)
-         (sel_script {asset_mgr ui_mirror rgb_colors (rgb_smashers)})
+         (sel_script {asset_mgr ui_mirror rgb_colors (rgb_cymbals rgb_smashers)})
+      )
+   ))
+   (enter {$this setup_common})
+   (component_select {$this sel_common})
+   (button_down {$this down_common})
+   (back colors_drum)
+)
+(drm_rgb_cymbal
+   (title os_cymbal_colors)
+   (data (
+      (os_slot_1
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_cymbals} 0})
+         (set {set_elem {asset_mgr ui_get rgb_cymbals} 0 $r})
+      )
+      (os_slot_2
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_cymbals} 1})
+         (set {set_elem {asset_mgr ui_get rgb_cymbals} 1 $r})
+      )
+      (os_slot_3
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_cymbals} 2})
+         (set {set_elem {asset_mgr ui_get rgb_cymbals} 2 $r})
+      )
+      (os_slot_4
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_cymbals} 3})
+         (set {set_elem {asset_mgr ui_get rgb_cymbals} 3 $r})
+      )
+      (os_slot_6
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_cymbals} 4})
+         (set {set_elem {asset_mgr ui_get rgb_cymbals} 4 $r})
+      )
+      (miss
+         (type uColorSld)
+         (fmt_type uColorRGB)
+         (get {elem {asset_mgr ui_get rgb_cymbals} 6})
+         (set {set_elem {asset_mgr ui_get rgb_cymbals} 6 $r})
+      )
+      (os_mirror
+         (type uNormal)
+         (sel_script {asset_mgr ui_mirror rgb_cymbals (rgb_colors rgb_smashers)})
       )
    ))
    (enter {$this setup_common})
@@ -1139,7 +1194,7 @@
       )
       (os_mirror
          (type uNormal)
-         (sel_script {asset_mgr ui_mirror rgb_smashers (rgb_colors)})
+         (sel_script {asset_mgr ui_mirror rgb_smashers (rgb_colors rgb_cymbals)})
       )
    ))
    (enter {$this setup_common})

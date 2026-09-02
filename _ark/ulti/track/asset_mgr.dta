@@ -445,22 +445,66 @@
                   {{sprintf "gem_mash%d_2nd_pass.mat" $i} set diffuse_tex gem_mash_white_merged.tex}
                   {{sprintf "gem_mash%d_2nd_pass.mat" $i} set color {asset_mgr get_color_smasher $inst $i}}
                }
-               {foreach_int $i 1 5
-                  {{sprintf "drum_mash%d.mat" $i} set emissive_map gem_mash_white_glow.tex}
-                  {{sprintf "drum_mash%d_2nd_pass.mat" $i} set diffuse_tex gem_mash_white_merged.tex}
-                  {{sprintf "drum_mash%d_2nd_pass.mat" $i} set color {asset_mgr get_color_smasher drum {- $i 1}}}
-               }
+               {foreach_int $i 1 5 {do
+                  ($mash {sprintf "drum_mash%d.mat" $i})
+                  ($color {sprintf "drum_mash%d_color.mat" $i})
+                  {unless {exists $color}
+                     {new Mat $color}
+                     {$color copy {$mash get next_pass} kCopyShallow}
+                     {$color set diffuse_tex gem_mash_white_merged.tex}
+                     
+                     {$mash set next_pass $color}
+                     {$mash set emissive_map gem_mash_white_glow.tex}
+                  }
+                  {$color set color {asset_mgr get_color_smasher drum {- $i 1}}}
+               }}
+               {foreach_int $i 0 2 {do
+                  ($s {elem (red green) $i})
+                  ($c {asset_mgr get_color drum {* $i 3}})
+                  ($base {sprintf "dynamic_crash_%s.mat" $s})
+                  ($color {sprintf "dynamic_crash_%s_color.mat" $s})
+                  {unless {exists $color}
+                     {new Mat $color}
+                     {$color copy prism_glow_blue.mat kCopyShallow}
+                     {$color set prelit FALSE}
+                     {$color set blend kBlendAdd}
+                     {$color set diffuse_tex prism_white_color.tex}
+
+                     {$base set diffuse_tex prism_white.tex}
+                     {$base set emissive_map black.tex}
+                     {$base set next_pass $color}
+
+                  }
+                  {$color set color $c}
+               }}
             }
             {foreach $sym (guitar drum) {do
-               ($o {asset_mgr get_color_smasher $inst 5})
                ($dir {sprint "smasher_plate_" $sym})
                {if {$td exists $dir}
                   {{$td find $dir} iterate RndDir $smasher {do
                      ($i {siti {str_elem {$smasher name} 11}})
                      {with $smasher
                         {if_else {&& {== $sym drum} {== $i 0}}
-                           {print "!!! implement kick stuff !!!"}
                            {do
+                              ($c {asset_mgr get_color_smasher drum 5})
+                              {foreach $m (kick_smasher_base.mat 'Material #13.mat')
+                                 {$m set color $c}
+                                 {$m set diffuse_tex smasher_plate_kick_color_nomip.tex}
+                                 {$m set emissive_map smasher_plate_kick_nomip.tex}
+                              }
+                              {unless {exists kick_flash_color.mat} ; due to kick_flash.anim
+                                 {new Mat kick_flash_color.mat}
+                                 {kick_flash_color.mat copy kick_flash.mat kCopyShallow}
+                                 {kick_flash_color.mat set diffuse_tex kick_flash_rgb.tex}
+                                 {foreach $m (kick_flash_front.mesh kick_flash_back.mesh)
+                                    {$m set_mat kick_flash_color.mat}
+                                 }
+                              }
+                              {kick_flash_color.mat set color $c}
+                              {kick_flash.anim set_frame 7.00}
+                           }
+                           {do
+                              ($o {asset_mgr get_color_smasher $inst {- 5 {== $inst drum}}})
                               ($c {asset_mgr get_color_smasher $inst {- $i {== $inst drum}}})
                               {glow.mat set diffuse_tex white_smasher.tex}
                               {glow.mat set next_pass smasher_sides.mat}
@@ -513,7 +557,7 @@
             {foreach_int $i 0 7 {do
                ($base {sprintf "cymbal_base_%d.mat" $i})
                ($color {sprintf "cymbal_color_%d.mat" $i})
-               ($c {asset_mgr get_color drum $i})
+               ($c {asset_mgr get_color_cymbal drum $i})
                ($cs {elem (red yellow blue green style '' miss) $i})
 
                {if_else {exists $color}
@@ -532,6 +576,7 @@
                      {$color set blend kBlendAdd}
                      {$color set z_mode kZModeTransparent}
                      {$color set diffuse_tex {{get_track_panel} find cymbal_rgb_color.tex}}
+                     {$color set emissive_map {{get_track_panel} find black.tex}}
 
                      {if $cs
                         {{sprintf "cymbal_gem_%s.mesh" $cs} set_mat $base}
@@ -591,6 +636,10 @@
    (get_color
       ($inst $i)
       {elem {$this config_get $inst rgb_colors} $i}
+   )
+   (get_color_cymbal
+      ($inst $i)
+      {elem {$this config_get $inst rgb_cymbals} $i}
    )
    (get_color_smasher
       ($inst $i)

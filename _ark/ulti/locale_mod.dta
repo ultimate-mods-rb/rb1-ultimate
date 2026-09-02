@@ -71,6 +71,7 @@
 (os_smashers "Smashers")
 (os_smashers_colors "Smasher Colors")
 (os_sus_colors "Sustain Colors")
+(os_cymbal_colors "Cymbal Colors")
 (os_copy_guitar "Copy to Guitar")
 (os_copy_bass "Copy to Bass")
 (os_rgb_colors "Note Colors")

@@ -152,6 +152,10 @@
       {$this eval_all exit}
       {$this state_remove color}
 
+      {if {$this state_has data_cond}
+         {resize {$this state_get data} 0}
+      }
+
       {set [state] $s}
 
       {unless {find_exists [states] [state]}
@@ -387,6 +391,20 @@
    })
    (setup_common
       {title.lbl set text_token {eval {$this state_get title}}}
+      {if {$this state_has data_cond}
+         {foreach $e {$this state_get data_cond}
+            {if_else
+               {&&
+                  {== {type $e} kDataArray}
+                  {find_exists $e cond}
+               }
+               {if {eval {elem {find $e cond} 1}}
+                  {push_back {$this state_get data} $e}
+               }
+               {push_back {$this state_get data} $e}
+            }
+         }
+      }
       {$this lst_reset}
    )
    (sel_common {do

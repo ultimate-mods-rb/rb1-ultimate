@@ -51,6 +51,7 @@
             {gem_miss.wid set (meshes 0) prism_gem_stepped_miss.mesh}
             {gem_miss_hopo.wid set (meshes 0) prism_gem_hopo_miss.mesh}
             {drum_miss.wid set (meshes 0) prism_gem_drum_miss.mesh}
+            {prism_gem_drum_miss.mesh copy prism_gem_drum_red.mesh kCopyDeep}
             {$this sync_objects}
          }
       }
