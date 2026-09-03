@@ -338,6 +338,11 @@
    {if {&& $back {meta is_up}}
       {synth play button_back}
    }
+   #ifdef HX_NG
+   {if $chiaki_milo
+      {$chiaki_milo screen_change $new_screen $old_screen $back}
+   }
+   #endif
    kDataUnhandled
 )
 (TRANSITION_COMPLETE_MSG

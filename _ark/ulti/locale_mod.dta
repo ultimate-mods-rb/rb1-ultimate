@@ -228,6 +228,7 @@
 (os_hidechars "Hide Characters")
 (os_selectvenue "Select Venue Screen")
 (os_scale_head "Scale Head")
+(os_chiaki_reaction "Live Chiaki Reaction")
 (time_total "Time & Total")
 (remaining_total "Remaining & Total")
 (remaining "Remaining")

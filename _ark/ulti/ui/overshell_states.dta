@@ -1357,10 +1357,16 @@
          (bool $flashbang)
          (sel_script {toggle_var flashbang})
       )
-      (os_cheats
-         (type uOnOFF)
-         (bool $mikan)
-         (sel_script {toggle_var mikan})
+      (os_chiaki_reaction
+         (type uNormal)
+         (block_ingame TRUE)
+         (sel_script
+            {unless $chiaki_milo
+               {set $chiaki_milo {load_objects "ulti/chiaki.milo"}}
+               {$chiaki_milo delete_loader}
+               {$chiaki_milo screen_change '' '' FALSE}
+            }
+         )
       )
       (os_fakecheat
          (type uNormal)
