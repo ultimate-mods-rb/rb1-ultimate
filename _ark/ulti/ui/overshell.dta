@@ -40,8 +40,19 @@
    )
    (SCROLL_MSG
       {$this update_helpbar}
-      {$this state_set pos
-         {eval_array ({OS_LIST selected_pos} {OS_LIST first_showing})}
+      {do
+         ($p {OS_LIST selected_pos})
+         ($f {OS_LIST first_showing})
+         ($fp
+            {if_else {$this state_has pos}
+               {elem {$this state_get pos} 1}
+               0
+            }
+         )
+         {$this state_set pos {eval_array ($p $f)}}
+         {if {!= $f $fp}
+            {$this lst_reset}
+         }
       }
    )
    (VIRTUAL_KEYBOARD_RESULT_MSG {$this eval_all virtual_keyboard_result_msg})
@@ -170,6 +181,7 @@
    )
    (lst_reset {do
       ($array {array 0})
+      {foreach_int $i 0 7 {{sprintf "icon%d.mesh" $i} set_showing FALSE}}
       {foreach $entry {$this state_get data}
          {if_else {== {type $entry} kDataArray} ; just return whatever was passed if not array
             {switch {elem {find $entry type} 1}
@@ -189,12 +201,32 @@
                   {push_back $array
                      {do
                         ($type {elem {find $entry type} 1})
-                        ($selected {== {- {size $array} 1} {OS_LIST selected_pos}})
+                        ($size {- {size $array} 1})
+                        ($selected {== $size {OS_LIST selected_pos}})
                         ($fmt_type {elem {find $entry fmt_type} 1})
                         ($hide_on_sel
                            {if_else {find_exists $entry hide_on_sel}
                               {elem {find $entry hide_on_sel} 1}
                               FALSE
+                           }
+                        )
+                        ($showing {<= {- $size {OS_LIST first_showing}} {OS_LIST get display_num}})
+                        ($index
+                           {if_else $showing
+                              {- $size {OS_LIST first_showing}}
+                              kDataUnhandled
+                           }
+                        )
+                        ($mesh
+                           {if_else $showing
+                              {sprintf "icon%d.mesh" $index}
+                              kDataUnhandled
+                           }
+                        )
+                        ($mat
+                           {if_else $showing
+                              {sprintf "icon%d.mat" $index}
+                              kDataUnhandled
                            }
                         )
                         ($data
@@ -314,8 +346,9 @@
                                           0
                                        }
                                     )
-                                    {if $selected
-                                       {color.mat set color $data}
+                                    {if $showing
+                                       {$mat set color $data}
+                                       {$mesh set_showing TRUE}
                                     }
                                     {unpack_color $data $r $g $b}
                                     {sprintf {localize_token {sprintf "os_color_fmt_%d" $i}} $r $g $b}
@@ -376,15 +409,17 @@
       {OS_LIST set_data $array}
       {if {$this state_has pos}
          {OS_LIST set_selected {elem {$this state_get pos} 0} {elem {$this state_get pos} 1}}
-         #ifdef HX_NG
-         {if [focused]
-            {foreach $entry $array
-               {if {!= $entry {elem $array {elem {$this state_get pos} 0}}}
-                  {OS_LIST disable_data {symbol $entry}}
-               }
-            }
-         }
-         #endif
+         ; find a better way of doing this!
+         ; this pollutes the symbol table (i think?) and disable_data doesn't exist on og (wtf)
+         ;#ifdef HX_NG
+         ;{if [focused]
+         ;   {foreach $entry $array
+         ;      {if {!= $entry {elem $array {elem {$this state_get pos} 0}}}
+         ;         {OS_LIST disable_data {symbol $entry}}
+         ;      }
+         ;   }
+         ;}
+         ;#endif
       }
       {OS_LIST poll}
       {$this update_helpbar}
@@ -445,7 +480,6 @@
                   }
                   {if {== {elem {find $entry type} 1} uColorSld}
                      {OS_LIST set color_index 0}
-                     {color.mesh set_showing TRUE}
                      {color.tnm set_frame
                         {- {OS_LIST selected_pos} {OS_LIST first_showing}}
                      }
@@ -475,7 +509,6 @@
                         {synth play button_select}
                         {set [focused] FALSE}
                         {OS_LIST set store 0}
-                        {color.mesh set_showing FALSE}
                         {$this update_helpbar}
                         {$this lst_reset}
                      )
@@ -493,7 +526,6 @@
                            (TRUE {fail "unable to find data for sld"})
                         }
                         {OS_LIST set store 0}
-                        {color.mesh set_showing FALSE}
                         {$this lst_reset}
                      )
                      (kPad_R1
@@ -624,6 +656,7 @@
                                        })
                                        (TRUE {fail "unable to find data for color"})
                                     }
+                                    {$this lst_reset}
                                     {$this state_remove color}
                                  }
                                  {do
