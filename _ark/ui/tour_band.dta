@@ -1347,6 +1347,9 @@
       {set $multi_event TRUE}
       {coop_track_panel set_paused TRUE}
       {char_cache iterate $char {$char prep_multi_event}}
+      {if {exists world_movie_panel}
+         {world_movie_panel unload}
+      }
       {ui goto_screen game_screen}
    )
 }

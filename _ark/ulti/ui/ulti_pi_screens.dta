@@ -91,7 +91,6 @@
    (delay 0)
    (song '')
    (load
-      ; TODO fix this only setting here if possible
       {set [delay] 0}
       {$this set_active FALSE}
       {set_elem {find $syscfg videos song_video files} 1 ""}
