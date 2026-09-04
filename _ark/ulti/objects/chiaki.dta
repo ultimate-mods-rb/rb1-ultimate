@@ -1,0 +1,96 @@
+(chiaki
+   (cat '')
+   (in_game FALSE)
+   (peak (chiaki_peak.tex))
+   (wake (chiaki_hurt.tex chiaki_thinking.tex chiaki_look.tex))
+   (yawn (chiaki_yawn.tex chiaki_tired.tex))
+   (sad (chiaki_sad.tex chiaki_sad_hoodie.tex))
+   (happy (chiaki_blush_smile.tex chiaki_lean_smile.tex))
+   (mad (chiaki_puffy.tex chiaki_slight_frown.tex chiaki_halt.tex))
+   (change_proxies
+      {mod_overlay add $this}
+      {game add_sinks $this game_lost intro_start intro_skip intro_end}
+   )
+   (SCREEN_CHANGE_MSG
+      {if {exists screen_task}
+         {delete screen_task}
+      }
+      {if {&& {! [in_game]} {exists beatmatch}}
+         {game foreach_local_player $player
+            {$player add_sinks $this hit miss pass phrase_rating}
+         }
+      }
+      {set [in_game] {exists beatmatch}}
+      {unless [in_game]
+         {thread_task kTaskUISeconds
+            (name screen_task)
+            (script
+               {$this set_tex {random_elem [wake]}}
+               {$task sleep 20}
+               {$this set_tex {random_elem [yawn]}}
+               {$task sleep 40}
+               {$this set_tex chiaki_sleep.tex}
+            )
+         }
+      }
+      {if_else {== {rnd aspect} kWidescreenAspect}
+         {do
+            {group.grp set_local_pos -305 0 85}
+            {group.grp set_local_scale 0.40 0.40 0.40}
+         }
+         {do
+            {group.grp set_local_pos -210 0 73}
+            {group.grp set_local_scale 0.30 0.30 0.30}
+         }
+      }
+   )
+   (game_update
+      {$this set_cat {do
+         ($rating {{beatmatch main_performer} crowd_rating})
+         {cond
+            ({>= $rating 0.98} peak)
+            ({>= $rating 0.65} happy)
+            ({>= $rating 0.35} wake)
+            ({>= $rating 0.01} mad)
+            (TRUE sad)
+         }
+      }}
+      {if {exists game_task}
+         {delete game_task}
+      }
+      {thread_task kTaskUISeconds
+         (name game_task)
+         (script
+            {$task sleep 10}
+            {$this set_cat yawn}
+            {$task sleep 15}
+            {$this set_tex chiaki_sleep.tex}
+         )
+      }
+   )
+   (set_tex
+      ($t)
+      {portrait.mat set diffuse_tex $t}
+   )
+   (set_cat
+      ($s)
+      {unless {&& {== $s [cat]} {find_elem {$this get $s} {portrait.mat get diffuse_tex}}}
+         {set [cat] $s}
+         {$this set_tex {random_elem {$this get [cat]}}}
+      }
+   )
+   (hit {$this game_update})
+   (miss {$this game_update})
+   (pass {$this game_update})
+   (phrase_rating {$this game_update})
+   (game_lost {$this game_update})
+   (intro_end {$this game_update})
+   (intro_start
+      {$this game_update}
+      {$this screen_change '' '' FALSE}
+   )
+   (intro_skip
+      {$this game_update}
+      {$this screen_change '' '' FALSE}
+   )
+)

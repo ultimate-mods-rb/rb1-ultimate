@@ -1,0 +1,194 @@
+(countdown
+   (active FALSE)
+   (done FALSE)
+   (alive TRUE)
+   (hide_at_end FALSE)
+   (current_event 0)
+   (total_events 0)
+   (remaining 0)
+   (event_array 0)
+   (target 0)
+   (track 0)
+   (player 0)
+   (parser)
+   (parent 0)
+   (anim 0)
+   (init
+      ($player $dir)
+      {set [player] $player}
+      {set [track] {get_dir_from_player $player}}
+      {set [parser] {object
+         {sprint
+            {if_else {gamemode get separate_parts}
+               {[player] track}
+               {[player] instrument}
+            }
+            "_countdown_mp"
+         }
+      }}
+      {print {sprint {$player instrument} " " {[track] name} " " {$dir name}}}
+      #ifdef HX_NG
+      {with $dir
+         {unless {$this has (init)}
+            {{meter_wipe.mnm dir} set_trans_parent $this}
+            {if_else {== {$player instrument} vocals}
+               {do
+                  {{meter_wipe.mnm dir} set_local_scale 0.5 0.5 0.5}
+                  {{meter_wipe.mnm dir} set_local_pos 0 0 -0.5}
+               }
+               {do
+                  {{meter_wipe.mnm dir} set_local_scale 1.5 1.5 1.5}
+                  {{meter_wipe.mnm dir} set_local_pos 0 0 -27}
+               }
+            }
+            {multiplier.txt set_font fakir_black_outline.font}
+            {multiplier.txt set_align kMiddleCenter}
+            {multiplier.txt set_local_pos -0.1 0 0.2}
+            {multiplier.txt set_local_scale 1.2 1.2 1.2}
+            {$this set init TRUE}
+            {$this sync_objects}
+         }
+      }
+      {set [target] {$dir find multiplier.txt}}
+      {set [anim] {$dir find meter_wipe.mnm}}
+      {set [parent] {$dir find streak_meter.grp}}
+      #else
+      {set [target] {$dir find count.lbl}}
+      {set [parent] [target]}
+      {if_else {== {$player instrument} vocals}
+         {do
+            {[target] set_local_pos 0 0 0.8}
+            {[target] set_local_scale 0.3 0.3 0.3}
+         }
+         {[target] set_local_pos 0 0 -25}
+      }
+      #endif
+      {[parent] set_showing FALSE}
+      {set [event_array] {eval_array {[parser] get event_array}}}
+      {unless {[parser] get first_note}
+         {do
+            ($pos {[parser] get final_note_pos})
+            ($len {- {end_of_song get end} $pos})
+            {if {>= $len 20}
+               {set [hide_at_end] TRUE}
+               {push_back [event_array] {eval_array ($pos {int {- $len 4}})}}
+            }
+         }
+      }
+      {set [total_events] {max 0 {- {size [event_array]} 1}}}
+      {game add_sink $this}
+      {unless {== {gamemode get player_arrangement} kArrangeHth}
+         {[player] add_sink $this}
+      }
+   )
+   (set_lbl
+      ($text)
+      #ifdef HX_NG
+      {[target] set_text {sprint $text}}
+      #else
+      {[target] set_localized {sprint $text}}
+      #endif
+   )
+   (downbeat
+      {if {&& {== {mod {int {taskmgr beat}} 4} 0} {size [event_array]} {! [done]}}
+         {if
+            {&&
+               {! [active]}
+               {>= {taskmgr beat} {elem {elem [event_array] [current_event]} 0}}
+            }
+            {if_else {&& [hide_at_end] {== [current_event] [total_events]}}
+               {set [done] TRUE}
+               {do
+                  {set [remaining] {int {/ {elem {elem [event_array] [current_event]} 1} 4}}}
+                  {set [active] TRUE}
+                  {if [anim]
+                     {[anim] animate
+                        (units kTaskBeats)
+                        (period {* {- [remaining] 1} 4})
+                        (range 0 1)
+                     }
+                  }
+                  {if [alive]
+                     {[parent] set_showing TRUE}
+                  }
+               }
+            }
+            {if [alive]
+               {{[track] find retract.trig} trigger}
+               {if {[track] has (streak_meter)}
+                  {{[track] get streak_meter} set_showing FALSE}
+               }
+               {if {[track] has (star_power_meter)}
+                  {{[track] get star_power_meter} set_showing FALSE}
+               }
+            }
+            ; this could break things!!!
+            {if {!= {[player] instrument} vocals}
+               {[player] force_solo TRUE}
+            }
+         }
+         {if [active]
+            {-- [remaining]}
+            {if_else [remaining]
+               {$this set_lbl [remaining]}
+               {do
+                  {$this set_lbl " "}
+                  {[parent] set_showing FALSE}
+                  {if {!= {[player] instrument} vocals}
+                     {[player] force_solo FALSE}
+                  }
+                  {set [active] FALSE}
+                  {if [alive]
+                     {if {[track] has (streak_meter)}
+                        {{[track] get streak_meter} set_showing TRUE}
+                     }
+                     {if {[track] has (star_power_meter)}
+                        {{[track] get star_power_meter} set_showing TRUE}
+                     }
+                     {if_else {== {[player] instrument} vocals}
+                        {{[track] find play_intro.trig} trigger}
+                        {{[track] find intro.trig} trigger}
+                     }
+                  }
+                  {if_else {== [current_event] [total_events]}
+                     {set [done] TRUE}
+                     {++ [current_event]}
+                  }
+               }
+            }
+         }
+      }
+   )
+   (enable_player
+      {set [alive] TRUE}
+      {if [active]
+         {thread_task kTaskSeconds
+            (delay 1)
+            (script
+               {if {&& [active] {> [remaining] 3}}
+                  {[parent] set_showing TRUE}
+                  {{[track] find retract.trig} trigger}
+                  {if {[track] has (streak_meter)}
+                     {{[track] get streak_meter} set_showing FALSE}
+                  }
+                  {if {[track] has (star_power_meter)}
+                     {{[track] get star_power_meter} set_showing FALSE}
+                  }
+               }
+            )
+         }
+      }
+   )
+   (disable_player
+      {set [alive] FALSE}
+      {[parent] set_showing FALSE}
+   )
+   (intro_start {$this reset})
+   (game_outro {$this reset})
+   (game_lost {$this reset})
+   (game_won {$this reset})
+   (reset
+      {[parent] set_showing FALSE}
+      {set [done] TRUE}
+   )
+)

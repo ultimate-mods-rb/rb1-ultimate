@@ -1351,7 +1351,6 @@
          (bool $hidechars)
          (sel_script {toggle_var hidechars})
       )
-      #endif
       (os_flashbang
          (type uOnOFF)
          (bool $flashbang)
@@ -1377,6 +1376,7 @@
             }
          )
       )
+      #endif
    ))
    (enter {$this setup_common})
    (component_select {$this sel_common})
