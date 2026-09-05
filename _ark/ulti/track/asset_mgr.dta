@@ -1,19 +1,9 @@
 (asset_mgr
+   (assets [assets])
+
    (gems_dir [gems_dir])
-
-   (guitar_gems [guitar_gems])
-   (guitar_gems_rgb [guitar_gems_rgb])
-   (drum_gems [drum_gems])
-   (drum_gems_rgb [drum_gems_rgb])
-
    (smashers_dir [smashers_dir])
 
-   (guitar_smashers [guitar_smashers])
-   (guitar_smashers_rgb [guitar_smashers_rgb])
-   (drum_smashers [drum_smashers])
-   (drum_smashers_rgb [drum_smashers_rgb])
-
-   (track_configs [track_configs])
 
    (config [config])
    (config_net [config_net])
@@ -26,78 +16,19 @@
    (init
       {print "asset_mgr init"}
 
+      {set [assets]
+         (
+            (gems)
+            (smashers)
+            (track_configs)
+         )
+      }
+      {$this add_assets gems {read_file "ulti/track/gems/gems.dta"}}
+      {$this add_assets smashers {read_file "ulti/track/smashers/smashers.dta"}}
+      {$this add_assets track_configs {read_file "ulti/track/track_configs.dta"}}
+
       {set [gems_dir] ''}
-
-      {set [guitar_gems] {array 0}}
-      {set [drum_gems] {array 0}}
-      {set [guitar_gems_rgb] {array 0}}
-      {set [drum_gems_rgb] {array 0}}
-
-      {foreach $a {find $syscfg gems}
-         {if {== {type $a} kDataArray}
-            {unless {$this find_get $a rgb_only}
-               {if {$this find_get $a guitar}
-                  {push_back [guitar_gems] {elem $a 0}}
-               }
-               {if {$this find_get $a drum}
-                  {push_back [drum_gems] {elem $a 0}}
-               }
-            }
-            {if {$this find_get $a rgb}
-               {if {$this find_get $a guitar}
-                  {push_back [guitar_gems_rgb] {elem $a 0}}
-               }
-               {if
-                  {&&
-                     {$this find_get $a drum}
-                     {!
-                        {&&
-                           {find_exists $a drum_rgb}
-                           {! {$this find_get $a drum_rgb}}
-                        }
-                     }
-                  }
-                  {push_back [drum_gems_rgb] {elem $a 0}}
-               }
-            }
-         }
-      }
-
       {set [smashers_dir] ''}
-
-      {set [guitar_smashers] {array 0}}
-      {set [drum_smashers] {array 0}}
-      {set [guitar_smashers_rgb] {array 0}}
-      {set [drum_smashers_rgb] {array 0}}
-
-      {foreach $a {find $syscfg smashers}
-         {if {== {type $a} kDataArray}
-            {unless {$this find_get $a rgb_only}
-               {if {$this find_get $a guitar}
-                  {push_back [guitar_smashers] {elem $a 0}}
-               }
-               {if {$this find_get $a drum}
-                  {push_back [drum_smashers] {elem $a 0}}
-               }
-            }
-            {if {$this find_get $a rgb}
-               {if {$this find_get $a guitar}
-                  {push_back [guitar_smashers_rgb] {elem $a 0}}
-               }
-               {if {$this find_get $a drum}
-                  {push_back [drum_smashers_rgb] {elem $a 0}}
-               }
-            }
-         }
-      }
-
-      {set [track_configs] {array 0}}
-
-      {foreach $a {find $syscfg track_configs}
-         {if {== {type $a} kDataArray}
-            {push_back [track_configs] {elem $a 0}}
-         }
-      }
 
       {set [config] {array 0}}
       {set [config_net] {array 0}}
@@ -110,6 +41,107 @@
 
       {print "asset_mgr initalized"}
    )
+   (add_asset
+      ($type $array)
+      {cond
+         ({!= {type $type} kDataSymbol}
+            {print "type isn't a symbol"}
+         )
+         ({! {find_exists [assets] $type}}
+            {print {sprint $type " is an unknown asset type"}}
+         )
+         ({!= {type $array} kDataArray}
+            {print "asset array isn't an array"}
+         )
+         ({== {size $array} 0}
+            {print "asset array is empty"}
+         )
+         (TRUE
+            {print {sprint "adding " {elem $array 0} " to " $type}}
+            {push_back {find [assets] $type} $array}
+         )
+      }
+   )
+   (add_assets
+      ($type $array)
+      {foreach $a $array {$this add_asset $type $a}}
+   )
+   (get_asset
+      ($type $asset)
+      {cond
+         ({! {find_exists [assets] $type}}
+            {print {sprint $type " is an unknown asset type"}}
+            kDataUnhandled
+         )
+         ({! {find_exists [assets] $type $asset}}
+            {print {sprint $asset " is an unknown asset"}}
+            kDataUnhandled
+         )
+         (TRUE {find [assets] $type $asset})
+      }
+   )
+   (get_assets
+      ($type $filters) {do
+      ($a {array 0})
+      {unless {find_exists [assets] $type}
+         {fail {sprint $type " is an unknown asset type"}}
+      }
+      {foreach $asset {find [assets] $type}
+         {if {== {type $asset} kDataArray}
+            {do
+               ($add TRUE)
+               {foreach $filter $filters
+                  {switch {type $filter}
+                     (kDataSymbol
+                        {unless
+                           {&&
+                              {find_exists $asset $filter}
+                              {eval {elem {find $asset $filter} 1}}
+                           }
+                           {set $add FALSE}
+                        }
+                     )
+                     (kDataArray
+                        {switch {elem $filter 0}
+                           ('!'
+                              {if
+                                 {&&
+                                    {find_exists $asset {elem $filter 1}}
+                                    {eval {elem {find $asset {elem $filter 1}} 1}}
+                                 }
+                                 {set $add FALSE}
+                              }
+                           )
+                           ('=='
+                              {unless
+                                 {&&
+                                    {find_exists $asset {elem $filter 1}}
+                                    {== {eval {elem {find $asset {elem $filter 1}} 1}} {eval {elem $filter 2}}}
+                                 }
+                                 {set $add FALSE}
+                              }
+                           )
+                           ('!='
+                              {unless
+                                 {&&
+                                    {find_exists $asset {elem $filter 1}}
+                                    {!= {eval {elem {find $asset {elem $filter 1}} 1}} {eval {elem $filter 2}}}
+                                 }
+                                 {set $add FALSE}
+                              }
+                           )
+                        }
+                     )
+                  }
+               }
+               {if $add
+                  {push_back $a {elem $asset 0}}
+               }
+            }
+         }
+      }
+      $a
+   })
    (load_gems
       {with {get_track_panel}
          {if {exists gems_dir}
@@ -122,7 +154,7 @@
             ($inst {$player instrument})
             ($rgb {$this config_get $inst rgb})
             ($gems {$this config_get $inst gems})
-            ($data {find_exists $syscfg gems $gems})
+            ($data {$this get_asset gems $gems})
             {if_else $data
                {do
                   ($gems_dir '')
@@ -198,7 +230,7 @@
             ($inst {$player instrument})
             ($rgb {$this config_get $inst rgb})
             ($smashers {$this config_get $inst smashers})
-            ($data {find_exists $syscfg smashers $smashers})
+            ($data {$this get_asset smashers $smashers})
             ($smashers_dir {asset_mgr smashers_dir})
             {if_else $data
                {do
@@ -235,7 +267,7 @@
          ($rgb {$dir get rgb})
          ($inst {$dir get inst})
          ($gems {$dir get gems})
-         ($data {find_exists $syscfg gems $gems})
+         ($data {$this get_asset gems $gems})
          {if {&& $data $rgb} {do
             ($rgb_mats {find_exists $data rgb_mats})
             {if $rgb_mats
@@ -325,7 +357,7 @@
          ($rgb {$dir get rgb})
          ($inst {$dir get inst})
          ($smashers {$dir get smashers})
-         ($data {find_exists $syscfg smashers $smashers})
+         ($data {$this get_asset smashers $smashers})
          {if {&& $data $rgb} {do
             ($apply_rgb {find_exists $data apply_rgb})
             {if $apply_rgb
@@ -588,7 +620,7 @@
       }
    )
    (apply_config {do
-      ($a {find_exists $syscfg track_configs $track_config})
+      ($a {$this get_asset track_configs $track_config})
       {if $a
          {with {get_track_panel}
             {foreach $o {elem $a 1}
@@ -989,18 +1021,30 @@
    (ensure_stuff {do
       ($rgb {$this ui_get rgb})
       {foreach $a
-         {if_else {!= [target] drum}
-            (
-               (guitar_gems guitar_gems_rgb gems)
-               (guitar_smashers guitar_smashers_rgb smashers)
+         (
+            (gems
+               {cond
+                  ({&& {== {asset_mgr target} drum} $rgb} (drum rgb drum_rgb))
+                  ({== {asset_mgr target} drum} (drum))
+                  ($rgb (guitar rgb))
+                  (TRUE (guitar))
+               }
             )
-            (
-               (drum_gems drum_gems_rgb gems)
-               (drum_smashers drum_smashers_rgb smashers)
+            (smashers
+               {cond
+                  ({&& {== {asset_mgr target} drum} $rgb} (drum rgb))
+                  ({== {asset_mgr target} drum} (drum))
+                  ($rgb (guitar rgb))
+                  (TRUE (guitar))
+               }
             )
-         }
-         {unless {find_elem {$this get {elem $a $rgb}} {$this ui_get {elem $a 2}}}
-            {$this ui_set {elem $a 2} {elem {$this get {elem $a $rgb}} 0}}
+         )
+         {do
+            ($type {elem $a 0})
+            ($as {$this get_assets $type {eval {elem $a 1}}})
+            {unless {find_elem $as {$this ui_get $type}}
+               {$this ui_set $type {elem $as 0}}
+            }
          }
       }
    })

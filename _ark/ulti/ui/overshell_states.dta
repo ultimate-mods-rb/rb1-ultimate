@@ -399,7 +399,6 @@
       #ifdef HX_NG
       (os_preset
          (type uNormal)
-         (block_ingame TRUE)
          (sel_script {$this update_state preset})
       )
       #else
@@ -444,7 +443,7 @@
          (fmt_type uLocalize)
          (hide_on_sel TRUE)
          (var track_config)
-         (array {asset_mgr track_configs})
+         (array {asset_mgr get_assets track_configs ()})
       )
       #ifdef HX_NG
       (os_sync_online
@@ -479,6 +478,7 @@
             }
             $a
          })
+         (block_ingame TRUE)
          (on_invoke {asset_mgr apply_preset $r})
       )
       (os_save_preset
@@ -547,15 +547,15 @@
          (array
             {cond
                ({&& {== {asset_mgr target} drum} {asset_mgr ui_get rgb}}
-                  {asset_mgr drum_gems_rgb}
+                  {asset_mgr get_assets gems (drum rgb drum_rgb)}
                )
                ({== {asset_mgr target} drum}
-                  {asset_mgr drum_gems}
+                  {asset_mgr get_assets gems (drum)}
                )
                ({asset_mgr ui_get rgb}
-                  {asset_mgr guitar_gems_rgb}
+                  {asset_mgr get_assets gems (guitar rgb)}
                )
-               (TRUE {asset_mgr guitar_gems})
+               (TRUE {asset_mgr get_assets gems (guitar)})
             }
          )
       )
@@ -568,15 +568,15 @@
          (array
             {cond
                ({&& {== {asset_mgr target} drum} {asset_mgr ui_get rgb}}
-                  {asset_mgr drum_smashers_rgb}
+                  {asset_mgr get_assets smashers (drum rgb)}
                )
                ({== {asset_mgr target} drum}
-                  {asset_mgr drum_smashers}
+                  {asset_mgr get_assets smashers (drum)}
                )
                ({asset_mgr ui_get rgb}
-                  {asset_mgr guitar_smashers_rgb}
+                  {asset_mgr get_assets smashers (guitar rgb)}
                )
-               (TRUE {asset_mgr guitar_smashers})
+               (TRUE {asset_mgr get_assets smashers (guitar)})
             }
          )
       )

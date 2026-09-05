@@ -2,6 +2,7 @@
    (rgb TRUE)
    (guitar TRUE)
    (drum TRUE)
+   (drum_rgb TRUE)
 )
 #ifdef HX_NG
 (rb2
