@@ -299,7 +299,7 @@
 )
 (objects
    #include objects.dta
-   #merge ../ulti/ulti_objects.dta
+   #merge ../ulti/objects/ulti_objects.dta
 )
 (locale
    #ifdef HX_NG
@@ -308,7 +308,6 @@
    ../ui/eng/locale_updates.dta
    ../ulti/locale_mod.dta
    #else
-   ../ui/eng/locale_milo.dta
    ../ui/eng/locale.dta
    ../ulti/locale_mod.dta
    #endif
@@ -534,10 +533,7 @@
    #include ../ulti/missing_song_data/missing_song_data.dta
 )
 #endif
-(gems #include ../ulti/track/gems/gems.dta)
-(smashers #include ../ulti/track/smashers/smashers.dta)
 (track_presets #include ../ulti/track/presets.dta)
-(track_configs #include ../ulti/track/track_configs.dta)
 (data_graveyard)
 (generate_weights FALSE)
 (generate_panfiles FALSE)
