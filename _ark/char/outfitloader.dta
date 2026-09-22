@@ -2776,6 +2776,7 @@
                (komaru (genre shell_shop_charstore))
                (fernet (genre shell_shop_charstore))
                (omaru)
+               (dva (genre shell_shop_charstore))
                (empty (exclude TRUE))
             )
          )

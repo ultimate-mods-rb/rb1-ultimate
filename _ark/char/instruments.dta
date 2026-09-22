@@ -442,6 +442,10 @@
             (cost 90)
             (default_outfit redoctane_resource)
          )
+         (nekomiku
+            (cost 799)
+            (default_outfit nekomiku_resource)
+         )
       )
       (outfits
          (none)
@@ -760,6 +764,7 @@
          (mace_resource)
          (skull_resource)
          (redoctane_resource)
+         (nekomiku_resource)
       )
    )
    (mic
@@ -783,6 +788,7 @@
          (md431ii_resource (cost 510))
          (md441u_resource (cost 1270))
          (sm57_resource (cost 170))
+         (micu_resource (cost 399))
          (mic1_silver)
          (mic1_gold)
          (mic1_clear)
