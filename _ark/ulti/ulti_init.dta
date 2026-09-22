@@ -89,12 +89,6 @@
 
 {set $goldprogress TRUE}
 
-{set $normal_venues TRUE}
-
-{set $rb2_venues TRUE}
-
-{set $custom_venues TRUE}
-
 {set $char_list {array 0}}
 
 {set $fast_selsong TRUE}
@@ -106,6 +100,8 @@
 {set $sync_online TRUE}
 
 {set $user_presets {array 0}}
+
+{set $venue_list {array 0}}
 
 {set $smallworld FALSE}
 
@@ -124,6 +120,8 @@
 {set $force_venue off}
 
 {set $force_vg off}
+
+{set $chest 1.00}
 
 #ifdef HX_WII
 {set $cnt_slot1 kPad_Tri}

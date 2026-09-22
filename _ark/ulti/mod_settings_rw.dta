@@ -51,15 +51,13 @@
       nohud
       micdeploy
       goldprogress
-      normal_venues
-      rb2_venues
-      custom_venues
       char_list
       crowd
       force_per_pixel
       force_vg
       fast_selsong
       videobgs
+      venue_list
    ))
    (save_settings
       {print "attempting to save mod settings"}

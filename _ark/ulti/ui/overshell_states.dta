@@ -1376,6 +1376,13 @@
             }
          )
       )
+      (os_force_venue
+         (type uFakeSld)
+         (fmt_type uLocalize)
+         (hide_on_sel TRUE)
+         (var force_venue)
+         (array (off random VENUES RB2_VENUES ULTI_VENUES))
+      )
       #endif
    ))
    (enter {$this setup_common})
@@ -1458,20 +1465,9 @@
          (bool $selectvenue)
          (sel_script {toggle_var selectvenue})
       )
-      (os_normal_venues
-         (type uOnOFF)
-         (bool $normal_venues)
-         (sel_script {toggle_var normal_venues})
-      )
-      (os_rb2_venues
-         (type uOnOFF)
-         (bool $rb2_venues)
-         (sel_script {toggle_var rb2_venues})
-      )
-      (os_custom_venues
-         (type uOnOFF)
-         (bool $custom_venues)
-         (sel_script {toggle_var custom_venues})
+      (os_venues
+         (type uNormal)
+         (sel_script {$this update_state venue_list})
       )
       (os_chars
          (type uNormal)
@@ -1487,13 +1483,6 @@
          (hide_on_sel TRUE)
          (var force_vg)
          (array (off male female))
-      )
-      (os_force_venue
-         (type uFakeSld)
-         (fmt_type uLocalize)
-         (hide_on_sel TRUE)
-         (var force_venue)
-         (array (off random VENUES RB2_VENUES ULTI_VENUES))
       )
    ))
    (enter {$this setup_common})
@@ -1721,6 +1710,84 @@
          {$this sel_common}
       }
    )
+   (button_down {$this down_common})
+   (back ven)
+)
+(venue_list
+   (title os_venues)
+   (data ())
+   (enter
+      {do
+         ($a
+            {` 
+               (
+                  (os_reset
+                     (type uNormal)
+                     (sel_script {resize $venue_list 0})
+                  )
+                  (os_remove
+                     (type uInvoke)
+                     (array (normal rb2 custom small_club big_club theater arena))
+                     (on_invoke
+                        {$this state_handle clear (
+                           {switch $ret
+                              (normal (VENUES))
+                              (rb2 (RB2_VENUES))
+                              (custom (ULTI_VENUES))
+                              {do
+                                 {$a {array 0}}
+                                 {foreach $venue (VENUES RB2_VENUES ULTI_VENUES)
+                                    {if {startswith $venue $ret}
+                                       {push_back $a $venue}
+                                    }
+                                 }
+                                 $a
+                              }
+                           }
+                        )}
+                     )
+                  )
+               )
+            }
+         )
+         {foreach $venue (VENUES RB2_VENUES ULTI_VENUES)
+            {unless {startswith $venue "blank_"}
+               {push_back $a
+                  {`
+                     ({, $venue}
+                        (type uOnOFF)
+                        (bool {$this state_handle in_list ({, $venue})})
+                        (sel_script {$this state_handle change_state ({, $venue})})
+                     )
+                  }
+               }
+            }
+         }
+         {$this state_set data $a}
+      }
+      {$this setup_common}
+   )
+   (exit {resize {$this state_get data} 0})
+   (clear
+      ($venues)
+      {foreach $venue $venues
+         {unless {|| {find_elem $venue_list $venue} {startswith $venue "blank_"}}
+            {push_back $venue_list $venue}
+         }
+      }
+   )
+   (in_list
+      ($venue)
+      {! {find_elem $venue_list $venue}}
+   )
+   (change_state
+      ($venue)
+      {if_else {find_elem $venue_list $venue}
+         {remove_elem $venue_list $venue}
+         {push_back $venue_list $venue}
+      }
+   )
+   (component_select {$this sel_common})
    (button_down {$this down_common})
    (back ven)
 )
