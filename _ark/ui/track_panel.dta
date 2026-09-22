@@ -15,6 +15,9 @@
    (animate_track_in_fast)
    (finish_load {do
       ($pro_drums {new RndDir pro_drums})
+      #ifdef MOD_DEBUG
+      {print "track_panel finish_load"}
+      #endif
       #ifdef HX_NG
       {$pro_drums insert (subdirs 0) "ulti/track/pro_drums.milo"}
       {$this iterate TrackDir $dir
@@ -273,6 +276,14 @@
                {$task sleep 1}
                {$task loop}
             )
+         }
+      }
+      #endif
+      #ifdef MOD_DEBUG
+      {if {gamemode get is_endurance}
+         {script_task kTaskSeconds
+            (delay 2)
+            (script {fake_win 5})
          }
       }
       #endif

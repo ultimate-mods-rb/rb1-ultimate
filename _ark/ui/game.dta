@@ -210,11 +210,18 @@
       }
    )
    (load
+      #ifdef MOD_DEBUG
+      {print "world_panel load"}
+      {print {game get_venue}}
+      #endif
       {char_cache world_configure_characters}
       {game load_crowd_audio}
    )
    (is_loaded {char_cache compression_done})
    (finish_load
+      #ifdef MOD_DEBUG
+      {print "world_panel finish_load"}
+      #endif
       {char_cache light_characters {$this loaded_dir}}
       {crowd_audio post_load}
       {apply_gfx_settings}

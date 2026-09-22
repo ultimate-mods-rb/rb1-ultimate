@@ -1,15 +1,10 @@
 (asset_mgr
    (assets [assets])
-
    (gems_dir [gems_dir])
    (smashers_dir [smashers_dir])
-
-
    (config [config])
    (config_net [config_net])
-
    (target [target])
-
    (i [i])
    (li [li])
 
@@ -55,6 +50,9 @@
          )
          ({== {size $array} 0}
             {print "asset array is empty"}
+         )
+         ({find_exists [assets] $type {elem $array 0}}
+            {print {sprint {elem $array 0} " has already been added to " $type}}
          )
          (TRUE
             {print {sprint "adding " {elem $array 0} " to " $type}}
@@ -158,7 +156,7 @@
             {if_else $data
                {do
                   ($gems_dir '')
-                  ($file {$this find_get_opt $data file $rgb})
+                  ($file {eval {$this find_get_opt $data file $rgb}})
                   ($meshes {$this find_get_opt $data meshes $rgb})
                   ($on_load
                      {cond

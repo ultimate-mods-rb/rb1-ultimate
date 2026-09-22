@@ -470,6 +470,9 @@
       )
    )
 )
+(holeintheearth
+   (song (midi_file "./ulti/updates/holeintheearth/holeintheearth.mid"))
+)
 (holidayincambodia
    (song (midi_file "./ulti/updates/holidayincambodia/holidayincambodia.mid"))
 )

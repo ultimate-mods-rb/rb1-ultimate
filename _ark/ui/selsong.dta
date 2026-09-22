@@ -148,6 +148,12 @@
       }
       {$this update_filter {song_provider get_display}}
       {$this update_leader}
+      #ifdef MOD_DEBUG
+      {if {gamemode get is_endurance}
+         {$this set_highlit_song random_song}
+         {$this component_select_start '' 0 0}
+      }
+      #endif
    )
    (exit
       {set [search_mode] FALSE}

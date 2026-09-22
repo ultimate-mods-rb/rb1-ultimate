@@ -193,7 +193,7 @@
                      {sprintf
                         {localize os_onoff_fmt}
                         {localize_token {elem $entry 0}}
-                        {localize {if_else {eval {elem {find $entry bool} 1}} on off}}
+                        {localize {if_else {eval {elem {find $entry bool} 1}} os_on os_off}}
                      }
                   }
                )
@@ -336,7 +336,7 @@
                                     }
                                  }
                               )
-                              (uLocalize {localize $data})
+                              (uLocalize {localize_token $data})
                               (uColorRGB
                                  {do
                                     ($r) ($g) ($b)
@@ -368,22 +368,22 @@
                         )
                         {cond
                            ({&& {== $type uColorSld} $selected [focused]} $fmt)
-                           ({== $type uColorSld} {localize {elem $entry 0}})
+                           ({== $type uColorSld} {localize_token {elem $entry 0}})
                            ({&& $hide_on_sel $selected [focused]}
                               {sprint {localize os_l} $fmt {localize os_r}}
                            )
-                           ($hide_on_sel {localize {elem $entry 0}})
+                           ($hide_on_sel {localize_token {elem $entry 0}})
                            ({&& {find_elem (uSld uFakeSld) $type} $selected [focused]}
                               {sprint
                                  {localize os_l}
-                                 {sprintf {localize {elem $entry 0}} $fmt}
+                                 {sprintf {localize_token {elem $entry 0}} $fmt}
                                  {localize os_r}
                               }
                            )
                            ({find_elem (uSld uFakeSld) $type}
-                              {sprintf {localize {elem $entry 0}} $fmt}
+                              {sprintf {localize_token {elem $entry 0}} $fmt}
                            )
-                           (TRUE {sprintf {localize {elem $entry 0}} $fmt})
+                           (TRUE {sprintf {localize_token {elem $entry 0}} $fmt})
                         }
                      }
                   }
@@ -690,7 +690,7 @@
                         {synth play button_select}
                         {set [focused] FALSE}
                         {do
-                           ($r {OS_LIST get store})
+                           ($ret {OS_LIST get store})
                            {foreach $cmd {find $entry on_invoke}
                               {eval $cmd}
                            }
@@ -834,6 +834,7 @@
 {helpbar_overshell load TRUE}
 {overshell_lower3rd_panel load TRUE}
 {overshell set_up FALSE}
+{overshell enter}
 #else
 {new UIScreen overshell_screen
    (panels

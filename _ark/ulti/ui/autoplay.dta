@@ -21,6 +21,13 @@
       {set [diff] kDifficultyExpert}
       {set [active] TRUE}
       {$this update_text}
+      #ifdef MOD_DEBUG
+      {if {gamemode get is_endurance}
+         {while {size [to_prompt]}
+            {$this on_next}
+         }
+      }
+      #endif
    })
    (exit
       {resize [players] 0}

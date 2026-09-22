@@ -44,7 +44,7 @@
                (handle TRUE)
             )
          #else
-         (main (size 130000000))
+         (main (size 143500000))
          (server_login (size 100000))
          (face_fx (size 1500000))
          #endif

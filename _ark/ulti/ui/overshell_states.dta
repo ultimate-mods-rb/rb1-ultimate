@@ -414,7 +414,7 @@
             $a
          })
          (block_ingame TRUE)
-         (on_invoke {asset_mgr apply_preset $r})
+         (on_invoke {asset_mgr apply_preset $ret})
       )
       #endif
       (guitar
@@ -479,7 +479,7 @@
             $a
          })
          (block_ingame TRUE)
-         (on_invoke {asset_mgr apply_preset $r})
+         (on_invoke {asset_mgr apply_preset $ret})
       )
       (os_save_preset
          (type uNormal)
@@ -506,7 +506,7 @@
             $a
          })
          (on_invoke
-            {remove_elem $user_presets {find_exists $user_presets $r}}
+            {remove_elem $user_presets {find_exists $user_presets $ret}}
             {$this state_set dirty TRUE}
          )
       )
@@ -1511,7 +1511,7 @@
    (data (
       (os_reset
          (type uNormal)
-         (sel_script {set $char_list {array 0}})
+         (sel_script {resize $char_list 0})
       )
       (os_guitar_chars
          (type uNormal)
@@ -1562,13 +1562,10 @@
                      (type uNormal)
                      (sel_script {$this state_handle reset ()})
                   )
-                  (os_clear_normal
-                     (type uNormal)
-                     (sel_script {$this state_handle clear ({$this state_get normal})})
-                  )
-                  (os_clear_custom
-                     (type uNormal)
-                     (sel_script {$this state_handle clear ({$this state_get custom})})
+                  (os_remove
+                     (type uInvoke)
+                     (array (normal custom))
+                     (on_invoke {$this state_handle clear ({$this state_get $ret})})
                   )
                )
             }
@@ -1636,7 +1633,7 @@
       }
    )
    (button_down
-      {if_else {!= $button kPad_Tri}
+      {if_else {|| [focused] {!= $button kPad_Tri}}
          {$this down_common}
          {do
             ($active 0)
