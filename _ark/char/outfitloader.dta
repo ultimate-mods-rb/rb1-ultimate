@@ -2777,6 +2777,7 @@
                (fernet (genre shell_shop_charstore))
                (omaru)
                (dva (genre shell_shop_charstore))
+               (yukari (genre shell_shop_charstore))
                (empty (exclude TRUE))
             )
          )

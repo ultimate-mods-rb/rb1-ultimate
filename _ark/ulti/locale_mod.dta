@@ -501,6 +501,9 @@
 (dva "D.Va")
 (guitar_dva "D.Va")
 (dva_desc "A former professional gamer who uses her skills to defend her country.")
+(yukari "Yukari Takeba")
+(guitar_yukari "Yukari Takeba")
+(yukari_desc "A second-year student at Gekkoukan High School.")
 ; guitar
 (mustang02 "Fender<sup>TM</sup> '65 Mustang<sup>TM</sup>")
 (mustang02_desc
