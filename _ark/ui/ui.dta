@@ -68,6 +68,7 @@
       #endif
    }
    {ui my_init}
+   {run {sprint MODS_PATH "mods.dta"}}
    {if $commerce
       {gamemode set_mode store}
    }

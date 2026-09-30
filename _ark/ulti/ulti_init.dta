@@ -121,7 +121,7 @@
 
 {set $force_vg off}
 
-{set $chest 1.00}
+{set $australia FALSE}
 
 #ifdef HX_WII
 {set $cnt_slot1 kPad_Tri}

@@ -173,6 +173,8 @@
 
 #ifdef HX_PS3
    #define PREFABS_PATH ("GD:/dev_hdd0/game/BLUS30050/USRDIR/user_prefabs.milo")
+   #define MODS_PATH ("GD:/dev_hdd0/game/BLUS30050/USRDIR/mods/")
 #else
    #define PREFABS_PATH ("GAME:/user_prefabs.milo")
+   #define MODS_PATH ("GAME:/mods/")
 #endif

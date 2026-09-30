@@ -523,7 +523,11 @@
    (virtual_keyboard_result_msg
       {if {&& $ok $text}
          {set $text {symbol $text}}
-         {if_else {find_exists $syscfg track_presets $text}
+         {if_else
+            {||
+               {find_exists $syscfg track_presets $text}
+               {find_exists $user_presets $text}
+            }
             {passive_messages_panel queue_message {localize os_diff_name}}
             {do
                {asset_mgr save_preset $text}
@@ -1334,6 +1338,11 @@
          (type uOnOFF)
          (bool $scale_head)
          (sel_script {toggle_var scale_head})
+      )
+      (os_australia
+         (type uOnOFF)
+         (bool $australia)
+         (sel_script {toggle_var australia})
       )
       (os_honestmode
          (type uOnOFF)

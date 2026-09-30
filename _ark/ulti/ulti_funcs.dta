@@ -10,8 +10,15 @@
 {func fail
    ($s)
    {print $s}
-   ;{exit} ; crashes in some cases
-   {delete rnd} ; will call abort so stable
+   #ifdef HX_NG
+      {delete rnd} ; only stable way to exit on ng
+   #else
+      #ifdef HX_WII
+      {memcardmgr return_to_wii_menu} ; everything else crashes on wii
+      #else
+      {exit} ; just goes to a black screen on ps2 but better than locking up
+      #endif
+   #endif
 }
 #endif
 {func dump_array
@@ -309,8 +316,20 @@
          }}
       }
    }
-   ; TEST DONT FUCKING PUSH DONT FUCKING PUSH
-   {if $mikan
+   {if $australia
+      {$world iterate CompositeCharacter $c {with $c
+         {unless {exists cc_scale}
+            {new Trans cc_scale}
+            {$this iterate Trans $t
+               {if {== {$t trans_parent} $this}
+                  {$t set_trans_parent cc_scale}
+               }
+            }
+            {cc_scale set_trans_parent $this}
+         }
+         {cc_scale set_local_rot 0 180 0}
+         {cc_scale set_local_pos 0 0 70}
+      }}
    }
 }
 {func tolower ; fuck you harmonix
