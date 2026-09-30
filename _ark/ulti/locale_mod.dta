@@ -634,6 +634,8 @@
 (x_title "X")
 (y_title "Y")
 (z_title "Z")
+(loading_viewer "Loading Viewer")
+(choose_loading "CHOOSE LOADING SCREEN")
 ;;;
 ;;; DRUM TRAINER
 ;;;

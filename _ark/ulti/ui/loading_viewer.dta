@@ -1,0 +1,119 @@
+{new UIPanel
+   loading_viewer_list_panel
+   (file "../../ui/qp_selvenue.milo")
+   (focus venue.lst)
+   (enter
+      {game set_song igetby}
+      {leader.lbl set_showing FALSE}
+      {choose_venue.lbl set text_token choose_loading}
+      {venue.lst set_data
+         (
+            ls_amsterdam1
+            ls_amsterdam3
+            ls_berlin1
+            ls_berlin2
+            ls_berlin4
+            ls_best_of_album_drm
+            ls_best_of_album_gtr
+            ls_best_of_album_vox
+            ls_boston2
+            ls_boston3
+            ls_chicago2
+            ls_chicago3
+            ls_h2h_bass
+            ls_h2h_drum
+            ls_h2h_guitar
+            ls_h2h_vocals
+            ls_la1
+            ls_la4
+            ls_london2
+            ls_london4
+            ls_nyc2
+            ls_nyc4
+            ls_reykjavik3
+            ls_sanfran2
+            ls_seattle1
+            ls_seattle2
+            ls_stockholm01
+            ls_stockholm02
+            ls_stockholm3
+            ls_sydney4
+            template_drummer_box
+            template
+         )
+      }
+   )
+   (SELECT_MSG {do
+      ($b FALSE)
+      {set $force_loading_image
+         {sprintf "loading/%s.milo" {venue.lst selected_sym}}
+      }
+      {game foreach_local_player_config $pcfg
+         {$pcfg set_track_type
+            {switch {$pcfg get_controller_type}
+               (kControllerDrum drum)
+               (kControllerVocals vocals)
+               {if_else $b
+                  bass
+                  {do
+                     {set $b TRUE}
+                     guitar
+                  }
+               }
+            }
+         }
+         {$pcfg set_difficulty kDifficultyExpert}
+         {$pcfg set_ready TRUE}
+      }
+      {ui goto_screen loading_screen}
+   })
+}
+{new UIScreen
+   loading_viewer_list_screen
+   (panels meta movie_panel loading_viewer_list_panel helpbar)
+   (focus loading_viewer_list_panel)
+   (back {gamemode get matchmaking_screen})
+   (helpbar (back select))
+}
+{new UIScreen loading_photo_viewer_screen
+   (panels loading_photo)
+   (enter {game set_venue blank_01})
+   (exit {set $force_loading_image 0})
+   (BUTTON_DOWN_MSG
+      {switch $button
+         (kPad_Start {ui goto_screen loading_photo_screen})
+         (kPad_Circle
+            {unless {{loading_photo loaded_dir} has (l)}
+               {{loading_photo loaded_dir} set l TRUE}
+               {rnd proc_lock}
+            }
+            {cycle_free_camera}
+         )
+         (kPad_Tri
+            {if {{loading_photo loaded_dir} has (l)}
+               {$world iterate CompositeCharacter $cc
+                  {$cc unfreeze}
+               }
+            }
+         )
+         (kPad_Square
+            {if {{loading_photo loaded_dir} has (l)}
+               {$world iterate CompositeCharacter $cc
+                  {$cc freeze}
+               }
+            }
+         )
+         kDataUnhandled
+      }
+   )
+}
+{new UIPanel viewer_exit_panel
+   (enter
+      {session end_game kQuit}
+      {band_ui_sink sync_screen meta_loading_pause_new_song_screen 1}
+   )
+}
+{new UIScreen viewer_game_screen
+   (panels game world_panel coop_track_panel mtv_overlay viewer_exit_panel)
+   GAME_SCREEN_HANDLERS
+}

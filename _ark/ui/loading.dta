@@ -44,7 +44,9 @@
       {set [next_screen]
          {cond
             ($force_loading_tip loading_tip_screen)
-            ($force_loading_image loading_image_screen)
+            ({|| $force_loading_image {gamemode get is_loading_viewer}}
+               loading_image_screen
+            )
             ({&&
                   {gamemode get show_loading_images}
                   {==
@@ -231,7 +233,12 @@
 {new UIScreen
    loading_instrument_screen
    (panels loading_instrument loading_panel)
-   (enter {ui goto_screen loading_photo_screen})
+   (enter
+      {if_else {gamemode get is_loading_viewer}
+         {ui goto_screen loading_photo_viewer_screen}
+         {ui goto_screen loading_photo_screen}
+      }
+   )
 }
 {new LoadingPanel
    loading_photo

@@ -2,6 +2,7 @@
 #ifdef HX_NG
 #include autoplay.dta
 #include camera_debug.dta
+#include loading_viewer.dta
 {new UIPanel
    main_bandtour_panel
    (file "../../ui/main_bandcoop.milo")
@@ -67,7 +68,10 @@
             {gamemode set_mode autoplay $player_num}
             {ui goto_screen autoplay_mode_setup_screen}
          )
-         (calibrate_av.btn kDataUnhandled)
+         (calibrate_av.btn 
+            {gamemode set_mode loading_viewer $player_num}
+            {ui goto_screen {gamemode get matchmaking_screen}}
+         )
          (exportsongs.btn
             #ifdef HX_PS3
             {ui goto_screen store_enter_confirm_screen}
@@ -100,7 +104,7 @@
       {audio.btn set text_token os_ultisettings}
       {gameplay.btn set text_token jukebox}
       {characterdata.btn set text_token autoplay}
-      {calibrate_av.btn set text_token placeholder}
+      {calibrate_av.btn set text_token loading_viewer}
       {exportsongs.btn set text_token musicstore}
    )
    (TRANSITION_COMPLETE_MSG {autosave} kDataUnhandled)

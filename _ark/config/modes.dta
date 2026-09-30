@@ -129,6 +129,7 @@
    (is_permadeath FALSE)
    (is_autoplay FALSE)
    (is_endurance FALSE)
+   (is_loading_viewer FALSE)
 )
 (init
    (community_screen main_leaderboard_screen)
@@ -779,6 +780,15 @@
 (permadeath
    TOUR_SOLO_PROPERTIES
    (is_permadeath TRUE)
+)
+(loading_viewer
+   (main_mode_screen bonus_screen)
+   COOP_MODE_PROPERTIES
+   (is_loading_viewer TRUE)
+   (game_screen viewer_game_screen)
+   (post_matchmaking_screen loading_viewer_list_screen)
+   (continue_screen loading_viewer_list_screen)
+   (pause_new_song_screen loading_viewer_list_screen)
 )
 #ifdef MOD_DEBUG
 (camera_debug
