@@ -2778,6 +2778,7 @@
                (omaru)
                (dva (genre shell_shop_charstore))
                (yukari (genre shell_shop_charstore))
+               (toko (genre shell_shop_charstore))
                (empty (exclude TRUE))
             )
          )
