@@ -500,7 +500,7 @@
 (guitar_fernet "Fernet")
 (fernet_desc "Captain of the M.A.H.O.U unit.")
 (dva "D.Va")
-(guitar_dva "D.Va")
+(drum_dva "D.Va")
 (dva_desc "A former professional gamer who uses her skills to defend her country.")
 (toko "Toko Fukawa")
 (guitar_toko "Toko Fukawa")

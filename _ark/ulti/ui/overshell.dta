@@ -289,53 +289,7 @@
                                     }
                                  }
                               )
-                              (uSync
-                                 {localize
-                                    {switch $data
-                                       (0 infinite)
-                                       (1 full)
-                                       (2 half)
-                                       (4 quarter)
-                                       invalid
-                                    }
-                                 }
-                              )
-                              (uInst
-                                 {localize
-                                    {switch $data
-                                       (kControllerGuitar guitar_sym)
-                                       (kControllerDrum drum_sym)
-                                       (kControllerVocals vocals_sym)
-                                       invalid
-                                    }
-                                 }
-                              )
-                              (uMapping
-                                 {localize
-                                    {switch $data
-                                       (0 custom)
-                                       (1 guitar_sym)
-                                       (2 gh_guitar)
-                                       (3 ps2_guitar)
-                                       (4 drum_sym)
-                                       invalid
-                                    }
-                                 }
-                              )
                               (uSpeed {int {+ {* $data 100} 0.5}})
-                              (uTimer
-                                 {localize
-                                    {switch $data
-                                       (0 off)
-                                       (1 time_total)
-                                       (2 remaining_total)
-                                       (3 remaining)
-                                       (4 time)
-                                       (5 total)
-                                       invalid
-                                    }
-                                 }
-                              )
                               (uLocalize {localize_token $data})
                               (uColorRGB
                                  {do
@@ -354,13 +308,15 @@
                                     {sprintf {localize_token {sprintf "os_color_fmt_%d" $i}} $r $g $b}
                                  }
                               )
-                              (uAspect
-                                 {localize
-                                    {switch $data
-                                       (kSquareAspect aspect_square)
-                                       (kRegularAspect apsect_regular)
-                                       (kWidescreenAspect aspect_widescreen)
-                                       invalid
+                              (uElemData
+                                 {do
+                                    ($a {elem {find $entry data_syms} 1})
+                                    {localize_token
+                                       {eval
+                                          {elem $a
+                                             {get_elem {eval {elem {find $entry array} 1}} $data}
+                                          }
+                                       }
                                     }
                                  }
                               )

@@ -45,14 +45,9 @@
 #define uColor     (1)
 #define uDrumColor (2)
 #define uCunt      (3)
-#define uSync      (4)
-#define uInst      (5)
-#define uMapping   (6)
-#define uSpeed     (7)
-#define uTimer     (8)
-#define uLocalize  (9)
-#define uColorRGB  (10)
-#define uAspect    (11)
+#define uSpeed     (4)
+#define uLocalize  (5)
+#define uColorRGB  (6)
 
 #define COLOR_DATA_COMMON (
    (type uFakeSld)
