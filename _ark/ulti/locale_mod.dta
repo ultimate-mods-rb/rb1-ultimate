@@ -45,6 +45,8 @@
 (aspect_square "Square")
 (apsect_regular "Regular")
 (aspect_widescreen "Widescreen")
+(os_per_pixel_fmt "Lighting Quality: %s")
+(os_fullres "Full Resolution")
 (os_misssounds "Miss Sounds")
 (os_trkmuting "Track Muting")
 (os_micdeploy "Deploy With Mic")

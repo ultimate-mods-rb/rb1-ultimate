@@ -202,10 +202,17 @@
          (sel_script {toggle_var crowd})
       )
       #ifdef HX_PS3
-      (os_force_per_pixel
+      (os_fullres
          (type uOnOFF)
-         (bool $force_per_pixel)
-         (sel_script {toggle_var force_per_pixel})
+         (bool $fullres)
+         (sel_script {toggle_var fullres})
+      )
+      (os_per_pixel_fmt
+         (type uFakeSld)
+         (fmt_type uElemData)
+         (var per_pixel_q)
+         (array (0 1 2))
+         (data_syms (low normal high))
       )
       #endif
       #endif

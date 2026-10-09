@@ -43,7 +43,9 @@
 
 {set $crowd TRUE}
 
-{set $force_per_pixel TRUE}
+{set $per_pixel_q 1}
+
+{set $fullres FALSE}
 
 {set $emulatefps 24}
 

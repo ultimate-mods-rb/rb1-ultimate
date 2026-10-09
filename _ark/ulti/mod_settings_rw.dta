@@ -53,7 +53,8 @@
       goldprogress
       char_list
       crowd
-      force_per_pixel
+      per_pixel_q
+      fullres
       force_vg
       fast_selsong
       videobgs

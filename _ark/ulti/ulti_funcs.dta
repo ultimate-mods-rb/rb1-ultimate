@@ -222,9 +222,10 @@
       {if {&& {! $scrbloom} [bloom_intensity]}
          {set [bloom_intensity]
             #ifdef HX_PS3
-            ; setting this to 0 breaks some visual effects but bloom is fucked on ps3 anyways
-            ; the entire game is super blurry with it even slightly on
-            0
+            {if_else $fullres  ; very blurry without fullres
+               0.01
+               0
+            }
             #else
             0.01
             #endif
@@ -243,10 +244,43 @@
             {$cs set (keyframes $i shake_maxangle y) 0}
          }
       }
-      {if $force_per_pixel
-         {$cs set ps3_per_pixel TRUE}
+      #ifdef HX_PS3
+      {switch $per_pixel_q
+         (0
+            {$cs set ps3_per_pixel FALSE}
+            {foreach_int $i 0 {$cs size (targets)}
+               {$cs set (targets $i self_shadow) FALSE}
+               {$cs set (targets $i spot_cutout) FALSE}
+               {$cs set (targets $i floor_shadow) FALSE}
+            }
+         )
+         (1
+            {if {game is_loaded}
+               {foreach_int $i 0 {$cs size (targets)}
+                  {$cs set (targets $i self_shadow) FALSE}
+               }
+            }
+         )
+         (2
+            {$cs set ps3_per_pixel TRUE}
+            {if {game is_loaded}
+               {foreach_int $i 0 {$cs size (targets)}
+                  {$cs set (targets $i self_shadow) TRUE}
+               }
+            }
+         )
+      }
+      #endif
+   }
+   #ifdef HX_PS3
+   ; hack! this is a normally unused (citation needed) bool reused for full resolution.
+   {rnd set_show_safe_area
+      {if_else {game is_loaded}
+         {! $fullres}
+         FALSE
       }
    }
+   #endif
    {if $bigmode {do
       ($x) ($y) ($z)
       {$world iterate Character $c
